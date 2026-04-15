@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi des Apprenants | Dashboard</title>
+
+
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Icons (Phosphor Icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="ph ph-student"></i>
+                    </div>
+                    <span>Suivi Apprenants</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-view="dashboard">
+                    <i class="ph ph-squares-four nav-icon"></i>
+                    <span>Tableau de bord</span>
+                </button>
+                <button class="nav-item" data-view="attendance">
+                    <i class="ph ph-check-circle nav-icon"></i>
+                    <span>Présence</span>
+                </button>
+                <button class="nav-item" data-view="students">
+                    <i class="ph ph-users nav-icon"></i>
+                    <span>Apprenants</span>
+                </button>
+                <button class="nav-item" data-view="statistics">
+                    <i class="ph ph-chart-line-up nav-icon"></i>
+                    <span>Statistiques</span>
+                </button>
+                <button class="nav-item" data-view="settings">
+                    <i class="ph ph-gear nav-icon"></i>
+                    <span>Paramètres</span>
+                </button>
+            </nav>
+            
+            <div class="mt-auto">
+                <button id="theme-toggle" class="nav-item">
+                    <i class="ph ph-moon nav-icon"></i>
+                    <span>Mode Sombre</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- VIEW: DASHBOARD -->
+            <section id="view-dashboard" class="view-section active">
+                <header class="content-header">
+                    <h1 class="content-title">Tableau de bord</h1>
+                    <p class="content-subtitle">Vue d'ensemble de l'activité</p>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Apprenants</div>
+                        <div class="stat-value" id="kpi-total-students">-</div>
+                        <div class="stat-change info">
+                            <i class="ph ph-users"></i> Actifs
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Taux de Présence Global</div>
+                        <div class="stat-value" id="kpi-attendance-rate">-%</div>
+                        <div class="stat-change" id="kpi-attendance-trend">
+                            <!-- JS will populate -->
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Sessions</div>
+                        <div class="stat-value" id="kpi-total-sessions">-</div>
+                        <div class="stat-change info">
+                            <i class="ph ph-calendar-check"></i> Formations
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Aujourd'hui</h2>
+                        <button class="btn btn-primary btn-sm" onclick="app.navigateTo('attendance')">
+                            <i class="ph ph-plus"></i> Faire l'appel
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="today-summary" class="empty-state">
+                            <i class="ph ph-calendar-x empty-icon"></i>
+                            <p class="empty-text">Aucune présence enregistrée aujourd'hui</p>
+                            <button class="btn btn-primary" onclick="app.navigateTo('attendance')">Commencer</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: ATTENDANCE -->
+            <section id="view-attendance" class="view-section hidden">
+                <header class="content-header">
+                    <h1 class="content-title">Suivi de Présence</h1>
+                    <p class="content-subtitle">Gérer les présences quotidiennes</p>
+                </header>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="flex flex-col md:flex-row gap-md items-end">
+                            <div class="form-group mb-0" style="flex: 1;">
+                                <label class="form-label">Date</label>
+                                <input type="date" id="attendance-date" class="form-input">
+                            </div>
+                            <div class="form-group mb-0" style="flex: 1;">
+                                <label class="form-label">Session / Groupe</label>
+                                <select id="attendance-session" class="form-select">
+                                    <option value="default">Formation Principale</option>
+                                    <!-- Options generated by JS -->
+                                </select>
+                            </div>
+                            <button id="load-attendance-btn" class="btn btn-secondary">
+                                <i class="ph ph-arrows-clockwise"></i> Charger
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Liste d'appel</h2>
+                        <div class="flex gap-sm">
+                            <span class="badge badge-present" id="count-present">0 Présents</span>
+                            <span class="badge badge-absent" id="count-absent">0 Absents</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Apprenant</th>
+                                    <th>Statut</th>
+                                    <th>Heure / Note</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer p-4 border-t flex justify-end">
+                        <button id="save-attendance-btn" class="btn btn-primary btn-lg">
+                            <i class="ph ph-floppy-disk"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: STUDENTS -->
+            <section id="view-students" class="view-section hidden">
+                <header class="content-header flex justify-between items-center">
+                    <div>
+                        <h1 class="content-title">Apprenants</h1>
+                        <p class="content-subtitle">Gérer la liste des étudiants</p>
+                    </div>
+                    <button id="add-student-btn" class="btn btn-primary">
+                        <i class="ph ph-user-plus"></i> Ajouter
+                    </button>
+                </header>
+
+                <div class="card mb-4">
+                    <div class="p-4 flex gap-md">
+                        <div class="search-container flex-1">
+                            <i class="ph ph-magnifying-glass search-icon"></i>
+                            <input type="text" id="student-search" class="search-input" placeholder="Rechercher un apprenant...">
+                        </div>
+                        <select id="student-filter-group" class="form-select" style="width: auto;">
+                            <option value="all">Tous les groupes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="students-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards populated by JS -->
+                </div>
+            </section>
+
+            <!-- VIEW: STATISTICS -->
+            <section id="view-statistics" class="view-section hidden">
+                <header class="content-header">
+                    <h1 class="content-title">Statistiques</h1>
+                    <p class="content-subtitle">Analyses détaillées de la présence</p>
+                </header>
+                
+                <div class="card mb-4">
+                     <div class="card-header">
+                        <h2 class="card-title">Tendance Mensuelle</h2>
+                     </div>
+                     <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); border-radius: var(--radius-md);">
+                         <p class="text-tertiary">Graphique d'évolution (implémenté avec CSS/JS)</p>
+                         <div id="stats-chart-placeholder" style="width: 100%; height: 100%;"></div>
+                     </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header flex justify-between">
+                        <h2 class="card-title">Rapport par Apprenant</h2>
+                        <div class="flex gap-2">
+                             <button id="export-pdf-btn" class="btn btn-secondary btn-sm">
+                                <i class="ph ph-file-pdf"></i> PDF
+                            </button>
+                            <button id="export-csv-btn" class="btn btn-secondary btn-sm">
+                                <i class="ph ph-file-csv"></i> CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Apprenant</th>
+                                    <th>Taux de Présence</th>
+                                    <th>Présences</th>
+                                    <th>Absences</th>
+                                    <th>Retards</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stats-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- VIEW: SETTINGS -->
+            <section id="view-settings" class="view-section hidden">
+                <header class="content-header">
+                    <h1 class="content-title">Paramètres</h1>
+                    <p class="content-subtitle">Configuration de l'application</p>
+                </header>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title">Données</h2>
+                    </div>
+                    <div class="card-body flex gap-md">
+                        <button id="export-backup-btn" class="btn btn-secondary">
+                            <i class="ph ph-download"></i> Sauvegarder les données (JSON)
+                        </button>
+                        <button id="import-backup-btn" class="btn btn-secondary">
+                            <i class="ph ph-upload"></i> Restaurer
+                        </button>
+                         <input type="file" id="import-file" class="hidden" accept=".json">
+                    </div>
+                </div>
+                
+                 <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title text-danger-600">Zone de danger</h2>
+                    </div>
+                    <div class="card-body">
+                         <button id="demo-data-btn" class="btn btn-secondary mb-4" style="width: 100%; justify-content: start;">
+                            <i class="ph ph-magic-wand"></i> Générer Données Démo (48 Apprenants)
+                        </button>
+                        <p class="mb-4 text-secondary">La suppression des données est irréversible.</p>
+                        <button id="reset-app-btn" class="btn btn-danger">
+                            <i class="ph ph-trash"></i> Réinitialiser toute l'application
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL: ADD/EDIT STUDENT -->
+    <div class="modal-overlay" id="student-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Ajouter un apprenant</h3>
+                <button class="modal-close" onclick="ui.closeModal('student-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="student-form">
+                    <input type="hidden" id="student-id">
+                    
+                    <div class="form-group text-center">
+                        <div class="avatar avatar-lg mx-auto mb-2" id="student-avatar-preview">
+                            <i class="ph ph-user"></i>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('student-photo-input').click()">
+                            Changer la photo
+                        </button>
+                        <input type="file" id="student-photo-input" class="hidden" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="student-name">Nom complet *</label>
+                        <input type="text" id="student-name" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="student-email">Email</label>
+                        <input type="email" id="student-email" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="student-group">Groupe</label>
+                        <input type="text" id="student-group" class="form-input" list="groups-datalist">
+                        <datalist id="groups-datalist"></datalist>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" onclick="ui.closeModal('student-modal')">Annuler</button>
+                <button type="button" class="btn btn-primary" id="save-student-btn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- SCRIPTS -->
+    <script src="js/ui.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/students.js"></script>
+    <script src="js/attendance.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
