@@ -1,228 +1,156 @@
 /* ============================================
-   DATA Management - Suivi des Apprenants
+   DATA Management — EducTrack
+   API REST → Railway MySQL via Vercel functions
    ============================================ */
 
-const STORAGE_KEY = 'suivi_apprenants_data';
+const BASE = ''; // Vercel: fonctions dans /api (même domaine)
 
 const dataManager = {
-    data: {
-        students: [],
-        attendance: {}, // { "YYYY-MM-DD": { sessionId: { studentId: { status, time, notes } } } }
-        sessions: [
-            { id: 'default', name: 'Formation Principale' }
-        ],
-        settings: {}
-    },
+  data: {
+    students:   [],
+    attendance: {},
+    sessions:   [{ id: 'default', name: 'Formation Principale' }],
+    settings:   {}
+  },
 
-    // Initialize and load data
-    init() {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            try {
-                this.data = JSON.parse(stored);
+  // ── Init : charge students + sessions depuis l'API ──
+  async init() {
+    try {
+      const [students, sessions] = await Promise.all([
+        fetch(`${BASE}/api/students`).then(r => r.json()),
+        fetch(`${BASE}/api/sessions`).then(r => r.json()),
+      ]);
+      this.data.students = Array.isArray(students) ? students : [];
+      this.data.sessions = Array.isArray(sessions) && sessions.length
+        ? sessions
+        : [{ id: 'default', name: 'Formation Principale' }];
+    } catch (e) {
+      console.warn('API indisponible, mode localStorage de secours', e);
+      this._loadFromStorage();
+    }
+  },
 
-                // Validate structure
-                if (!this.data.students) this.data.students = [];
-                if (!this.data.attendance) this.data.attendance = {};
-                if (!this.data.sessions) this.data.sessions = [{ id: 'default', name: 'Formation Principale' }];
-                if (!this.data.settings) this.data.settings = {};
+  // ── Fallback localStorage ──
+  _loadFromStorage() {
+    const stored = localStorage.getItem('eductrack_data');
+    if (stored) {
+      try { Object.assign(this.data, JSON.parse(stored)); } catch (_) {}
+    }
+  },
+  _saveToStorage() {
+    localStorage.setItem('eductrack_data', JSON.stringify(this.data));
+  },
 
-                this.migrateOldData();
-            } catch (e) {
-                console.error("Data corruption detected, resetting data:", e);
-                this.resetData(); // This will also save fresh defaults
-                this.generateDemoData(); // And regenerate demo data since we are resetting
-            }
-        } else {
-            // First launch: generate data immediately as requested
-            this.generateDemoData();
-        }
+  // ── STUDENTS ──
+  getStudents(groupId = null) {
+    if (groupId && groupId !== 'all') {
+      return this.data.students.filter(s => s.group === groupId);
+    }
+    return this.data.students;
+  },
 
-        // Double check: if students are empty (user cleared them or previous init failed), repopulate
-        if (this.data.students.length === 0) {
-            this.generateDemoData();
-        }
+  async addStudent(student) {
+    student.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+    student.created_at = new Date().toISOString();
+    try {
+      await fetch(`${BASE}/api/students`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(student),
+      });
+    } catch (e) { console.warn('addStudent API error', e); }
+    this.data.students.push(student);
+    this._saveToStorage();
+    return student;
+  },
 
-        this.save();
-    },
+  async updateStudent(id, updates) {
+    const index = this.data.students.findIndex(s => s.id === id);
+    if (index === -1) return false;
+    this.data.students[index] = { ...this.data.students[index], ...updates };
+    try {
+      await fetch(`${BASE}/api/students?id=${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+    } catch (e) { console.warn('updateStudent API error', e); }
+    this._saveToStorage();
+    return true;
+  },
 
-    save() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
-    },
+  async deleteStudent(id) {
+    this.data.students = this.data.students.filter(s => s.id !== id);
+    try {
+      await fetch(`${BASE}/api/students?id=${id}`, { method: 'DELETE' });
+    } catch (e) { console.warn('deleteStudent API error', e); }
+    this._saveToStorage();
+  },
 
-    // --- STUDENTS ---
-    getStudents(groupId = null) {
-        if (groupId && groupId !== 'all') {
-            return this.data.students.filter(s => s.group === groupId);
-        }
-        return this.data.students;
-    },
+  // ── ATTENDANCE ──
+  async getAttendance(date, sessionId = 'default') {
+    try {
+      const res = await fetch(`${BASE}/api/attendance?date=${date}&session=${sessionId}`);
+      const data = await res.json();
+      if (!this.data.attendance[date]) this.data.attendance[date] = {};
+      this.data.attendance[date][sessionId] = data;
+      return data;
+    } catch (e) {
+      console.warn('getAttendance API error', e);
+      return (this.data.attendance[date] || {})[sessionId] || {};
+    }
+  },
 
-    addStudent(student) {
-        // Generate simple ID
-        student.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
-        student.createdAt = new Date().toISOString();
-        this.data.students.push(student);
-        this.save();
-        return student;
-    },
+  async saveAttendance(date, sessionId, records) {
+    if (!this.data.attendance[date]) this.data.attendance[date] = {};
+    this.data.attendance[date][sessionId] = records;
+    this._saveToStorage();
+    try {
+      await fetch(`${BASE}/api/attendance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, session_id: sessionId, records }),
+      });
+    } catch (e) { console.warn('saveAttendance API error', e); }
+  },
 
-    updateStudent(id, updates) {
-        const index = this.data.students.findIndex(s => s.id === id);
-        if (index !== -1) {
-            this.data.students[index] = { ...this.data.students[index], ...updates };
-            this.save();
-            return true;
-        }
-        return false;
-    },
+  // ── UTILS ──
+  getGroups() {
+    const groups = new Set(this.data.students.map(s => s.group).filter(Boolean));
+    return Array.from(groups);
+  },
 
-    deleteStudent(id) {
-        this.data.students = this.data.students.filter(s => s.id !== id);
-        this.save();
-    },
+  exportData() {
+    return JSON.stringify(this.data, null, 2);
+  },
 
-    // --- ATTENDANCE ---
-    getAttendance(date, sessionId = 'default') {
-        if (!this.data.attendance[date]) return {};
-        // If specific session not found, try default or just return empty
-        return this.data.attendance[date][sessionId] || {};
-    },
-
-    saveAttendance(date, sessionId, records) {
-        if (!this.data.attendance[date]) {
-            this.data.attendance[date] = {};
-        }
-        this.data.attendance[date][sessionId] = records;
-        this.save();
-    },
-
-    // --- UTILS ---
-    getGroups() {
-        const groups = new Set(this.data.students.map(s => s.group).filter(Boolean));
-        return Array.from(groups);
-    },
-
-    // --- DATA MANAGEMENT ---
-    exportData() {
-        return JSON.stringify(this.data, null, 2);
-    },
-
-    importData(jsonString) {
-        try {
-            const parsed = JSON.parse(jsonString);
-            if (parsed.students && parsed.attendance) {
-                this.data = parsed;
-                this.save();
-                return true;
-            }
-            return false;
-        } catch (e) {
-            console.error("Import failed", e);
-            return false;
-        }
-    },
-
-    resetData() {
-        this.data = {
-            students: [],
-            attendance: {},
-            sessions: [{ id: 'default', name: 'Formation Principale' }],
-            settings: {}
-        };
-        this.save();
-    },
-
-    // MIGRATION UTILS
-    tryMigrateLegacyData() {
-        // Legacy migration removed in favor of fresh start with demo data
-    },
-
-    migrateOldData() {
-        // Placeholder for future schema migrations
-        if (!this.data.sessions) {
-            this.data.sessions = [{ id: 'default', name: 'Formation Principale' }];
-        }
-    },
-
-    generateDemoData() {
-        console.log("Génération automatique des données...");
-        const marketingNames = [
-            "Sophie Martin", "Lucas Bernard", "Emma Thomas", "Gabriel Petit", "Léa Robert",
-            "Hugo Richard", "Chloé Durand", "Arthur Dubois", "Manon Moreau", "Jules Laurent",
-            "Camille Simon", "Louis Michel", "Lola Lefebvre", "Nathan Leroy", "Zoé Roux",
-            "Théo David", "Jade Bertrand", "Paul Morel", "Sarah Fournier", "Tom Girard",
-            "Eva Bonnet", "Léo Mercer", "Anna Blanc", "Maxime Guerin", "Mila Boyer",
-            "Enzo Garry", "Lina Font"
-        ];
-
-        const webNames = [
-            "Thomas Pierre", "Célia Vasseur", "Axel Colin", "Inès Bodin", "Robin Chauvin",
-            "Alice Clement", "Mathis Da Silva", "Romane Delorme", "Baptiste Desmas", "Lou Diot",
-            "Clément Dupuy", "Lisa Faure", "Antoine Fleury", "Victoire Gaillard", "Rémi Gautier",
-            "Elise Giraud", "Noah Hardy", "Lucie Hubert", "Maël Jean", "Juliette Langlois",
-            "Sacha Lemoine"
-        ];
-
-        this.data.students = [];
-        this.data.attendance = {};
-        this.data.sessions = [
-            { id: 'marketing', name: 'Marketing Digital' },
-            { id: 'web', name: 'Développement Web et Mobile' }
-        ];
-
-        // Helper to add student
-        const add = (name, group) => {
-            const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            this.data.students.push({
-                id,
-                name,
-                group,
-                email: name.toLowerCase().replace(/ /g, '.') + '@example.com',
-                createdAt: new Date().toISOString(),
-                photo: null
-            });
-            return id;
-        };
-
-        // Generate Students
-        const marketingIds = marketingNames.map(name => add(name, "Marketing Digital"));
-        const webIds = webNames.map(name => add(name, "Développement Web et Mobile"));
-
-        // Generate Attendance for last 5 days
-        const generateAttendance = (studentIds, sessionId) => {
-            for (let i = 0; i < 5; i++) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
-
-                if (!this.data.attendance[dateStr]) this.data.attendance[dateStr] = {};
-
-                const records = {};
-                studentIds.forEach(id => {
-                    const rand = Math.random();
-                    let status = 'present';
-                    if (rand > 0.9) status = 'absent';
-                    else if (rand > 0.8) status = 'late';
-
-                    records[id] = { status, note: '' };
-                });
-                // Fix: Ensure we use the correct session ID structure for the app
-                // If the app uses 'default' everywhere, we need to be careful?
-                // No, app.js should be improved to use sessions from data.js
-                // For now, let's put them in 'default' AND their specific sessions to be safe
-                // or just 'default' if the UI selector defaults to it.
-                // The UI selector <select id="attendance-session"> defaults to 'default'.
-                // I will add them to 'default' so they show up primarily.
-                this.data.attendance[dateStr]['default'] = records;
-            }
-        };
-
-        generateAttendance([...marketingIds, ...webIds], 'default'); // All in default session for visibility
-
-        this.save();
+  importData(jsonString) {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (parsed.students && parsed.attendance) {
+        this.data = parsed;
+        this._saveToStorage();
         return true;
-    },
+      }
+      return false;
+    } catch (e) { return false; }
+  },
 
+  async resetData() {
+    this.data = {
+      students:   [],
+      attendance: {},
+      sessions:   [{ id: 'default', name: 'Formation Principale' }],
+      settings:   {}
+    };
+    this._saveToStorage();
+  },
 
+  // Conservé pour compatibilité (ne génère plus de données en prod)
+  generateDemoData() {
+    console.info('generateDemoData désactivé en mode API');
+  },
+
+  // Ancienne méthode save() conservée pour compatibilité
+  save() { this._saveToStorage(); },
 };

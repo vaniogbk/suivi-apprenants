@@ -1,0 +1,14 @@
+{
+  "name": "eductrack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "capture": "node capture-screens.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.22.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.41.0"
+  }
+}

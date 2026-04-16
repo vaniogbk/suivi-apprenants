@@ -74,7 +74,7 @@ const studentManager = {
         ui.openModal('student-modal');
     },
 
-    saveStudent() {
+    async saveStudent() {
         const id = document.getElementById('student-id').value;
         const name = document.getElementById('student-name').value;
         const email = document.getElementById('student-email').value;
@@ -86,18 +86,13 @@ const studentManager = {
             return;
         }
 
-        const studentData = {
-            name,
-            email,
-            group,
-            photo
-        };
+        const studentData = { name, email, group, photo };
 
         if (id) {
-            dataManager.updateStudent(id, studentData);
+            await dataManager.updateStudent(id, studentData);
             ui.toast('Apprenant modifié avec succès', 'success');
         } else {
-            dataManager.addStudent(studentData);
+            await dataManager.addStudent(studentData);
             ui.toast('Apprenant ajouté avec succès', 'success');
         }
 
@@ -107,9 +102,9 @@ const studentManager = {
     },
 
     deleteStudent(id) {
-        ui.confirm('Êtes-vous sûr de vouloir supprimer cet apprenant ?').then(confirmed => {
+        ui.confirm('Êtes-vous sûr de vouloir supprimer cet apprenant ?').then(async confirmed => {
             if (confirmed) {
-                dataManager.deleteStudent(id);
+                await dataManager.deleteStudent(id);
                 this.renderStudents();
                 this.updateStats();
                 ui.toast('Apprenant supprimé', 'success');

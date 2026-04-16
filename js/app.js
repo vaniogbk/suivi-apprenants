@@ -15,8 +15,8 @@ class App {
         // 1. Init UI & Theme
         ui.initTheme();
 
-        // 2. Init Data
-        dataManager.init();
+        // 2. Init Data (async — attend la réponse de l'API)
+        await dataManager.init();
 
         // 3. Init Modules
         studentManager.init();
