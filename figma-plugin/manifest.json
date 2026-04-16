@@ -1,7 +1,9 @@
 {
   "name": "EducTrack — Import Maquette",
-  "id": "eductrack-maquette-import-2026",
+  "id": "1626521780462980555",
   "api": "1.0.0",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
   "main": "code.js",
   "ui": "ui.html",
   "networkAccess": {
