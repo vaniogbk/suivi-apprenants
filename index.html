@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi des Apprenants | Dashboard</title>
+    <title>EducTrack — Suivi des Apprenants</title>
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366F1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="EducTrack">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
-    
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/components.css">
@@ -338,6 +344,13 @@
 
     <!-- TOAST CONTAINER -->
     <div class="toast-container" id="toast-container"></div>
+
+    <!-- Service Worker PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+      }
+    </script>
 
     <!-- SCRIPTS -->
     <script src="js/ui.js"></script>
