@@ -22,9 +22,14 @@ const statisticsManager = {
         // Refresh stats when navigating to stats view?
     },
 
-    renderDashboardStats() {
+    async renderDashboardStats() {
         const students = dataManager.getStudents();
-        const sessions = dataManager.data.sessions.length;
+        let formationsCount = 0;
+        try {
+            const r = await fetch('/api/formations');
+            const f = await r.json();
+            formationsCount = Array.isArray(f) ? f.length : 0;
+        } catch (e) { formationsCount = 0; }
 
         let totalPresent = 0;
         let totalRecords = 0;
@@ -48,7 +53,7 @@ const statisticsManager = {
         // Update Dashboard KPIs
         this.updateElement('kpi-total-students', students.length);
         this.updateElement('kpi-attendance-rate', `${rate}%`);
-        this.updateElement('kpi-total-sessions', sessions);
+        this.updateElement('kpi-total-sessions', formationsCount);
 
         // Update Trend Indicator (Simple logic for now: compare last session with avg)
         // ...
