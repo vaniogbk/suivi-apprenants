@@ -1129,12 +1129,200 @@
         </table>
     </div>
 
+    <!-- ===========================
+         SECTION 8 — DIAGRAMMES UML
+    ============================ -->
+    <div class="section">
+        <h2 class="section-title">8. Diagrammes UML</h2>
+
+        <!-- 8.1 Use Case -->
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.1 Diagramme des cas d'utilisation</h3>
+        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
+            Représente les interactions entre les acteurs (Administrateur et Formateur) et les fonctionnalités du système.
+        </p>
+        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
+flowchart LR
+    A([👤 Administrateur\nÉcole]) --- UC1
+    A --- UC2
+    A --- UC3
+    A --- UC4
+    A --- UC5
+    A --- UC6
+    A --- UC7
+
+    B([👤 Formateur]) --- UC6
+    B --- UC8
+    B --- UC9
+
+    subgraph sys ["🖥️ Système EducTrack"]
+        UC1["Gérer les formations"]
+        UC2["Gérer les apprenants"]
+        UC3["Gérer les formateurs"]
+        UC4["Faire l'appel\n(toutes formations)"]
+        UC5["Consulter les statistiques"]
+        UC6["Faire l'appel\n(sa formation)"]
+        UC7["Suivre la présence\ndes formateurs"]
+        UC8["Accéder via lien token"]
+        UC9["Voir sa liste d'appel"]
+    end
+
+    style sys fill:#EEF2FF,stroke:#6366F1,stroke-width:2px
+    style A fill:#6366F1,color:#fff,stroke:none
+    style B fill:#10B981,color:#fff,stroke:none
+        </div>
+
+        <!-- 8.2 Diagramme de classes -->
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.2 Diagramme de classes (modèle de données)</h3>
+        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
+            Représente la structure de la base de données MySQL (Railway) avec les relations entre entités.
+        </p>
+        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
+classDiagram
+    class Formation {
+        +String id
+        +String name
+        +String description
+        +String group_name
+        +Date start_date
+        +Date end_date
+        +DateTime created_at
+    }
+
+    class Formateur {
+        +String id
+        +String name
+        +String email
+        +String formation_id
+        +String token
+        +DateTime created_at
+    }
+
+    class Student {
+        +String id
+        +String name
+        +String email
+        +String group
+        +LongText photo
+        +DateTime created_at
+    }
+
+    class Attendance {
+        +BigInt id
+        +Date date
+        +String session_id
+        +String student_id
+        +String status
+        +Text note
+    }
+
+    class FormateurPresence {
+        +BigInt id
+        +Date date
+        +String formateur_id
+        +String status
+        +Text note
+    }
+
+    class Session {
+        +String id
+        +String name
+    }
+
+    Formation "1" --> "0..*" Formateur : assigne
+    Formation "1" --> "1" Session : sync
+    Formateur "1" --> "0..*" FormateurPresence : est suivi par
+    Student "0..*" --> "0..*" Attendance : enregistre
+    Session "1" --> "0..*" Attendance : regroupe
+        </div>
+
+        <!-- 8.3 Séquence -->
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.3 Diagramme de séquence — Enregistrement des présences (Formateur)</h3>
+        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
+            Flux d'interaction lors de l'enregistrement des présences depuis l'espace formateur.
+        </p>
+        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
+sequenceDiagram
+    actor F as Formateur
+    participant P as trainer.html
+    participant API as Vercel API
+    participant DB as Railway MySQL
+    actor A as Administrateur
+
+    F->>P: Ouvre son lien (token)
+    P->>API: GET /api/formateurs?token=xxx
+    API->>DB: SELECT formateur + formation + étudiants
+    DB-->>API: Données formateur
+    API-->>P: { formateur, students[] }
+    P-->>F: Affiche liste d'appel
+
+    F->>P: Sélectionne présent/absent/retard
+    F->>P: Clique « Enregistrer »
+    P->>API: POST /api/attendance { date, session_id, records }
+    API->>DB: INSERT/UPDATE attendance (UPSERT)
+    DB-->>API: OK
+    API-->>P: { saved: true }
+    P-->>F: Toast « Présences enregistrées »
+
+    Note over A,DB: Plus tard — côté Administration
+    A->>API: GET /api/attendance?date=&session=
+    API->>DB: SELECT attendance records
+    DB-->>API: Enregistrements
+    API-->>A: Rapport de présence complet
+        </div>
+
+        <!-- 8.4 Déploiement -->
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.4 Diagramme de déploiement</h3>
+        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
+            Architecture d'hébergement et de communication entre les composants.
+        </p>
+        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB">
+flowchart TD
+    subgraph client ["📱 Client (Navigateur / PWA)"]
+        UI["index.html\ntrainer.html\ncss/ js/"]
+    end
+
+    subgraph vercel ["☁️ Vercel (Serverless)"]
+        API1["/api/students"]
+        API2["/api/attendance"]
+        API3["/api/formations"]
+        API4["/api/formateurs"]
+        API5["/api/send-email"]
+    end
+
+    subgraph railway ["🚂 Railway"]
+        MySQL[("MySQL\nBase de données")]
+    end
+
+    subgraph brevo ["📧 Brevo"]
+        SMTP["API Email\nTransactionnel"]
+    end
+
+    UI -->|"HTTPS fetch()"| API1
+    UI -->|"HTTPS fetch()"| API2
+    UI -->|"HTTPS fetch()"| API3
+    UI -->|"HTTPS fetch()"| API4
+    API1 -->|"mysql2"| MySQL
+    API2 -->|"mysql2"| MySQL
+    API3 -->|"mysql2"| MySQL
+    API4 -->|"mysql2"| MySQL
+    API5 -->|"REST API"| SMTP
+
+    style client fill:#EEF2FF,stroke:#6366F1
+    style vercel fill:#F0FDF4,stroke:#10B981
+    style railway fill:#FFF7ED,stroke:#F59E0B
+    style brevo fill:#FDF4FF,stroke:#A855F7
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <div class="doc-footer">
-        <p>Cahier de Charges — Suivi des Apprenants v1.0 — Avril 2026</p>
-        <p>Document généré le 15 avril 2026 · Pour impression : Fichier → Imprimer → Enregistrer en PDF</p>
+        <p>Cahier de Charges — Suivi des Apprenants v2.0 — Mai 2026</p>
+        <p>Document généré le 29 mai 2026 · Pour impression : Fichier → Imprimer → Enregistrer en PDF</p>
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', fontFamily: 'Segoe UI, Arial, sans-serif' });</script>
 </body>
 </html>
