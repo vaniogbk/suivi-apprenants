@@ -1,36 +1,60 @@
 /**
- * capture-screens.js — EducTrack
- * Génère les captures PNG pour Figma :
- *   - 6 captures Desktop 1440×900 (2x)
- *   - 5 captures Mobile  390×844  (2x)
- *   - 1 capture Desktop Dark mode
+ * capture-screens.js — EducTrack v2
+ * Capture les screenshots depuis l'app live Vercel :
+ *   - 9 captures Desktop 1440×900
+ *   - 8 captures Mobile  390×844
  * Usage : node capture-screens.js
  */
 
 const puppeteer = require('puppeteer-core');
 const path = require('path');
-const fs = require('fs');
+const fs   = require('fs');
 
-const FILE = 'file:///' + path.join(__dirname, 'maquette.html').replace(/\\/g, '/');
-const OUT  = path.join(__dirname, 'screens');
+const BASE_URL    = 'https://eductrack-eosin.vercel.app';
+const TRAINER_URL = BASE_URL + '/trainer.html?token=b8875194653a590e54a94aba53044c40818341653a1e19d869b145af699f4db0';
+const OUT         = path.join(__dirname, 'screens');
 
 const DESKTOP_SCREENS = [
-  { id:'dashboard',  label:'desktop-01-dashboard',   title:'Dashboard'   },
-  { id:'attendance', label:'desktop-02-presence',    title:'Présence'    },
-  { id:'students',   label:'desktop-03-apprenants',  title:'Apprenants'  },
-  { id:'statistics', label:'desktop-04-statistiques',title:'Statistiques'},
-  { id:'settings',   label:'desktop-05-parametres',  title:'Paramètres'  },
+  { view: 'dashboard',   label: 'desktop-01-dashboard',    title: 'Dashboard'        },
+  { view: 'attendance',  label: 'desktop-02-presence',     title: 'Présence'         },
+  { view: 'students',    label: 'desktop-03-apprenants',   title: 'Apprenants'       },
+  { view: 'formations',  label: 'desktop-04-formations',   title: 'Formations'       },
+  { view: 'formateurs',  label: 'desktop-05-formateurs',   title: 'Formateurs'       },
+  { view: 'statistics',  label: 'desktop-06-statistiques', title: 'Statistiques'     },
+  { view: 'settings',    label: 'desktop-07-parametres',   title: 'Paramètres'       },
+  { view: 'dashboard',   label: 'desktop-08-dashboard-dark', title: 'Dashboard Dark', dark: true },
+  { url: TRAINER_URL,    label: 'desktop-09-trainer',      title: 'Espace Formateur' },
 ];
 
 const MOBILE_SCREENS = [
-  { id:'dashboard',  label:'mobile-01-dashboard',    title:'Mobile Dashboard'   },
-  { id:'attendance', label:'mobile-02-presence',     title:'Mobile Présence'    },
-  { id:'students',   label:'mobile-03-apprenants',   title:'Mobile Apprenants'  },
-  { id:'statistics', label:'mobile-04-statistiques', title:'Mobile Statistiques'},
-  { id:'settings',   label:'mobile-05-parametres',   title:'Mobile Paramètres'  },
+  { view: 'dashboard',   label: 'mobile-01-dashboard',     title: 'Dashboard'        },
+  { view: 'attendance',  label: 'mobile-02-presence',      title: 'Présence'         },
+  { view: 'students',    label: 'mobile-03-apprenants',    title: 'Apprenants'       },
+  { view: 'formations',  label: 'mobile-04-formations',    title: 'Formations'       },
+  { view: 'formateurs',  label: 'mobile-05-formateurs',    title: 'Formateurs'       },
+  { view: 'statistics',  label: 'mobile-06-statistiques',  title: 'Statistiques'     },
+  { view: 'settings',    label: 'mobile-07-parametres',    title: 'Paramètres'       },
+  { url: TRAINER_URL,    label: 'mobile-08-trainer',       title: 'Espace Formateur' },
 ];
 
-async function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+async function navigateTo(page, view) {
+  await page.evaluate((v) => {
+    const btn = document.querySelector(`.nav-item[data-view="${v}"]`);
+    if (btn) btn.click();
+  }, view);
+  await wait(600);
+}
+
+async function setDarkMode(page) {
+  await page.evaluate(() => {
+    const html = document.documentElement;
+    html.setAttribute('data-theme', 'dark');
+    localStorage.setItem('eductrack_theme', 'dark');
+  });
+  await wait(400);
+}
 
 (async () => {
   if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
@@ -39,80 +63,102 @@ async function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
   const browser = await puppeteer.launch({
     headless: 'new',
     executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-    args: ['--no-sandbox','--disable-setuid-sandbox'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
-  /* ──────────────────────────────────────────────
+  /* ─────────────────────────────────
      DESKTOP  1440 × 900
-  ────────────────────────────────────────────── */
-  console.log('\n📐 Desktop 1440×900 (2x)\n');
+  ───────────────────────────────── */
+  console.log('\n📐 Desktop 1440×900\n');
   const dPage = await browser.newPage();
-  await dPage.setViewport({ width:1440, height:900, deviceScaleFactor:2 });
-  await dPage.goto(FILE, { waitUntil:'networkidle0', timeout:30000 });
+  await dPage.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 });
+
+  // Charge l'app principale
+  console.log('  ⏳ Chargement de l\'app...');
+  await dPage.goto(BASE_URL, { waitUntil: 'networkidle0', timeout: 30000 });
   await dPage.waitForFunction(() => document.fonts.ready);
-  await wait(1200);
+  await wait(1500); // Laisser l'API charger les données
 
   for (const s of DESKTOP_SCREENS) {
     process.stdout.write(`  📸 ${s.title}... `);
-    await dPage.evaluate((id) => dShow(id, document.getElementById('d-nav-'+id)), s.id);
-    await wait(350);
-    await dPage.screenshot({ path: path.join(OUT, s.label+'.png'), clip:{x:0,y:0,width:1440,height:900} });
-    console.log('✅');
-  }
 
-  // Dark mode desktop — Dashboard
-  process.stdout.write('  🌙 Dashboard Sombre... ');
-  await dPage.evaluate(() => { dShow('dashboard'); if(!dark) toggleTheme(); });
-  await wait(350);
-  await dPage.screenshot({ path: path.join(OUT,'desktop-06-dashboard-dark.png'), clip:{x:0,y:0,width:1440,height:900} });
-  console.log('✅');
+    if (s.url) {
+      // Page séparée (trainer)
+      await dPage.goto(s.url, { waitUntil: 'networkidle0', timeout: 15000 });
+      await wait(800);
+    } else {
+      if (s.dark) await setDarkMode(dPage);
+      await navigateTo(dPage, s.view);
+    }
+
+    await dPage.screenshot({
+      path: path.join(OUT, s.label + '.png'),
+      clip: { x: 0, y: 0, width: 1440, height: 900 },
+    });
+    console.log('✅');
+
+    // Retour à l'app principale si besoin
+    if (s.url) {
+      await dPage.goto(BASE_URL, { waitUntil: 'networkidle0', timeout: 30000 });
+      await wait(1000);
+    }
+    // Reset dark mode
+    if (s.dark) {
+      await dPage.evaluate(() => document.documentElement.setAttribute('data-theme', 'light'));
+      await wait(300);
+    }
+  }
 
   await dPage.close();
 
-  /* ──────────────────────────────────────────────
+  /* ─────────────────────────────────
      MOBILE  390 × 844
-     On switche en mode mobile dans la maquette
-     puis on capture uniquement le téléphone
-  ────────────────────────────────────────────── */
-  console.log('\n📱 Mobile 390×844 (2x)\n');
+  ───────────────────────────────── */
+  console.log('\n📱 Mobile 390×844\n');
   const mPage = await browser.newPage();
-  await mPage.setViewport({ width:900, height:960, deviceScaleFactor:2 });
-  await mPage.goto(FILE, { waitUntil:'networkidle0', timeout:30000 });
+  await mPage.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+
+  console.log('  ⏳ Chargement de l\'app...');
+  await mPage.goto(BASE_URL, { waitUntil: 'networkidle0', timeout: 30000 });
   await mPage.waitForFunction(() => document.fonts.ready);
-
-  // Activer le mode mobile
-  await mPage.evaluate(() => setMode('mobile'));
-  await wait(600);
-
-  // Trouver la position du téléphone dans la page
-  const phoneBox = await mPage.$eval('.phone', el => {
-    const r = el.getBoundingClientRect();
-    return { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) };
-  });
+  await wait(1500);
 
   for (const s of MOBILE_SCREENS) {
     process.stdout.write(`  📸 ${s.title}... `);
-    await mPage.evaluate((id, idx) => mShow(id, idx), s.id, MOBILE_SCREENS.findIndex(x=>x.id===s.id));
-    await wait(350);
+
+    if (s.url) {
+      await mPage.goto(s.url, { waitUntil: 'networkidle0', timeout: 15000 });
+      await wait(800);
+    } else {
+      await navigateTo(mPage, s.view);
+    }
+
     await mPage.screenshot({
-      path: path.join(OUT, s.label+'.png'),
-      clip: { x: phoneBox.x, y: phoneBox.y, width: phoneBox.w, height: phoneBox.h },
+      path: path.join(OUT, s.label + '.png'),
+      clip: { x: 0, y: 0, width: 390, height: 844 },
     });
     console.log('✅');
+
+    if (s.url) {
+      await mPage.goto(BASE_URL, { waitUntil: 'networkidle0', timeout: 30000 });
+      await wait(1000);
+    }
   }
 
   await mPage.close();
   await browser.close();
 
-  console.log('\n🎉 Terminé ! Captures dans ./screens/\n');
-  const files = fs.readdirSync(OUT).sort();
+  console.log('\n🎉 Terminé ! 17 captures dans ./screens/\n');
+  const files = fs.readdirSync(OUT).filter(f => f.endsWith('.png')).sort();
   console.log('  Desktop :');
-  files.filter(f=>f.startsWith('desktop')).forEach(f=>{
-    console.log(`    📄 ${f}  (${(fs.statSync(path.join(OUT,f)).size/1024).toFixed(0)} KB)`);
+  files.filter(f => f.startsWith('desktop')).forEach(f => {
+    const size = (fs.statSync(path.join(OUT, f)).size / 1024).toFixed(0);
+    console.log(`    📄 ${f}  (${size} KB)`);
   });
   console.log('  Mobile :');
-  files.filter(f=>f.startsWith('mobile')).forEach(f=>{
-    console.log(`    📱 ${f}  (${(fs.statSync(path.join(OUT,f)).size/1024).toFixed(0)} KB)`);
+  files.filter(f => f.startsWith('mobile')).forEach(f => {
+    const size = (fs.statSync(path.join(OUT, f)).size / 1024).toFixed(0);
+    console.log(`    📱 ${f}  (${size} KB)`);
   });
-  console.log('\n👉 Figma : glisse-dépose tous les PNG → renomme les frames → connecte le prototype');
+  console.log('\n👉 Maintenant : git add screens/ && git push → puis relance le plugin Figma');
 })();
