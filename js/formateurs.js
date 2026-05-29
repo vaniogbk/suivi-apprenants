@@ -151,18 +151,49 @@ const formateursManager = {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
         ui.toast('Formateur mis à jour', 'success');
+        ui.closeModal('formateur-modal');
+        this.render();
       } else {
         const resp = await fetch('/api/formateurs', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
         });
         if (!resp.ok) throw new Error();
-        ui.toast('Formateur créé — lien d\'accès généré', 'success');
+        const { token } = await resp.json();
+        ui.closeModal('formateur-modal');
+        await this.render();
+        this.showLinkModal(data.name, data.email, token);
       }
-      ui.closeModal('formateur-modal');
-      this.render();
     } catch (e) {
       ui.toast('Erreur lors de la sauvegarde', 'error');
     }
+  },
+
+  showLinkModal(name, email, token) {
+    const link = `${window.location.origin}/trainer.html?token=${token}`;
+    const modal = document.getElementById('formateur-link-modal');
+    document.getElementById('fl-name').textContent  = name;
+    document.getElementById('fl-link').value        = link;
+    document.getElementById('fl-mailto').href       =
+      `mailto:${email || ''}?subject=Votre espace EducTrack&body=Bonjour ${encodeURIComponent(name)},%0D%0A%0D%0AAccédez à votre espace formateur via ce lien :%0D%0A${encodeURIComponent(link)}%0D%0A%0D%0ABonne formation !`;
+
+    // Auto-send email via API if email present
+    if (email) {
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: email, name, link })
+      }).then(r => {
+        if (r.ok) ui.toast(`Email envoyé à ${email}`, 'success');
+      }).catch(() => {});
+    }
+    ui.openModal('formateur-link-modal');
+  },
+
+  copyModalLink() {
+    const input = document.getElementById('fl-link');
+    navigator.clipboard.writeText(input.value)
+      .then(() => ui.toast('Lien copié !', 'success'))
+      .catch(() => { input.select(); document.execCommand('copy'); ui.toast('Lien copié !', 'success'); });
   },
 
   async delete(id) {

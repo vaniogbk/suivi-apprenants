@@ -435,6 +435,48 @@
         </div>
     </div>
 
+    <!-- MODAL: LIEN FORMATEUR -->
+    <div class="modal-overlay" id="formateur-link-modal">
+        <div class="modal" style="max-width:520px">
+            <div class="modal-header" style="background:var(--primary-50);border-radius:var(--radius-xl) var(--radius-xl) 0 0">
+                <div>
+                    <h3 class="modal-title" style="color:var(--primary-700)">
+                        <i class="ph ph-link"></i> Lien d'accès créé
+                    </h3>
+                    <p style="font-size:0.85rem;color:var(--primary-600);margin-top:2px">
+                        Partagez ce lien avec <strong id="fl-name"></strong>
+                    </p>
+                </div>
+                <button class="modal-close" onclick="ui.closeModal('formateur-link-modal')">&times;</button>
+            </div>
+            <div class="modal-body" style="display:flex;flex-direction:column;gap:var(--spacing-lg)">
+                <div>
+                    <label class="form-label">Lien d'accès formateur</label>
+                    <div class="flex gap-sm">
+                        <input type="text" id="fl-link" class="form-input input-mono" readonly
+                               style="flex:1;font-size:0.8rem;background:var(--bg-secondary)">
+                        <button type="button" class="btn btn-primary" onclick="formateursManager.copyModalLink()">
+                            <i class="ph ph-copy"></i> Copier
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-sm flex-wrap">
+                    <a id="fl-mailto" href="#" class="btn btn-secondary flex-1" style="justify-content:center">
+                        <i class="ph ph-envelope"></i> Ouvrir dans ma messagerie
+                    </a>
+                </div>
+                <div style="background:var(--warning-50);border-radius:var(--radius-md);padding:var(--spacing-md);font-size:0.85rem;color:var(--warning-700)">
+                    <i class="ph ph-warning"></i> Conservez ce lien — il donne un accès direct à la page de présence sans mot de passe.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="ui.closeModal('formateur-link-modal')">
+                    <i class="ph ph-check"></i> Compris
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: ADD/EDIT STUDENT -->
     <div class="modal-overlay" id="student-modal">
         <div class="modal">
