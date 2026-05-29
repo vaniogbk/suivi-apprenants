@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
         session_id VARCHAR(100),
         student_id VARCHAR(100),
         status     VARCHAR(20) NOT NULL DEFAULT 'present',
-        note       TEXT DEFAULT '',
+        note       TEXT,
         UNIQUE KEY uniq_att (date, session_id, student_id),
         FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
       )
