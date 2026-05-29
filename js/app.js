@@ -22,6 +22,8 @@ class App {
         studentManager.init();
         attendanceManager.init();
         statisticsManager.init();
+        formationsManager.init();
+        formateursManager.init();
 
         // 4. Setup Navigation
         this.setupNavigation();
@@ -75,9 +77,15 @@ class App {
             case 'attendance':
                 attendanceManager.loadAttendance(); // Reload logic
                 break;
+            case 'formations':
+                formationsManager.render();
+                break;
+            case 'formateurs':
+                formateursManager.render();
+                break;
             case 'statistics':
                 statisticsManager.renderStatsTable();
-                statisticsManager.renderDashboardStats(); // Refresh charts
+                statisticsManager.renderDashboardStats();
                 break;
         }
     }

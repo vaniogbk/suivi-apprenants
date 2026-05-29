@@ -580,6 +580,65 @@ body {
   margin-top: auto;
 }
 
+.justify-end  { justify-content: flex-end; }
+.justify-center { justify-content: center; }
+.flex-wrap    { flex-wrap: wrap; }
+.flex-1       { flex: 1; }
+.w-full       { width: 100%; }
+.mb-0         { margin-bottom: 0; }
+.mb-2         { margin-bottom: var(--spacing-sm); }
+.mb-3         { margin-bottom: var(--spacing-md); }
+.mb-4         { margin-bottom: var(--spacing-lg); }
+.mt-3         { margin-top: var(--spacing-md); }
+.p-4          { padding: var(--spacing-lg); }
+.gap-2        { gap: var(--spacing-sm); }
+.gap-6        { gap: var(--spacing-xl); }
+
+.border-t     { border-top: 1px solid var(--border-color); }
+.border-b     { border-bottom: 1px solid var(--border-color); }
+
+.text-secondary { color: var(--text-secondary); }
+.text-danger-600 { color: var(--danger-600); }
+.text-success-600 { color: var(--success-600); }
+.text-warning-600 { color: var(--warning-600); }
+.font-medium  { font-weight: 500; }
+.font-bold    { font-weight: 700; }
+
+.grid         { display: grid; }
+.grid-cols-1  { grid-template-columns: repeat(1, 1fr); }
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .md\:flex-row    { flex-direction: row; }
+}
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Card footer actions */
+.card-footer-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+/* Save attendance footer — proper spacing */
+.card-footer {
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Mono input for links */
+.input-mono {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+}
+
 /* ============================================
    ANIMATIONS
    ============================================ */

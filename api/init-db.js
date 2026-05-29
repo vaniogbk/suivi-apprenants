@@ -1,4 +1,4 @@
-// GET /api/init-db → crée les tables si elles n'existent pas (à appeler une seule fois)
+// GET /api/init-db → crée toutes les tables si elles n'existent pas
 
 const pool = require('./db');
 
@@ -39,13 +39,49 @@ module.exports = async (req, res) => {
     `);
 
     await db.query(`
+      CREATE TABLE IF NOT EXISTS formations (
+        id          VARCHAR(100) PRIMARY KEY,
+        name        VARCHAR(255) NOT NULL,
+        description TEXT,
+        group_name  VARCHAR(255),
+        start_date  DATE,
+        end_date    DATE,
+        created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS formateurs (
+        id           VARCHAR(100) PRIMARY KEY,
+        name         VARCHAR(255) NOT NULL,
+        email        VARCHAR(255),
+        formation_id VARCHAR(100),
+        token        VARCHAR(64) UNIQUE NOT NULL,
+        created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (formation_id) REFERENCES formations(id) ON DELETE SET NULL
+      )
+    `);
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS formateur_presence (
+        id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+        date         DATE NOT NULL,
+        formateur_id VARCHAR(100),
+        status       VARCHAR(20) NOT NULL DEFAULT 'present',
+        note         TEXT,
+        UNIQUE KEY uniq_fp (date, formateur_id),
+        FOREIGN KEY (formateur_id) REFERENCES formateurs(id) ON DELETE CASCADE
+      )
+    `);
+
+    await db.query(`
       INSERT IGNORE INTO sessions (id, name) VALUES
         ('default',   'Formation Principale'),
         ('marketing', 'Marketing Digital'),
         ('web',       'Développement Web et Mobile')
     `);
 
-    return res.json({ success: true, message: 'Tables créées avec succès' });
+    return res.json({ success: true, message: 'Toutes les tables créées avec succès' });
   } finally {
     db.release();
   }

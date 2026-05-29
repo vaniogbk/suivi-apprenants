@@ -170,6 +170,11 @@
     flex-wrap: wrap;
   }
 
+  /* Settings: boutons Sauvegarder/Restaurer ne débordent plus */
+  .card-body.flex {
+    flex-wrap: wrap;
+  }
+
   /* Toasts en haut sur mobile */
   .toast-container {
     bottom: auto;

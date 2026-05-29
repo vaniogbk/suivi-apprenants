@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Formateur — EducTrack</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { background: var(--bg-secondary); }
+        .trainer-wrap { max-width: 800px; margin: 0 auto; padding: var(--spacing-xl) var(--spacing-md); }
+        .trainer-topbar {
+            display: flex; align-items: center; gap: var(--spacing-md);
+            background: var(--bg-primary); border-radius: var(--radius-lg);
+            padding: var(--spacing-lg); margin-bottom: var(--spacing-xl);
+            border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+        }
+        .trainer-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        .trainer-info h1 { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin: 0; }
+        .trainer-info p  { font-size: 0.875rem; color: var(--text-secondary); margin: 2px 0 0; }
+        .theme-btn { margin-left: auto; }
+        @media (max-width: 640px) {
+            .trainer-wrap { padding: var(--spacing-md); }
+        }
+    </style>
+</head>
+<body>
+    <div class="trainer-wrap">
+
+        <!-- Top bar -->
+        <div class="trainer-topbar" id="trainer-topbar">
+            <div class="trainer-avatar"><i class="ph ph-chalkboard-teacher"></i></div>
+            <div class="trainer-info">
+                <h1 id="trainer-name">Chargement…</h1>
+                <p id="trainer-formation">EducTrack</p>
+            </div>
+            <button id="theme-btn" class="btn btn-sm btn-secondary theme-btn" title="Changer de thème">
+                <i class="ph ph-moon"></i>
+            </button>
+        </div>
+
+        <!-- Error -->
+        <div id="trainer-error" class="hidden">
+            <div class="card">
+                <div class="empty-state">
+                    <i class="ph ph-lock empty-icon"></i>
+                    <p class="empty-text">Lien d'accès invalide ou expiré.<br>Contactez votre administrateur.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance form -->
+        <div id="trainer-content" class="hidden">
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="flex gap-md items-end flex-wrap">
+                        <div class="form-group mb-0 flex-1" style="min-width:160px">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="trainer-date" class="form-input">
+                        </div>
+                        <button id="trainer-load-btn" class="btn btn-secondary">
+                            <i class="ph ph-arrows-clockwise"></i> Charger
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Liste d'appel</h2>
+                    <div class="flex gap-sm">
+                        <span class="badge badge-present" id="t-count-present">0 Présents</span>
+                        <span class="badge badge-absent"  id="t-count-absent">0 Absents</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Apprenant</th>
+                                <th>Statut</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trainer-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <button id="trainer-save-btn" class="btn btn-primary btn-lg">
+                        <i class="ph ph-floppy-disk"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/ui.js"></script>
+    <script src="js/trainer.js"></script>
+</body>
+</html>

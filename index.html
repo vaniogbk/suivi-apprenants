@@ -51,6 +51,14 @@
                     <i class="ph ph-users nav-icon"></i>
                     <span>Apprenants</span>
                 </button>
+                <button class="nav-item" data-view="formations">
+                    <i class="ph ph-chalkboard-teacher nav-icon"></i>
+                    <span>Formations</span>
+                </button>
+                <button class="nav-item" data-view="formateurs">
+                    <i class="ph ph-user-gear nav-icon"></i>
+                    <span>Formateurs</span>
+                </button>
                 <button class="nav-item" data-view="statistics">
                     <i class="ph ph-chart-line-up nav-icon"></i>
                     <span>Statistiques</span>
@@ -171,7 +179,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="card-footer p-4 border-t flex justify-end">
+                    <div class="card-footer">
                         <button id="save-attendance-btn" class="btn btn-primary btn-lg">
                             <i class="ph ph-floppy-disk"></i> Enregistrer
                         </button>
@@ -205,6 +213,62 @@
 
                 <div id="students-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Cards populated by JS -->
+                </div>
+            </section>
+
+            <!-- VIEW: FORMATIONS -->
+            <section id="view-formations" class="view-section hidden">
+                <header class="content-header flex justify-between items-center">
+                    <div>
+                        <h1 class="content-title">Formations</h1>
+                        <p class="content-subtitle">Gérer les programmes de formation</p>
+                    </div>
+                    <button id="add-formation-btn" class="btn btn-primary">
+                        <i class="ph ph-plus"></i> Ajouter
+                    </button>
+                </header>
+                <div id="formations-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- VIEW: FORMATEURS -->
+            <section id="view-formateurs" class="view-section hidden">
+                <header class="content-header flex justify-between items-center">
+                    <div>
+                        <h1 class="content-title">Formateurs</h1>
+                        <p class="content-subtitle">Gérer les formateurs et leurs accès</p>
+                    </div>
+                    <button id="add-formateur-btn" class="btn btn-primary">
+                        <i class="ph ph-user-plus"></i> Ajouter
+                    </button>
+                </header>
+
+                <div class="card mb-4">
+                    <div class="p-4">
+                        <div class="flex gap-md items-center">
+                            <label class="form-label mb-0" style="white-space:nowrap">Filtrer par formation :</label>
+                            <select id="formateur-filter-formation" class="form-select" style="max-width:280px">
+                                <option value="">Toutes les formations</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Formateur</th>
+                                    <th>Formation</th>
+                                    <th>Lien d'accès</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="formateurs-tbody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -297,6 +361,80 @@
         </main>
     </div>
 
+    <!-- MODAL: ADD/EDIT FORMATION -->
+    <div class="modal-overlay" id="formation-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="formation-modal-title">Nouvelle formation</h3>
+                <button class="modal-close" onclick="ui.closeModal('formation-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formation-form">
+                    <input type="hidden" id="formation-id">
+                    <div class="form-group">
+                        <label class="form-label" for="formation-name">Nom de la formation *</label>
+                        <input type="text" id="formation-name" class="form-input" placeholder="Ex : Développement Web" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="formation-desc">Description</label>
+                        <textarea id="formation-desc" class="form-input form-textarea" rows="2" placeholder="Objectifs, contenu..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="formation-group">Nom du groupe (doit correspondre au groupe des apprenants)</label>
+                        <input type="text" id="formation-group" class="form-input" placeholder="Ex : Développement Web (laisser vide = même que le nom)">
+                    </div>
+                    <div class="flex gap-md">
+                        <div class="form-group flex-1">
+                            <label class="form-label" for="formation-start">Date de début</label>
+                            <input type="date" id="formation-start" class="form-input">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label class="form-label" for="formation-end">Date de fin</label>
+                            <input type="date" id="formation-end" class="form-input">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" onclick="ui.closeModal('formation-modal')">Annuler</button>
+                <button type="button" class="btn btn-primary" id="save-formation-btn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT FORMATEUR -->
+    <div class="modal-overlay" id="formateur-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="formateur-modal-title">Nouveau formateur</h3>
+                <button class="modal-close" onclick="ui.closeModal('formateur-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formateur-form">
+                    <input type="hidden" id="formateur-id">
+                    <div class="form-group">
+                        <label class="form-label" for="formateur-name">Nom complet *</label>
+                        <input type="text" id="formateur-name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="formateur-email">Email (pour envoyer le lien)</label>
+                        <input type="email" id="formateur-email" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="formateur-formation-sel">Formation assignée</label>
+                        <select id="formateur-formation-sel" class="form-select">
+                            <option value="">— Aucune formation —</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" onclick="ui.closeModal('formateur-modal')">Annuler</button>
+                <button type="button" class="btn btn-primary" id="save-formateur-btn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: ADD/EDIT STUDENT -->
     <div class="modal-overlay" id="student-modal">
         <div class="modal">
@@ -358,6 +496,8 @@
     <script src="js/students.js"></script>
     <script src="js/attendance.js"></script>
     <script src="js/statistics.js"></script>
+    <script src="js/formations.js"></script>
+    <script src="js/formateurs.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
