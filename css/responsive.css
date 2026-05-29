@@ -29,50 +29,90 @@
   }
 }
 
-/* Mobile */
+/* Mobile — barre de navigation fixée en bas (style PWA natif) */
 @media (max-width: 640px) {
   .app-container {
     flex-direction: column;
   }
 
+  /* ── Bottom tab bar ── */
   .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
     width: 100%;
     height: auto;
-    position: relative;
     border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    padding: var(--spacing-sm) var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    padding: 6px 0 env(safe-area-inset-bottom, 8px);
     flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    gap: var(--spacing-sm);
+    align-items: stretch;
+    gap: 0;
+    z-index: 100;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.92);
+    overflow: visible;
+  }
+
+  [data-theme="dark"] .sidebar {
+    background-color: rgba(15, 23, 42, 0.92);
   }
 
   .sidebar-header {
-    display: none; /* Hide logo on mobile for space */
+    display: none;
+  }
+
+  /* Cache le bouton thème dans la nav mobile (accessible via Paramètres) */
+  #theme-toggle {
+    display: none;
   }
 
   .nav-menu {
     flex-direction: row;
     width: 100%;
     justify-content: space-around;
+    gap: 0;
   }
 
   .nav-item {
+    flex: 1;
     flex-direction: column;
-    gap: 4px;
-    padding: 8px;
-    font-size: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 4px;
+    font-size: 0.625rem;
+    border-radius: 0;
+    position: relative;
+  }
+
+  /* Indicateur actif en haut de l'onglet */
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--primary-500);
+    border-radius: 0 0 3px 3px;
   }
 
   .nav-icon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
 
+  /* ── Contenu principal ── */
   .main-content {
     margin-left: 0;
     padding: var(--spacing-md);
+    /* Espace pour la bottom nav + safe area iPhone */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 8px));
   }
 
   .content-header {
@@ -84,23 +124,37 @@
   }
 
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
   }
 
-  .table th, .table td {
-    padding: var(--spacing-sm);
+  .stats-grid .stat-card:last-child:nth-child(odd) {
+    grid-column: span 2;
   }
-  
-  /* Stack tables on very small screens if needed, or keep scroll */
-  
+
+  .table th,
+  .table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.8125rem;
+  }
+
+  /* Modal plein écran sur mobile */
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
   .modal {
     width: 100%;
-    height: 100%;
     max-width: none;
-    max-height: none;
-    border-radius: 0;
+    max-height: 92vh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    transform: translateY(40px);
   }
-  
+
+  .modal-overlay.open .modal {
+    transform: translateY(0);
+  }
+
   .card-header {
     flex-direction: column;
     align-items: flex-start;
@@ -109,17 +163,43 @@
 
   .card-header .btn {
     width: 100%;
+    justify-content: center;
   }
 
   .attendance-options {
     flex-wrap: wrap;
   }
+
+  /* Toasts en haut sur mobile */
+  .toast-container {
+    bottom: auto;
+    top: calc(var(--spacing-md) + env(safe-area-inset-top, 0px));
+    right: var(--spacing-md);
+    left: var(--spacing-md);
+  }
+
+  .toast {
+    min-width: auto;
+    width: 100%;
+    animation: slideInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
 
-/* Touch targets */
+@keyframes slideInDown {
+  from { transform: translateY(-120%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* Touch targets — 44px minimum (Apple HIG) */
 @media (pointer: coarse) {
-  .btn, .nav-item, .attendance-label, .modal-close {
+  .btn,
+  .attendance-label,
+  .modal-close {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  .nav-item {
+    min-height: 52px;
   }
 }

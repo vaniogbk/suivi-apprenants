@@ -311,18 +311,56 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-2xl);
+  padding: var(--spacing-2xl) var(--spacing-xl);
   text-align: center;
   color: var(--text-tertiary);
+  gap: var(--spacing-md);
 }
 
 .empty-icon {
-  font-size: 3rem;
-  margin-bottom: var(--spacing-md);
-  opacity: 0.5;
+  font-size: 4rem;
+  opacity: 0.4;
+  animation: float 3s ease-in-out infinite;
+  display: block;
+  line-height: 1;
 }
 
 .empty-text {
   font-size: 1rem;
-  margin-bottom: var(--spacing-lg);
+  color: var(--text-secondary);
+  max-width: 280px;
+  line-height: 1.5;
+  margin-bottom: var(--spacing-sm);
+}
+
+.empty-state .btn {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* ============================================
+   SKELETON LOADER
+   ============================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 25%,
+    var(--bg-secondary) 50%,
+    var(--bg-tertiary) 75%
+  );
+  background-size: 400px 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  color: transparent !important;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.skeleton-text  { height: 1rem; width: 100%; margin-bottom: var(--spacing-sm); }
+.skeleton-title { height: 1.5rem; width: 60%; margin-bottom: var(--spacing-md); }
+.skeleton-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
