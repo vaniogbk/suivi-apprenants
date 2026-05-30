@@ -5,6 +5,8 @@
 /* Imports removed for local compatibility */
 
 const studentManager = {
+    currentGroup: 'all',
+
     init() {
         this.bindEvents();
         this.renderStudents();
@@ -112,15 +114,35 @@ const studentManager = {
         });
     },
 
+    filterByGroup(group) {
+        this.currentGroup = group;
+        this.renderStudents(document.getElementById('student-search')?.value || '');
+    },
+
+    populateGroupFilter() {
+        const sel = document.getElementById('student-filter-group');
+        if (!sel) return;
+        const groups = dataManager.getGroups();
+        const cur = sel.value;
+        sel.innerHTML = '<option value="all">Toutes les formations</option>' +
+            groups.map(g => `<option value="${g}">${g}</option>`).join('');
+        if (cur) sel.value = cur;
+    },
+
     renderStudents(filter = '') {
         const grid = document.getElementById('students-grid');
         if (!grid) return;
 
+        this.populateGroupFilter();
+
         const students = dataManager.getStudents();
-        const filtered = students.filter(s =>
-            s.name.toLowerCase().includes(filter.toLowerCase()) ||
-            (s.group && s.group.toLowerCase().includes(filter.toLowerCase()))
-        );
+        const filtered = students.filter(s => {
+            const matchGroup = this.currentGroup === 'all' || s.group === this.currentGroup;
+            const matchSearch = !filter ||
+                s.name.toLowerCase().includes(filter.toLowerCase()) ||
+                (s.group && s.group.toLowerCase().includes(filter.toLowerCase()));
+            return matchGroup && matchSearch;
+        });
 
         grid.innerHTML = '';
 

@@ -28,6 +28,7 @@ class App {
         statisticsManager.init();
         formationsManager.init();
         formateursManager.init();
+        pdfImport.init();
 
         // 4. Setup Navigation
         this.setupNavigation();

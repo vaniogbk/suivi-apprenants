@@ -20,6 +20,8 @@
     
     <!-- Icons (Phosphor Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- PDF.js (lecture PDF côté client) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <!-- PDF Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -201,9 +203,14 @@
                         <h1 class="content-title">Apprenants</h1>
                         <p class="content-subtitle">Gérer la liste des étudiants</p>
                     </div>
-                    <button id="add-student-btn" class="btn btn-primary">
-                        <i class="ph ph-user-plus"></i> Ajouter
-                    </button>
+                    <div class="flex gap-sm">
+                        <button id="import-pdf-btn" class="btn btn-secondary">
+                            <i class="ph ph-file-pdf"></i> Importer PDF
+                        </button>
+                        <button id="add-student-btn" class="btn btn-primary">
+                            <i class="ph ph-user-plus"></i> Ajouter
+                        </button>
+                    </div>
                 </header>
 
                 <div class="card mb-4">
@@ -212,8 +219,8 @@
                             <i class="ph ph-magnifying-glass search-icon"></i>
                             <input type="text" id="student-search" class="search-input" placeholder="Rechercher un apprenant...">
                         </div>
-                        <select id="student-filter-group" class="form-select" style="width: auto;">
-                            <option value="all">Tous les groupes</option>
+                        <select id="student-filter-group" class="form-select" style="width: auto;" title="Filtrer par formation" onchange="studentManager.filterByGroup(this.value)">
+                            <option value="all">Toutes les formations</option>
                         </select>
                     </div>
                 </div>
@@ -484,6 +491,63 @@
         </div>
     </div>
 
+    <!-- MODAL: IMPORT PDF -->
+    <div class="modal-overlay" id="pdf-import-modal">
+        <div class="modal" style="max-width:560px">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="ph ph-file-pdf"></i> Importer une liste PDF</h3>
+                <button type="button" class="modal-close" onclick="ui.closeModal('pdf-import-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Step 1: Upload -->
+                <div id="pdf-step-1">
+                    <div class="form-group">
+                        <label class="form-label" for="pdf-formation-select">Formation / Groupe *</label>
+                        <select id="pdf-formation-select" class="form-select" title="Sélectionner la formation">
+                            <option value="">— Sélectionner une formation —</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Fichier PDF (liste des apprenants)</label>
+                        <label id="pdf-drop-zone" for="pdf-file-input" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:2px dashed var(--border-color);border-radius:var(--radius-lg);padding:32px;cursor:pointer;transition:all var(--transition-fast);background:var(--bg-secondary)">
+                            <i class="ph ph-file-pdf" style="font-size:2.5rem;color:var(--primary-400)"></i>
+                            <div style="text-align:center">
+                                <p style="font-weight:600;color:var(--text-primary)">Glissez votre PDF ici</p>
+                                <p style="font-size:.85rem;color:var(--text-tertiary)">ou cliquez pour choisir un fichier</p>
+                            </div>
+                        </label>
+                        <input type="file" id="pdf-file-input" accept=".pdf" title="Fichier PDF" class="hidden">
+                    </div>
+                    <div id="pdf-parsing-msg" class="hidden" style="text-align:center;padding:16px;color:var(--text-secondary)">
+                        <i class="ph ph-spinner loading-spinner"></i> Lecture du PDF en cours…
+                    </div>
+                </div>
+
+                <!-- Step 2: Preview names -->
+                <div id="pdf-step-2" class="hidden">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                        <p style="font-weight:600;color:var(--text-primary)"><span id="pdf-name-count">0</span> apprenants détectés</p>
+                        <div class="flex gap-sm">
+                            <button type="button" class="btn btn-sm btn-ghost" onclick="pdfImport.toggleAll(true)">Tout cocher</button>
+                            <button type="button" class="btn btn-sm btn-ghost" onclick="pdfImport.toggleAll(false)">Tout décocher</button>
+                        </div>
+                    </div>
+                    <div id="pdf-names-list" style="max-height:280px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:8px"></div>
+                    <div class="form-group" style="margin-top:16px;margin-bottom:0">
+                        <label class="form-label" for="pdf-group-override">Groupe assigné</label>
+                        <input type="text" id="pdf-group-override" class="form-input" placeholder="Nom du groupe (ex: TIT)" title="Groupe à assigner aux apprenants">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" onclick="ui.closeModal('pdf-import-modal')">Annuler</button>
+                <button type="button" class="btn btn-primary hidden" id="pdf-import-confirm-btn" onclick="pdfImport.confirmImport()">
+                    <i class="ph ph-user-plus"></i> Importer les apprenants sélectionnés
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: ADD/EDIT STUDENT -->
     <div class="modal-overlay" id="student-modal">
         <div class="modal">
@@ -553,6 +617,7 @@
     <script src="js/statistics.js"></script>
     <script src="js/formations.js"></script>
     <script src="js/formateurs.js"></script>
+    <script src="js/pdf-import.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
