@@ -49,8 +49,8 @@ class App {
         if (!this._school) { el.textContent = ''; return; }
         const isSmall = window.innerWidth <= 1024;
         el.textContent = isSmall ? this._abbreviate(this._school.name) : this._school.name;
-        el.title = this._school.name; // tooltip = nom complet
-    },
+        el.title = this._school.name;
+    }
 
     _abbreviate(name) {
         if (!name || name.length <= 14) return name;
@@ -60,7 +60,7 @@ class App {
         const acronym = words.slice(0, -1).map(w => w[0].toUpperCase()).join('');
         const last    = words[words.length - 1];
         return `${acronym} ${last}`;
-    },
+    }
 
     setupNavigation() {
         document.querySelectorAll('.nav-item[data-view]').forEach(item => {
