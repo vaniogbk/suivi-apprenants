@@ -10,11 +10,12 @@ class App {
     }
 
     async init() {
-        // Show school name in sidebar
+        // Show school name in sidebar (abbreviated on small screens)
         const school = typeof Auth !== 'undefined' ? Auth.getSchool() : null;
-        const el = document.getElementById('school-name-display');
-        if (el && school) el.textContent = school.name;
-        else if (el) el.textContent = '';
+        this._school = school;
+        this._updateSchoolName();
+        window.addEventListener('resize', () => this._updateSchoolName());
+
 
         // 1. Init UI & Theme
         ui.initTheme();
@@ -41,6 +42,25 @@ class App {
         window.app = this;
         window.dataManager = dataManager;
     }
+
+    _updateSchoolName() {
+        const el = document.getElementById('school-name-display');
+        if (!el) return;
+        if (!this._school) { el.textContent = ''; return; }
+        const isSmall = window.innerWidth <= 1024;
+        el.textContent = isSmall ? this._abbreviate(this._school.name) : this._school.name;
+        el.title = this._school.name; // tooltip = nom complet
+    },
+
+    _abbreviate(name) {
+        if (!name || name.length <= 14) return name;
+        const stop = new Set(['des', 'du', 'de', 'la', 'le', 'les', 'et', 'en', 'au', 'aux', 'd', 'l']);
+        const words = name.split(/\s+/).filter(w => !stop.has(w.toLowerCase()) && w.length > 1);
+        if (words.length < 2) return name.substring(0, 12) + '…';
+        const acronym = words.slice(0, -1).map(w => w[0].toUpperCase()).join('');
+        const last    = words[words.length - 1];
+        return `${acronym} ${last}`;
+    },
 
     setupNavigation() {
         document.querySelectorAll('.nav-item[data-view]').forEach(item => {
