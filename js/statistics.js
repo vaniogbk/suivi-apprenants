@@ -58,8 +58,8 @@ const statisticsManager = {
         // Update Trend Indicator (Simple logic for now: compare last session with avg)
         // ...
 
-        // Update Stats Chart Placeholder
-        this.renderChart(rate);
+        this.renderDonut(rate);
+        this.renderFormationBars();
     },
 
     renderStatsTable() {
@@ -126,40 +126,80 @@ const statisticsManager = {
         if (el) el.textContent = value;
     },
 
-    // Simple textual chart render or SVG injection
-    renderChart(rate) {
-        const container = document.getElementById('stats-chart-placeholder');
-        if (!container) return;
-
-        // Simple Pie Chart using conic-gradient
+    renderDonut(rate) {
+        const el = document.getElementById('stats-chart-placeholder');
+        if (!el) return;
+        const r   = 54;
+        const circ = 2 * Math.PI * r;
+        const dash = (rate / 100) * circ;
         const color = rate >= 80 ? '#10B981' : rate >= 50 ? '#F59E0B' : '#EF4444';
 
-        container.innerHTML = `
-            <div style="
-                width: 150px; 
-                height: 150px; 
-                border-radius: 50%; 
-                background: conic-gradient(${color} ${rate}%, var(--bg-tertiary) 0);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: relative;
-            ">
-                <div style="
-                    width: 120px;
-                    height: 120px;
-                    background: var(--bg-primary);
-                    border-radius: 50%;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                ">
-                    <span style="font-size: 2rem; font-weight: bold; color: var(--text-primary);">${rate}%</span>
-                    <span style="font-size: 0.75rem; color: var(--text-secondary);">Présence Globale</span>
-                </div>
+        el.innerHTML = `
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--bg-tertiary)" stroke-width="16"/>
+            <circle cx="70" cy="70" r="${r}" fill="none" stroke="${color}" stroke-width="16"
+              stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${circ / 4}"
+              stroke-linecap="round" style="transition:stroke-dasharray .6s ease"/>
+            <text x="70" y="65" text-anchor="middle" font-size="22" font-weight="800"
+              fill="var(--text-primary)" font-family="Inter,sans-serif">${rate}%</text>
+            <text x="70" y="84" text-anchor="middle" font-size="11"
+              fill="var(--text-tertiary)" font-family="Inter,sans-serif">présence</text>
+          </svg>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:.8rem">
+            <span style="display:flex;align-items:center;gap:5px">
+              <span style="width:10px;height:10px;border-radius:50%;background:#10B981;display:inline-block"></span>≥ 80% Bon
+            </span>
+            <span style="display:flex;align-items:center;gap:5px">
+              <span style="width:10px;height:10px;border-radius:50%;background:#F59E0B;display:inline-block"></span>50–79% Moyen
+            </span>
+            <span style="display:flex;align-items:center;gap:5px">
+              <span style="width:10px;height:10px;border-radius:50%;background:#EF4444;display:inline-block"></span>< 50% Faible
+            </span>
+          </div>`;
+    },
+
+    renderFormationBars() {
+        const el = document.getElementById('stats-formation-bars');
+        if (!el) return;
+
+        const groups = dataManager.getGroups();
+        if (!groups.length) {
+            el.innerHTML = `<div class="empty-state"><i class="ph ph-chart-bar empty-icon"></i><p class="empty-text">Enregistrez des présences pour voir les statistiques par formation</p></div>`;
+            return;
+        }
+
+        const rows = groups.map(group => {
+            const students = dataManager.getStudents(group);
+            if (!students.length) return null;
+
+            let present = 0, absent = 0, late = 0, total = 0;
+            students.forEach(s => {
+                const st = this.getStudentStats(s.id);
+                present += st.present; absent += st.absent; late += st.late; total += st.total;
+            });
+            const rate = total > 0 ? Math.round(((present + late) / total) * 100) : 0;
+            const color = rate >= 80 ? '#10B981' : rate >= 50 ? '#F59E0B' : '#EF4444';
+            return { group, rate, color, students: students.length, total };
+        }).filter(Boolean);
+
+        if (!rows.length) {
+            el.innerHTML = `<div class="empty-state"><i class="ph ph-chart-bar empty-icon"></i><p class="empty-text">Aucune présence enregistrée</p></div>`;
+            return;
+        }
+
+        el.innerHTML = rows.map(r => `
+          <div style="margin-bottom:var(--spacing-md)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-weight:600;font-size:.9rem;color:var(--text-primary)">${r.group}</span>
+              <div style="display:flex;align-items:center;gap:12px;font-size:.8rem;color:var(--text-secondary)">
+                <span>${r.students} apprenants</span>
+                <span style="font-weight:700;color:${r.color};font-size:1rem">${r.rate}%</span>
+              </div>
             </div>
-        `;
+            <div style="height:10px;background:var(--bg-tertiary);border-radius:5px;overflow:hidden">
+              <div style="height:100%;width:${r.rate}%;background:${r.color};border-radius:5px;transition:width .6s ease"></div>
+            </div>
+          </div>`).join('');
     },
 
     exportCSV() {

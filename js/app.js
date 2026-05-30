@@ -88,6 +88,12 @@ class App {
             case 'formateurs':
                 formateursManager.render();
                 break;
+            case 'settings': {
+                const s = typeof Auth !== 'undefined' ? Auth.getSchool() : null;
+                const el = document.getElementById('settings-school-name');
+                if (el) el.textContent = s?.name || 'Administrateur';
+                break;
+            }
             case 'statistics':
                 statisticsManager.renderStatsTable();
                 statisticsManager.renderDashboardStats();

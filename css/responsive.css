@@ -70,6 +70,29 @@
     display: none;
   }
 
+  /* Déconnexion : affichée comme icône à droite de la barre mobile */
+  .mt-auto {
+    display: flex;
+    align-items: stretch;
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+
+  #logout-btn {
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 10px;
+    font-size: 0.625rem;
+    border-radius: 0;
+    border-left: 1px solid var(--border-color);
+    min-width: 56px;
+  }
+
+  #logout-btn span {
+    display: block;
+    font-size: 0.6rem;
+  }
+
   .nav-menu {
     flex-direction: row;
     width: 100%;

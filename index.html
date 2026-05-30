@@ -293,14 +293,19 @@
                     <p class="content-subtitle">Analyses détaillées de la présence</p>
                 </header>
                 
-                <div class="card mb-4">
-                     <div class="card-header">
-                        <h2 class="card-title">Tendance Mensuelle</h2>
-                     </div>
-                     <div class="card-body" style="height: 300px; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); border-radius: var(--radius-md);">
-                         <p class="text-tertiary">Graphique d'évolution (implémenté avec CSS/JS)</p>
-                         <div id="stats-chart-placeholder" style="width: 100%; height: 100%;"></div>
-                     </div>
+                <div class="stats-grid" style="margin-bottom:var(--spacing-xl)">
+                    <!-- Donut chart global -->
+                    <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--spacing-lg);padding:var(--spacing-xl)">
+                        <h2 class="card-title" style="text-align:center">Présence Globale</h2>
+                        <div id="stats-chart-placeholder"></div>
+                    </div>
+                    <!-- Barres par formation -->
+                    <div class="card" style="grid-column:span 2">
+                        <div class="card-header">
+                            <h2 class="card-title">Taux par Formation</h2>
+                        </div>
+                        <div id="stats-formation-bars" class="card-body"></div>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -356,6 +361,20 @@
                     </div>
                 </div>
                 
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2 class="card-title">Compte</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3" style="color:var(--text-secondary);font-size:.9rem">
+                            Connecté en tant que <strong id="settings-school-name"></strong>
+                        </p>
+                        <button class="btn btn-secondary" onclick="Auth.logout()">
+                            <i class="ph ph-sign-out"></i> Se déconnecter
+                        </button>
+                    </div>
+                </div>
+
                  <div class="card">
                     <div class="card-header">
                         <h2 class="card-title text-danger-600">Zone de danger</h2>
