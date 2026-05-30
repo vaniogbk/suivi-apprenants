@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
 
   try {
     const { id, status } = req.query; // id = FedaPay transaction ID
-    const appUrl = process.env.APP_URL || 'https://eductrack-eosin.vercel.app';
+    const appUrl = process.env.APP_URL || 'https://eductrack-app.vercel.app';
 
     if (status !== 'approved') {
       return res.redirect(`${appUrl}/register.html?payment=failed`);
@@ -57,6 +57,6 @@ module.exports = async (req, res) => {
     return res.redirect(`${appUrl}/login.html?registered=1`);
   } catch (err) {
     console.error('activate-school error:', err.message);
-    res.redirect(`${process.env.APP_URL || 'https://eductrack-eosin.vercel.app'}/register.html?error=1`);
+    res.redirect(`${process.env.APP_URL || 'https://eductrack-app.vercel.app'}/register.html?error=1`);
   }
 };

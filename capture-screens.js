@@ -11,7 +11,7 @@ const path = require('path');
 const fs   = require('fs');
 const https = require('https');
 
-const BASE_URL    = 'https://eductrack-eosin.vercel.app';
+const BASE_URL    = 'https://eductrack-app.vercel.app';
 const TRAINER_URL = BASE_URL + '/trainer.html?token=b8875194653a590e54a94aba53044c40818341653a1e19d869b145af699f4db0';
 const OUT         = path.join(__dirname, 'screens');
 
@@ -49,7 +49,7 @@ async function getToken() {
   return new Promise(resolve => {
     const body = JSON.stringify({ email: 'demo@eductrack.app', password: 'EducTrack2026!' });
     const req  = https.request({
-      hostname: 'eductrack-eosin.vercel.app', path: '/api/login',
+      hostname: 'eductrack-app.vercel.app', path: '/api/login',
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
     }, res => {
       let data = '';

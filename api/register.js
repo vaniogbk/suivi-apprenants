@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
     const hash     = auth.hashPassword(password);
     const price    = parseInt(process.env.SUBSCRIPTION_PRICE_XOF || '50000');
     const fedaKey  = process.env.FEDAPAY_SECRET_KEY;
-    const appUrl   = process.env.APP_URL || 'https://eductrack-eosin.vercel.app';
+    const appUrl   = process.env.APP_URL || 'https://eductrack-app.vercel.app';
 
     await pool.query(
       `INSERT INTO schools (id, name, email, phone, responsible_name, responsible_contact, password_hash, subscription_status)
