@@ -110,8 +110,28 @@ class App {
                 break;
             case 'settings': {
                 const s = typeof Auth !== 'undefined' ? Auth.getSchool() : null;
-                const el = document.getElementById('settings-school-name');
-                if (el) el.textContent = s?.name || 'Administrateur';
+                if (document.getElementById('settings-school-name'))
+                    document.getElementById('settings-school-name').textContent = s?.name || '—';
+                if (document.getElementById('set-school-name'))
+                    document.getElementById('set-school-name').textContent = s?.name || '—';
+                if (document.getElementById('set-school-email'))
+                    document.getElementById('set-school-email').textContent = s?.email || '—';
+                if (document.getElementById('set-school-resp'))
+                    document.getElementById('set-school-resp').textContent = s?.responsible_name || '—';
+                if (document.getElementById('set-sub-expires'))
+                    document.getElementById('set-sub-expires').textContent = s?.subscription_expires
+                        ? new Date(s.subscription_expires).toLocaleDateString('fr-FR') : '—';
+                // Sync theme toggle
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const tog = document.getElementById('theme-toggle-settings');
+                if (tog) tog.checked = isDark;
+                // Populate export formation filter
+                const sel = document.getElementById('export-formation-filter');
+                if (sel) {
+                    const groups = dataManager.getGroups();
+                    sel.innerHTML = '<option value="">Toutes les formations</option>'
+                        + groups.map(g => `<option value="${g}">${g}</option>`).join('');
+                }
                 break;
             }
             case 'statistics':

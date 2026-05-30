@@ -343,52 +343,241 @@
             <section id="view-settings" class="view-section hidden">
                 <header class="content-header">
                     <h1 class="content-title">Paramètres</h1>
-                    <p class="content-subtitle">Configuration de l'application</p>
+                    <p class="content-subtitle">Gérez votre compte, vos exports et votre application</p>
                 </header>
 
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h2 class="card-title">Données</h2>
+                <!-- Mon établissement -->
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <i class="ph ph-buildings"></i>
+                        <h2>Mon établissement</h2>
                     </div>
-                    <div class="card-body flex gap-md">
-                        <button id="export-backup-btn" class="btn btn-secondary">
-                            <i class="ph ph-download"></i> Sauvegarder les données (JSON)
-                        </button>
-                        <button id="import-backup-btn" class="btn btn-secondary">
-                            <i class="ph ph-upload"></i> Restaurer
-                        </button>
-                         <input type="file" id="import-file" class="hidden" accept=".json">
-                    </div>
-                </div>
-                
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h2 class="card-title">Compte</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-3" style="color:var(--text-secondary);font-size:.9rem">
-                            Connecté en tant que <strong id="settings-school-name"></strong>
-                        </p>
-                        <button class="btn btn-secondary" onclick="Auth.logout()">
-                            <i class="ph ph-sign-out"></i> Se déconnecter
-                        </button>
+                    <div class="settings-section-body">
+                        <div class="settings-row">
+                            <span class="settings-row-label">Nom</span>
+                            <span class="settings-row-value" id="set-school-name">—</span>
+                        </div>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Email</span>
+                            <span class="settings-row-value" id="set-school-email">—</span>
+                        </div>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Responsable</span>
+                            <span class="settings-row-value" id="set-school-resp">—</span>
+                        </div>
                     </div>
                 </div>
 
-                 <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title text-danger-600">Zone de danger</h2>
+                <!-- Abonnement -->
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <i class="ph ph-seal-check"></i>
+                        <h2>Abonnement</h2>
                     </div>
-                    <div class="card-body">
-                         <button id="demo-data-btn" class="btn btn-secondary mb-4" style="width: 100%; justify-content: start;">
-                            <i class="ph ph-magic-wand"></i> Générer Données Démo (48 Apprenants)
-                        </button>
-                        <p class="mb-4 text-secondary">La suppression des données est irréversible.</p>
-                        <button id="reset-app-btn" class="btn btn-danger">
-                            <i class="ph ph-trash"></i> Réinitialiser toute l'application
-                        </button>
+                    <div class="settings-section-body">
+                        <div class="settings-row">
+                            <span class="settings-row-label">Statut</span>
+                            <span id="set-sub-status"><span class="badge badge-present">Actif</span></span>
+                        </div>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Expiration</span>
+                            <span class="settings-row-value" id="set-sub-expires">—</span>
+                        </div>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Renouvellement</span>
+                            <a href="/register.html" class="btn btn-sm btn-secondary">
+                                <i class="ph ph-arrow-clockwise"></i> Renouveler l'abonnement
+                            </a>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Apparence -->
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <i class="ph ph-palette"></i>
+                        <h2>Apparence</h2>
+                    </div>
+                    <div class="settings-section-body">
+                        <div class="settings-row">
+                            <div>
+                                <span class="settings-row-label">Mode sombre</span>
+                                <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Thème de l'interface</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="theme-toggle-settings" onchange="ui.toggleThemeFromSettings(this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exports & Archives -->
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <i class="ph ph-download-simple"></i>
+                        <h2>Exports &amp; Archives</h2>
+                    </div>
+                    <div class="settings-section-body">
+
+                        <!-- Filtres export -->
+                        <div class="flex gap-md mb-4" style="flex-wrap:wrap;align-items:center">
+                            <label class="form-label mb-0">Formation :</label>
+                            <select id="export-formation-filter" class="form-select" style="max-width:240px" title="Filtrer les exports par formation">
+                                <option value="">Toutes les formations</option>
+                            </select>
+                        </div>
+
+                        <div class="export-grid">
+                            <!-- Apprenants -->
+                            <div class="export-card">
+                                <i class="ph ph-users" style="font-size:1.6rem;color:var(--primary-400)"></i>
+                                <div class="export-card-title">Liste des apprenants</div>
+                                <div class="export-card-desc">Liste complète ou par formation avec nom, groupe, email</div>
+                                <div class="export-card-actions">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="Exports.studentListPDF(document.getElementById('export-formation-filter').value||null)">
+                                        <i class="ph ph-file-pdf"></i> PDF
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="Exports.studentListCSV(document.getElementById('export-formation-filter').value||null)">
+                                        <i class="ph ph-file-csv"></i> CSV
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Feuille de présence -->
+                            <div class="export-card">
+                                <i class="ph ph-clipboard-text" style="font-size:1.6rem;color:var(--success-500)"></i>
+                                <div class="export-card-title">Feuille de présence</div>
+                                <div class="export-card-desc">Feuille imprimable du dernier appel chargé (avec cases P/A/R et signature)</div>
+                                <div class="export-card-actions">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="attendanceManager.exportCurrentSheetPDF()">
+                                        <i class="ph ph-file-pdf"></i> PDF imprimable
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Historique présences -->
+                            <div class="export-card">
+                                <i class="ph ph-clock-countdown" style="font-size:1.6rem;color:var(--warning-500)"></i>
+                                <div class="export-card-title">Historique des présences</div>
+                                <div class="export-card-desc">Tous les appels enregistrés, triés par date</div>
+                                <div class="export-card-actions">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="Exports.attendanceHistoryPDF(document.getElementById('export-formation-filter').value||null)">
+                                        <i class="ph ph-file-pdf"></i> PDF
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="Exports.attendanceHistoryCSV(document.getElementById('export-formation-filter').value||null)">
+                                        <i class="ph ph-file-csv"></i> CSV
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Formateurs -->
+                            <div class="export-card">
+                                <i class="ph ph-chalkboard-teacher" style="font-size:1.6rem;color:var(--info-500)"></i>
+                                <div class="export-card-title">Liste des formateurs</div>
+                                <div class="export-card-desc">Noms, emails et formations assignées</div>
+                                <div class="export-card-actions">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="Exports.formateursPDF()">
+                                        <i class="ph ph-file-pdf"></i> PDF
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="Exports.formateursCSV()">
+                                        <i class="ph ph-file-csv"></i> CSV
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Statistiques -->
+                            <div class="export-card">
+                                <i class="ph ph-chart-bar" style="font-size:1.6rem;color:var(--danger-500)"></i>
+                                <div class="export-card-title">Rapport statistiques</div>
+                                <div class="export-card-desc">Taux de présence global, par formation et par apprenant</div>
+                                <div class="export-card-actions">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="Exports.statisticsPDF()">
+                                        <i class="ph ph-file-pdf"></i> PDF complet
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sauvegarde données -->
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <i class="ph ph-database"></i>
+                        <h2>Sauvegarde des données</h2>
+                    </div>
+                    <div class="settings-section-body">
+                        <div class="settings-row">
+                            <div>
+                                <span class="settings-row-label">Exporter la sauvegarde</span>
+                                <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Fichier JSON de toutes vos données</div>
+                            </div>
+                            <button type="button" id="export-backup-btn" class="btn btn-secondary btn-sm">
+                                <i class="ph ph-download"></i> Télécharger JSON
+                            </button>
+                        </div>
+                        <div class="settings-row">
+                            <div>
+                                <span class="settings-row-label">Restaurer une sauvegarde</span>
+                                <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Importer un fichier JSON précédemment exporté</div>
+                            </div>
+                            <button type="button" id="import-backup-btn" class="btn btn-secondary btn-sm">
+                                <i class="ph ph-upload"></i> Choisir fichier
+                            </button>
+                        </div>
+                        <input type="file" id="import-file" class="hidden" accept=".json" title="Fichier JSON">
+                    </div>
+                </div>
+
+                <!-- Compte & Déconnexion -->
+                <div class="settings-section">
+                    <div class="settings-section-header">
+                        <i class="ph ph-user-circle"></i>
+                        <h2>Compte</h2>
+                    </div>
+                    <div class="settings-section-body">
+                        <div class="settings-row">
+                            <span class="settings-row-label">Connecté en tant que</span>
+                            <span class="settings-row-value font-medium" id="settings-school-name">—</span>
+                        </div>
+                        <div class="settings-row">
+                            <span class="settings-row-label">Déconnexion</span>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="Auth.logout()">
+                                <i class="ph ph-sign-out"></i> Se déconnecter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone de danger -->
+                <div class="settings-section">
+                    <div class="settings-section-header" style="background:var(--danger-50);border-bottom-color:var(--danger-500)">
+                        <i class="ph ph-warning" style="color:var(--danger-600)"></i>
+                        <h2 style="color:var(--danger-700)">Zone de danger</h2>
+                    </div>
+                    <div class="settings-section-body">
+                        <div class="settings-row">
+                            <div>
+                                <span class="settings-row-label">Données démo</span>
+                                <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Générer des données de test</div>
+                            </div>
+                            <button type="button" id="demo-data-btn" class="btn btn-secondary btn-sm">
+                                <i class="ph ph-magic-wand"></i> Générer démo
+                            </button>
+                        </div>
+                        <div class="settings-row">
+                            <div>
+                                <span class="settings-row-label" style="color:var(--danger-600)">Réinitialiser</span>
+                                <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Effacer toutes les données — irréversible</div>
+                            </div>
+                            <button type="button" id="reset-app-btn" class="btn btn-danger btn-sm">
+                                <i class="ph ph-trash"></i> Réinitialiser
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </section>
 
         </main>
@@ -637,6 +826,7 @@
     <script src="js/formations.js"></script>
     <script src="js/formateurs.js"></script>
     <script src="js/pdf-import.js"></script>
+    <script src="js/exports.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

@@ -1138,46 +1138,70 @@
         <!-- 8.1 Use Case -->
         <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.1 Diagramme des cas d'utilisation</h3>
         <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Représente les interactions entre les acteurs (Administrateur et Formateur) et les fonctionnalités du système.
+            Interactions entre les 3 acteurs du système : Super Admin (Vanio), Administrateur École et Formateur.
         </p>
         <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
 flowchart LR
-    A([👤 Administrateur\nÉcole]) --- UC1
-    A --- UC2
-    A --- UC3
-    A --- UC4
-    A --- UC5
-    A --- UC6
-    A --- UC7
+    SA([👑 Super Admin\nVanio]) --- SA1 & SA2 & SA3
 
-    B([👤 Formateur]) --- UC6
-    B --- UC8
-    B --- UC9
+    A([👤 Admin\nÉcole]) --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8 & UC9
+
+    B([👤 Formateur]) --- UC6 & UC10 & UC11
 
     subgraph sys ["🖥️ Système EducTrack"]
+        SA1["S'inscrire / Payer\nl'abonnement"]
+        SA2["Se connecter\n(login.html)"]
+        SA3["—"]
         UC1["Gérer les formations"]
-        UC2["Gérer les apprenants"]
-        UC3["Gérer les formateurs"]
-        UC4["Faire l'appel\n(toutes formations)"]
-        UC5["Consulter les statistiques"]
-        UC6["Faire l'appel\n(sa formation)"]
-        UC7["Suivre la présence\ndes formateurs"]
-        UC8["Accéder via lien token"]
-        UC9["Voir sa liste d'appel"]
+        UC2["Gérer les apprenants\n+ Import PDF"]
+        UC3["Gérer les formateurs\n+ Générer lien"]
+        UC4["Faire l'appel"]
+        UC5["Consulter statistiques"]
+        UC6["Enregistrer présences"]
+        UC7["Exporter listes PDF/CSV"]
+        UC8["Configurer paramètres"]
+        UC9["Voir super admin"]
+        UC10["Accéder via lien token"]
+        UC11["Voir sa liste d'appel"]
     end
 
+    subgraph sadm ["🛡️ Super Admin"]
+        SA2
+        SA1
+        SAV["Voir toutes les\nécoles inscrites"]
+        SAC["Activer / Suspendre\nun abonnement"]
+    end
+
+    SA --- SAV & SAC
+
     style sys fill:#EEF2FF,stroke:#6366F1,stroke-width:2px
+    style sadm fill:#FDF4FF,stroke:#A855F7,stroke-width:2px
+    style SA fill:#A855F7,color:#fff,stroke:none
     style A fill:#6366F1,color:#fff,stroke:none
     style B fill:#10B981,color:#fff,stroke:none
         </div>
 
         <!-- 8.2 Diagramme de classes -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.2 Diagramme de classes (modèle de données)</h3>
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.2 Diagramme de classes — Modèle de données complet</h3>
         <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Représente la structure de la base de données MySQL (Railway) avec les relations entre entités.
+            Structure de la base de données MySQL (Railway) — version finale avec multi-école et authentification.
         </p>
         <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
 classDiagram
+    class School {
+        +String id
+        +String name
+        +String email
+        +String phone
+        +String responsible_name
+        +String responsible_contact
+        +String password_hash
+        +String subscription_status
+        +Date subscription_expires
+        +String payment_ref
+        +DateTime created_at
+    }
+
     class Formation {
         +String id
         +String name
@@ -1185,6 +1209,7 @@ classDiagram
         +String group_name
         +Date start_date
         +Date end_date
+        +String school_id
         +DateTime created_at
     }
 
@@ -1194,6 +1219,7 @@ classDiagram
         +String email
         +String formation_id
         +String token
+        +String school_id
         +DateTime created_at
     }
 
@@ -1203,6 +1229,7 @@ classDiagram
         +String email
         +String group
         +LongText photo
+        +String school_id
         +DateTime created_at
     }
 
@@ -1213,6 +1240,7 @@ classDiagram
         +String student_id
         +String status
         +Text note
+        +String school_id
     }
 
     class FormateurPresence {
@@ -1226,98 +1254,135 @@ classDiagram
     class Session {
         +String id
         +String name
+        +String school_id
     }
 
+    School "1" --> "0..*" Formation    : possède
+    School "1" --> "0..*" Student      : inscrit
+    School "1" --> "0..*" Formateur    : emploie
+    School "1" --> "0..*" Session      : gère
     Formation "1" --> "0..*" Formateur : assigne
-    Formation "1" --> "1" Session : sync
-    Formateur "1" --> "0..*" FormateurPresence : est suivi par
-    Student "0..*" --> "0..*" Attendance : enregistre
-    Session "1" --> "0..*" Attendance : regroupe
+    Formation "1" --> "1"   Session    : sync
+    Formateur "1" --> "0..*" FormateurPresence : suivi
+    Student   "0..*" --> "0..*" Attendance     : enregistre
+    Session   "1"    --> "0..*" Attendance     : regroupe
         </div>
 
-        <!-- 8.3 Séquence -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.3 Diagramme de séquence — Enregistrement des présences (Formateur)</h3>
+        <!-- 8.3 Séquence : Inscription + Paiement -->
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.3 Diagramme de séquence — Inscription d'un établissement</h3>
         <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Flux d'interaction lors de l'enregistrement des présences depuis l'espace formateur.
+            Flux complet d'inscription : formulaire → paiement FedaPay → activation → envoi des identifiants par email.
+        </p>
+        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
+sequenceDiagram
+    actor E as Établissement
+    participant R as register.html
+    participant API as Vercel API
+    participant FP as FedaPay
+    participant DB as Railway MySQL
+    participant BR as Brevo (Email)
+
+    E->>R: Remplit le formulaire d'inscription
+    R->>API: POST /api/register { nom, email, ... }
+    API->>DB: INSERT schools (status=pending)
+    API->>FP: Crée transaction XOF
+    FP-->>API: token transaction
+    API-->>R: { mode:'fedapay', token }
+    R->>FP: Ouvre modal paiement (MTN/Moov/Visa)
+    E->>FP: Effectue le paiement
+    FP->>API: Callback /api/activate-school?id=TX&status=approved
+    API->>DB: UPDATE schools SET status='active'
+    API->>BR: POST /api/send-email (identifiants)
+    BR-->>E: Email avec login + mot de passe
+    API-->>R: Redirect /login.html?registered=1
+    E->>R: Se connecte avec ses identifiants
+        </div>
+
+        <!-- 8.4 Séquence : Présence Formateur -->
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.4 Diagramme de séquence — Appel de présence (Formateur)</h3>
+        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
+            Flux d'enregistrement des présences depuis l'espace formateur (accès par token unique).
         </p>
         <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
 sequenceDiagram
     actor F as Formateur
-    participant P as trainer.html
+    participant T as trainer.html
     participant API as Vercel API
     participant DB as Railway MySQL
-    actor A as Administrateur
+    actor A as Admin École
 
-    F->>P: Ouvre son lien (token)
-    P->>API: GET /api/formateurs?token=xxx
-    API->>DB: SELECT formateur + formation + étudiants
-    DB-->>API: Données formateur
-    API-->>P: { formateur, students[] }
-    P-->>F: Affiche liste d'appel
+    F->>T: Ouvre lien token unique
+    T->>API: GET /api/formateurs?token=xxx
+    API->>DB: SELECT formateur + students (school_id)
+    DB-->>API: Données
+    API-->>T: formateur + liste apprenants
+    T-->>F: Affiche liste d'appel
 
-    F->>P: Sélectionne présent/absent/retard
-    F->>P: Clique « Enregistrer »
-    P->>API: POST /api/attendance { date, session_id, records }
-    API->>DB: INSERT/UPDATE attendance (UPSERT)
+    F->>T: Coche P/A/R pour chaque apprenant
+    F->>T: Clique Enregistrer
+    T->>API: POST /api/attendance { date, session_id, records }
+    API->>DB: UPSERT attendance (school_id tagué)
     DB-->>API: OK
-    API-->>P: { saved: true }
-    P-->>F: Toast « Présences enregistrées »
+    API-->>T: saved: true
+    T-->>F: Confirmation toast
 
-    Note over A,DB: Plus tard — côté Administration
+    Note over A,DB: Côté Admin — en temps réel
     A->>API: GET /api/attendance?date=&session=
-    API->>DB: SELECT attendance records
+    API->>DB: SELECT avec school_id filter
     DB-->>API: Enregistrements
-    API-->>A: Rapport de présence complet
+    API-->>A: Rapport complet
         </div>
 
-        <!-- 8.4 Déploiement -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.4 Diagramme de déploiement</h3>
+        <!-- 8.5 Déploiement -->
+        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.5 Diagramme de déploiement — Architecture finale</h3>
         <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Architecture d'hébergement et de communication entre les composants.
+            Infrastructure complète : PWA multi-école, API serverless, base MySQL, email transactionnel et paiement mobile.
         </p>
         <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB">
 flowchart TD
-    subgraph client ["📱 Client (Navigateur / PWA)"]
-        UI["index.html\ntrainer.html\ncss/ js/"]
+    subgraph client ["📱 Client PWA (Navigateur / Mobile)"]
+        UI["index.html · login.html · register.html\ntrainer.html · superadmin.html"]
     end
 
-    subgraph vercel ["☁️ Vercel (Serverless)"]
-        API1["/api/students"]
-        API2["/api/attendance"]
-        API3["/api/formations"]
-        API4["/api/formateurs"]
-        API5["/api/send-email"]
+    subgraph vercel ["☁️ Vercel (Serverless — 11 fonctions)"]
+        A1["/api/login"]
+        A2["/api/register · /api/activate-school"]
+        A3["/api/students · /api/attendance"]
+        A4["/api/formations · /api/formateurs"]
+        A5["/api/sessions · /api/send-email"]
+        A6["/api/superadmin · /api/init-db"]
     end
 
-    subgraph railway ["🚂 Railway"]
-        MySQL[("MySQL\nBase de données")]
+    subgraph railway ["🚂 Railway (MySQL)"]
+        DB[("schools · students\nformations · formateurs\nattendance · sessions\nformateur_presence")]
     end
 
     subgraph brevo ["📧 Brevo"]
-        SMTP["API Email\nTransactionnel"]
+        SMTP["Email transactionnel\n(identifiants + liens formateur)"]
     end
 
-    UI -->|"HTTPS fetch()"| API1
-    UI -->|"HTTPS fetch()"| API2
-    UI -->|"HTTPS fetch()"| API3
-    UI -->|"HTTPS fetch()"| API4
-    API1 -->|"mysql2"| MySQL
-    API2 -->|"mysql2"| MySQL
-    API3 -->|"mysql2"| MySQL
-    API4 -->|"mysql2"| MySQL
-    API5 -->|"REST API"| SMTP
+    subgraph fedapay ["💳 FedaPay"]
+        PAY["Paiement MTN MoMo\nMoov Money · Visa/MC"]
+    end
+
+    UI -->|"HTTPS + Bearer JWT"| A1 & A2 & A3 & A4 & A5 & A6
+    A1 & A3 & A4 & A6 -->|"mysql2 + school_id filter"| DB
+    A2 -->|"mysql2"| DB
+    A5 -->|"REST API"| SMTP
+    A2 -->|"REST API"| PAY
 
     style client fill:#EEF2FF,stroke:#6366F1
     style vercel fill:#F0FDF4,stroke:#10B981
     style railway fill:#FFF7ED,stroke:#F59E0B
     style brevo fill:#FDF4FF,stroke:#A855F7
+    style fedapay fill:#FEF3C7,stroke:#D97706
         </div>
     </div>
 
     <!-- FOOTER -->
     <div class="doc-footer">
-        <p>Cahier de Charges — Suivi des Apprenants v2.0 — Mai 2026</p>
-        <p>Document généré le 29 mai 2026 · Pour impression : Fichier → Imprimer → Enregistrer en PDF</p>
+        <p>Cahier de Charges — EducTrack v3.0 — Mai 2026</p>
+        <p>Document généré le 30 mai 2026 · Pour impression : Fichier → Imprimer → Enregistrer en PDF</p>
     </div>
 
 </div>

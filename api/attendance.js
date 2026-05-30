@@ -12,6 +12,23 @@ module.exports = async (req, res) => {
 
   try {
     if (req.method === 'GET') {
+      // ── Historique complet (export) ──
+      if (req.query.all === 'true') {
+        const { session } = req.query;
+        let sql = `
+          SELECT a.date, a.session_id, a.student_id, a.status, a.note,
+                 s.name AS student_name, s.\`group\` AS student_group
+          FROM attendance a
+          LEFT JOIN students s ON a.student_id = s.id AND s.school_id = a.school_id
+          WHERE a.school_id = ?`;
+        const params = [schoolId];
+        if (session) { sql += ' AND a.session_id = ?'; params.push(session); }
+        sql += ' ORDER BY a.date DESC, s.name';
+        const [rows] = await pool.query(sql, params);
+        return res.json(rows);
+      }
+
+      // ── Présence d'un jour ──
       const { date, session = 'default' } = req.query;
       if (!date) return res.status(400).json({ error: 'date required' });
       const [rows] = await pool.query(

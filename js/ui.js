@@ -79,6 +79,13 @@ const ui = {
         }
     },
 
+    toggleThemeFromSettings(isDark) {
+        const next = isDark ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        this.updateThemeIcon(next);
+    },
+
     // Helper: Create initials avatar
     createAvatar(name) {
         const initials = name

@@ -182,5 +182,18 @@ const attendanceManager = {
                 summary.className = 'empty-state';
             }
         }
+    },
+
+    exportCurrentSheetPDF() {
+        const date      = this.currentDate;
+        const sessionId = this.currentSession;
+        if (!date) { ui.toast('Chargez d\'abord une feuille de présence', 'error'); return; }
+        const students = dataManager.getStudents();
+        const records  = (dataManager.data.attendance[date] || {})[sessionId] || {};
+        if (typeof Exports !== 'undefined') {
+            Exports.attendanceSheetPDF(date, sessionId, students, records);
+        } else {
+            ui.toast('Module d\'export non disponible', 'error');
+        }
     }
 };
