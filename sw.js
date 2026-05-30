@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eductrack-v8';
+const CACHE_NAME = 'eductrack-v9';
 const STATIC_ASSETS = [
   '/',
   '/index.html',

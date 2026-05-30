@@ -7,14 +7,27 @@
   .sidebar {
     width: 80px;
     padding: var(--spacing-md);
+    overflow: hidden; /* Empêche le débordement horizontal */
   }
 
+  /* Cacher TOUT le texte dans la sidebar sur tablette */
   .logo span,
-  .nav-item span {
+  .logo-name,
+  .logo-school,
+  .nav-item span,
+  #logout-btn span,
+  #theme-toggle span {
+    display: none !important;
+  }
+
+  /* Ne garder que l'icône dans le logo */
+  .logo > div:last-child {
     display: none;
   }
 
-  .nav-item {
+  .nav-item,
+  #logout-btn,
+  #theme-toggle {
     justify-content: center;
     padding: var(--spacing-md) 0;
   }
