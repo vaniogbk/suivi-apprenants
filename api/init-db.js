@@ -1,5 +1,5 @@
-const pool = require('./db');
-const auth = require('./auth');
+const pool = require('../lib/db');
+const auth = require('../lib/auth');
 
 // Helper: try ALTER TABLE, ignore "Duplicate column" error
 async function addCol(table, col, def) {

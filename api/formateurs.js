@@ -1,5 +1,5 @@
-const pool   = require('./db');
-const auth   = require('./auth');
+const pool   = require('../lib/db');
+const auth   = require('../lib/auth');
 const crypto = require('crypto');
 
 module.exports = async (req, res) => {

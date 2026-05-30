@@ -1,5 +1,5 @@
 // Callback FedaPay après paiement réussi
-const pool = require('./db');
+const pool = require('../lib/db');
 const { sendCredentials } = require('./register');
 
 module.exports = async (req, res) => {
