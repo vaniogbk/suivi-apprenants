@@ -110,14 +110,16 @@ module.exports = async (req, res) => {
     await pool.query("UPDATE formateurs SET school_id='demo' WHERE school_id IS NULL");
 
     // ── Seed: default sessions ──
-    await pool.query(`
-      INSERT IGNORE INTO sessions (id, name, school_id) VALUES
-        ('default',          'Formation Principale',          'demo'),
-        ('tit',              'Technicien d\'Intervention Télécom (TIT)', 'demo'),
-        ('referent-digital', 'Référent Digital',              'demo'),
-        ('tmee',             'Technicien Maintenance Élec.',  'demo'),
-        ('cybersecurite',    'Analyste Cybersécurité',        'demo')
-    `);
+    const seedSessions = [
+      ['default',          'Formation Principale',                          'demo'],
+      ['tit',              "Technicien d'Intervention Télécom (TIT)",       'demo'],
+      ['referent-digital', 'Référent Digital',                              'demo'],
+      ['tmee',             'Technicien Maintenance Electronique',            'demo'],
+      ['cybersecurite',    'Analyste Cybersécurité',                        'demo'],
+    ];
+    for (const [id, name, sid] of seedSessions) {
+      await pool.query('INSERT IGNORE INTO sessions (id, name, school_id) VALUES (?,?,?)', [id, name, sid]);
+    }
 
     // ── Demo school account ──
     const demoPassword = process.env.DEMO_PASSWORD || 'EducTrack2026!';
