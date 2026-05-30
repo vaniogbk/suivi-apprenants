@@ -1,29 +1,29 @@
-// GET /api/students        → liste tous les apprenants
-// POST /api/students       → ajoute un apprenant
-// PUT /api/students?id=xx  → modifie un apprenant
-// DELETE /api/students?id= → supprime un apprenant
-
 const pool = require('./db');
+const auth  = require('./auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const db = await pool.getConnection();
+  const school   = auth.getFromReq(req);
+  const schoolId = school?.schoolId || 'demo';
+
   try {
     if (req.method === 'GET') {
-      const [rows] = await db.query('SELECT * FROM students ORDER BY name');
+      const [rows] = await pool.query(
+        'SELECT * FROM students WHERE school_id = ? ORDER BY name',
+        [schoolId]
+      );
       return res.json(rows);
     }
 
     if (req.method === 'POST') {
       const { id, name, email, group: grp, photo, created_at } = req.body;
-      await db.query(
-        'INSERT INTO students (id, name, email, `group`, photo, created_at) VALUES (?,?,?,?,?,?)',
-        [id, name, email || null, grp || null, photo || null, created_at || new Date()]
+      await pool.query(
+        'INSERT INTO students (id, name, email, `group`, photo, created_at, school_id) VALUES (?,?,?,?,?,?,?)',
+        [id, name, email || null, grp || null, photo || null, created_at || new Date(), schoolId]
       );
       return res.status(201).json({ id });
     }
@@ -31,21 +31,22 @@ module.exports = async (req, res) => {
     if (req.method === 'PUT') {
       const { id } = req.query;
       const { name, email, group: grp, photo } = req.body;
-      await db.query(
-        'UPDATE students SET name=?, email=?, `group`=?, photo=? WHERE id=?',
-        [name, email || null, grp || null, photo || null, id]
+      await pool.query(
+        'UPDATE students SET name=?, email=?, `group`=?, photo=? WHERE id=? AND school_id=?',
+        [name, email || null, grp || null, photo || null, id, schoolId]
       );
       return res.json({ updated: true });
     }
 
     if (req.method === 'DELETE') {
       const { id } = req.query;
-      await db.query('DELETE FROM students WHERE id=?', [id]);
+      await pool.query('DELETE FROM students WHERE id=? AND school_id=?', [id, schoolId]);
       return res.json({ deleted: true });
     }
 
     res.status(405).json({ error: 'Method not allowed' });
-  } finally {
-    db.release();
+  } catch (err) {
+    console.error('students error:', err.message);
+    res.status(500).json({ error: err.message });
   }
 };

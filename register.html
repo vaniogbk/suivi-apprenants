@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription — EducTrack</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366F1">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh; background: linear-gradient(135deg,#EEF2FF,#F0FDF4);
+      display: flex; align-items: flex-start; justify-content: center; padding: 24px;
+    }
+    .wrap { width: 100%; max-width: 600px; }
+    .hero {
+      background: linear-gradient(135deg,#6366F1,#4338CA); border-radius: 20px;
+      padding: 36px; color: #fff; margin-bottom: 24px; position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content:''; position:absolute; top:-60px; right:-60px;
+      width:220px; height:220px; background:rgba(255,255,255,.06); border-radius:50%;
+    }
+    .hero-logo { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+    .hero-icon { width:44px; height:44px; border-radius:10px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:20px; }
+    .hero h1 { font-size:1.6rem; font-weight:800; margin-bottom:6px; }
+    .hero p  { opacity:.85; font-size:.95rem; line-height:1.6; }
+    .price-badge {
+      display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.15);
+      border-radius:full; padding:8px 16px; border-radius:50px; margin-top:16px;
+      font-weight:700; font-size:1rem;
+    }
+    .card { background:#fff; border-radius:20px; padding:32px; box-shadow:0 10px 40px rgba(99,102,241,.1); margin-bottom:20px; }
+    .card h2 { font-size:1.1rem; font-weight:700; color:#111827; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media(max-width:480px) { .form-row { grid-template-columns:1fr; } }
+    .form-group { margin-bottom:18px; }
+    .form-group.full { grid-column:1/-1; }
+    label { display:block; font-size:.85rem; font-weight:600; color:#374151; margin-bottom:6px; }
+    input, select {
+      width:100%; padding:12px 16px; border:1.5px solid #E5E7EB; border-radius:10px;
+      font-size:.9rem; color:#111827; background:#F9FAFB; transition:border .15s; font-family:inherit;
+    }
+    input:focus, select:focus { outline:none; border-color:#6366F1; background:#fff; box-shadow:0 0 0 3px rgba(99,102,241,.1); }
+    .payment-options { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:10px; margin-bottom:20px; }
+    .pay-btn {
+      padding:14px 8px; border:2px solid #E5E7EB; border-radius:10px;
+      background:#F9FAFB; cursor:pointer; text-align:center; transition:all .15s; font-size:.75rem; font-weight:600; color:#374151;
+    }
+    .pay-btn:hover, .pay-btn.active { border-color:#6366F1; background:#EEF2FF; color:#4F46E5; }
+    .pay-btn i { display:block; font-size:1.4rem; margin-bottom:4px; }
+    .btn-submit {
+      width:100%; padding:16px; border:none; border-radius:12px;
+      background:linear-gradient(135deg,#6366F1,#4338CA); color:#fff;
+      font-size:1rem; font-weight:700; cursor:pointer; transition:opacity .15s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-submit:hover { opacity:.9; }
+    .btn-submit:disabled { opacity:.5; cursor:not-allowed; }
+    .error { background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; padding:12px 14px; font-size:.85rem; color:#DC2626; margin-bottom:16px; display:none; }
+    .step { display:flex; align-items:center; gap:8px; margin-bottom:12px; font-size:.85rem; color:#6B7280; }
+    .step i { color:#6366F1; }
+    .footer { text-align:center; font-size:.83rem; color:#9CA3AF; margin-top:16px; }
+    .footer a { color:#6366F1; text-decoration:none; font-weight:600; }
+    .secure { display:flex; align-items:center; gap:6px; font-size:.75rem; color:#6B7280; margin-top:10px; justify-content:center; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-logo">
+      <div class="hero-icon"><i class="ph ph-graduation-cap"></i></div>
+      <span style="font-size:1.3rem;font-weight:800">EducTrack</span>
+    </div>
+    <h1>Inscrivez votre établissement</h1>
+    <p>Solution complète de suivi des apprenants — présences, formateurs, statistiques.</p>
+    <div class="price-badge">
+      <i class="ph ph-seal-check"></i>
+      <span id="price-label">50 000 FCFA / an</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i class="ph ph-buildings"></i> Informations de l'établissement</h2>
+    <div class="error" id="error-msg"></div>
+
+    <form id="reg-form">
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Nom de l'établissement *</label>
+          <input id="r-name" type="text" placeholder="École Numérique de Cotonou" required>
+        </div>
+        <div class="form-group">
+          <label>Email professionnel *</label>
+          <input id="r-email" type="email" placeholder="contact@ecole.bj" required>
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input id="r-phone" type="tel" placeholder="+229 01 XX XX XX XX">
+        </div>
+        <div class="form-group full">
+          <label>Nom & Prénom du responsable des études *</label>
+          <input id="r-resp-name" type="text" placeholder="Jean-Marie KOSSOU" required>
+        </div>
+        <div class="form-group full">
+          <label>Contact du responsable</label>
+          <input id="r-resp-contact" type="text" placeholder="Email ou téléphone direct">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2><i class="ph ph-credit-card"></i> Paiement de l'abonnement</h2>
+    <div class="payment-options">
+      <div class="pay-btn active" onclick="selectPay(this,'mtn')">
+        <i class="ph ph-device-mobile"></i>MTN MoMo
+      </div>
+      <div class="pay-btn" onclick="selectPay(this,'moov')">
+        <i class="ph ph-device-mobile-camera"></i>Moov Money
+      </div>
+      <div class="pay-btn" onclick="selectPay(this,'card')">
+        <i class="ph ph-credit-card"></i>Carte Visa/MC
+      </div>
+    </div>
+
+    <div style="background:#F9FAFB;border-radius:10px;padding:16px;margin-bottom:20px;font-size:.85rem;color:#374151">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span>Abonnement EducTrack</span><strong>1 an</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #E5E7EB">
+        <span style="font-weight:700">Total</span>
+        <span style="font-weight:700;color:#6366F1;font-size:1rem" id="price-display">50 000 FCFA</span>
+      </div>
+    </div>
+
+    <button type="button" class="btn-submit" id="pay-btn" onclick="submitReg()">
+      <i class="ph ph-lock"></i> Payer et activer mon compte
+    </button>
+    <div class="secure">
+      <i class="ph ph-shield-check"></i> Paiement sécurisé via FedaPay — SSL 256 bits
+    </div>
+  </div>
+
+  <div class="footer">
+    Déjà abonné ? <a href="/login.html">Se connecter</a>
+  </div>
+</div>
+
+<!-- FedaPay SDK -->
+<script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+<script>
+let selectedMethod = 'mtn';
+
+function selectPay(el, method) {
+  document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedMethod = method;
+}
+
+async function submitReg() {
+  const form = document.getElementById('reg-form');
+  if (!form.reportValidity()) return;
+
+  const btn = document.getElementById('pay-btn');
+  const err = document.getElementById('error-msg');
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ph ph-spinner" style="animation:spin 1s linear infinite"></i> Traitement…';
+
+  const body = {
+    name:               document.getElementById('r-name').value.trim(),
+    email:              document.getElementById('r-email').value.trim(),
+    phone:              document.getElementById('r-phone').value.trim(),
+    responsible_name:   document.getElementById('r-resp-name').value.trim(),
+    responsible_contact:document.getElementById('r-resp-contact').value.trim(),
+  };
+
+  try {
+    const resp = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Erreur');
+
+    if (data.mode === 'sandbox') {
+      // Sandbox: already activated
+      window.location.href = '/login.html?registered=1';
+      return;
+    }
+
+    // FedaPay payment
+    if (data.token) {
+      FedaPay.init({
+        public_key: window.__FEDAPAY_PUBLIC_KEY__ || '',
+        transaction: { token: data.token },
+        onComplete(obj) {
+          if (obj.reason === FedaPay.TRANSACTION_APPROVED) {
+            window.location.href = '/login.html?registered=1';
+          } else {
+            err.textContent = 'Paiement annulé ou refusé. Réessayez.';
+            err.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="ph ph-lock"></i> Payer et activer mon compte';
+          }
+        },
+      }).open();
+    }
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph ph-lock"></i> Payer et activer mon compte';
+  }
+}
+
+// Load price from env-like meta or default
+const priceXof = parseInt('50000');
+document.getElementById('price-display').textContent = priceXof.toLocaleString('fr-FR') + ' FCFA';
+document.getElementById('price-label').textContent   = priceXof.toLocaleString('fr-FR') + ' FCFA / an';
+</script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</body>
+</html>

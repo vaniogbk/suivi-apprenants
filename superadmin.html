@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin — EducTrack</title>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #0F172A; color: #F1F5F9; min-height: 100vh; }
+    .topbar {
+      background: #1E293B; border-bottom: 1px solid #334155; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 36px; height: 36px; border-radius: 9px; background: linear-gradient(135deg,#6366F1,#4338CA); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .topbar h1 { font-size: 1rem; font-weight: 700; color: #F1F5F9; }
+    .badge-super { background: #4F46E5; color: #fff; font-size: .7rem; padding: 2px 8px; border-radius: 50px; font-weight: 700; }
+    #logout-btn { background: #334155; border: none; color: #94A3B8; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: .85rem; display: flex; align-items: center; gap: 6px; }
+    #logout-btn:hover { background: #475569; color: #F1F5F9; }
+
+    .login-wrap {
+      display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px;
+    }
+    .login-card {
+      background: #1E293B; border: 1px solid #334155; border-radius: 16px; padding: 36px;
+      width: 100%; max-width: 380px;
+    }
+    .login-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    input {
+      width: 100%; padding: 12px 14px; border: 1px solid #334155; border-radius: 8px;
+      background: #0F172A; color: #F1F5F9; font-size: .9rem; font-family: inherit; margin-bottom: 14px;
+    }
+    input:focus { outline: none; border-color: #6366F1; }
+    .btn-login {
+      width: 100%; padding: 12px; background: #6366F1; color: #fff; border: none;
+      border-radius: 8px; font-size: .95rem; font-weight: 700; cursor: pointer; transition: opacity .15s;
+    }
+    .btn-login:hover { opacity: .9; }
+
+    .main { padding: 24px; max-width: 1200px; margin: 0 auto; display: none; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .stat-card {
+      background: #1E293B; border: 1px solid #334155; border-radius: 12px; padding: 20px;
+    }
+    .stat-card .label { font-size: .8rem; color: #94A3B8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em; }
+    .stat-card .value { font-size: 2rem; font-weight: 800; }
+    .stat-card.active   .value { color: #10B981; }
+    .stat-card.pending  .value { color: #F59E0B; }
+    .stat-card.expired  .value { color: #EF4444; }
+    .stat-card.total    .value { color: #6366F1; }
+
+    .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 10px 14px; text-align: left; background: #1E293B; color: #94A3B8; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid #334155; }
+    td { padding: 12px 14px; border-bottom: 1px solid #1E293B; font-size: .85rem; vertical-align: middle; }
+    tr:hover td { background: #1E293B; }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px;
+      border-radius: 50px; font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    }
+    .status-badge.active  { background: rgba(16,185,129,.15); color: #10B981; }
+    .status-badge.pending { background: rgba(245,158,11,.15); color: #F59E0B; }
+    .status-badge.expired { background: rgba(239,68,68,.15);  color: #EF4444; }
+    .action-btn {
+      padding: 5px 10px; border-radius: 6px; border: 1px solid #334155; background: transparent;
+      color: #94A3B8; cursor: pointer; font-size: .75rem; transition: all .15s;
+    }
+    .action-btn:hover { background: #334155; color: #F1F5F9; }
+    .action-btn.danger:hover { background: #7F1D1D; border-color: #7F1D1D; color: #FCA5A5; }
+    .search-bar {
+      width: 100%; padding: 10px 14px; background: #1E293B; border: 1px solid #334155;
+      border-radius: 8px; color: #F1F5F9; font-size: .85rem; margin-bottom: 16px; font-family: inherit;
+    }
+    .search-bar:focus { outline: none; border-color: #6366F1; }
+    .error-msg { color: #EF4444; font-size: .85rem; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- Login screen -->
+<div class="login-wrap" id="login-screen">
+  <div class="login-card">
+    <h2><i class="ph ph-shield-star"></i> Super Admin EducTrack</h2>
+    <input type="password" id="sa-key" placeholder="Clé d'accès super admin" autocomplete="off">
+    <div class="error-msg" id="sa-error"></div>
+    <button class="btn-login" style="margin-top:12px" onclick="saLogin()">
+      <i class="ph ph-sign-in"></i> Accéder
+    </button>
+  </div>
+</div>
+
+<!-- Top bar -->
+<div class="topbar" id="topbar" style="display:none">
+  <div class="topbar-logo">
+    <div class="logo-icon"><i class="ph ph-graduation-cap"></i></div>
+    <div>
+      <h1>EducTrack <span class="badge-super">SUPER ADMIN</span></h1>
+    </div>
+  </div>
+  <button id="logout-btn" onclick="saLogout()"><i class="ph ph-sign-out"></i> Déconnexion</button>
+</div>
+
+<!-- Main content -->
+<div class="main" id="main">
+
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card total"><div class="label">Total établissements</div><div class="value" id="s-total">—</div></div>
+    <div class="stat-card active"><div class="label">Abonnements actifs</div><div class="value" id="s-active">—</div></div>
+    <div class="stat-card pending"><div class="label">En attente</div><div class="value" id="s-pending">—</div></div>
+    <div class="stat-card expired"><div class="label">Expirés</div><div class="value" id="s-expired">—</div></div>
+  </div>
+
+  <div class="section-title"><i class="ph ph-buildings"></i> Établissements inscrits</div>
+  <input type="text" class="search-bar" id="search" placeholder="🔍 Rechercher un établissement…" oninput="renderTable()">
+
+  <div style="background:#1E293B;border:1px solid #334155;border-radius:12px;overflow:hidden">
+    <table>
+      <thead>
+        <tr>
+          <th>Établissement</th>
+          <th>Email</th>
+          <th>Responsable</th>
+          <th>Statut</th>
+          <th>Expiration</th>
+          <th>Inscrit le</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="schools-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let saKey = '';
+let schools = [];
+
+function saLogin() {
+  const k = document.getElementById('sa-key').value;
+  if (!k) return;
+  saKey = k;
+  loadDashboard();
+}
+
+document.getElementById('sa-key').addEventListener('keydown', e => { if (e.key === 'Enter') saLogin(); });
+
+function saLogout() {
+  saKey = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('topbar').style.display = 'none';
+  document.getElementById('main').style.display = 'none';
+}
+
+async function loadDashboard() {
+  try {
+    const [statsResp, listResp] = await Promise.all([
+      fetch('/api/superadmin?action=stats', { headers: { 'Authorization': `Bearer ${saKey}` } }),
+      fetch('/api/superadmin',              { headers: { 'Authorization': `Bearer ${saKey}` } }),
+    ]);
+    if (!statsResp.ok) {
+      document.getElementById('sa-error').textContent = 'Clé incorrecte';
+      return;
+    }
+    const stats = await statsResp.json();
+    schools     = await listResp.json();
+
+    document.getElementById('s-total').textContent   = stats.total;
+    document.getElementById('s-active').textContent  = stats.active;
+    document.getElementById('s-pending').textContent = stats.pending;
+    document.getElementById('s-expired').textContent = stats.expired;
+
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('topbar').style.display = 'flex';
+    document.getElementById('main').style.display   = 'block';
+    renderTable();
+  } catch (e) {
+    document.getElementById('sa-error').textContent = 'Erreur : ' + e.message;
+  }
+}
+
+function renderTable() {
+  const q   = document.getElementById('search').value.toLowerCase();
+  const filtered = schools.filter(s =>
+    s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q)
+  );
+  const tbody = document.getElementById('schools-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#475569">Aucun résultat</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(s => `
+    <tr>
+      <td><div style="font-weight:600;color:#F1F5F9">${s.name}</div><div style="font-size:.75rem;color:#64748B">${s.phone || ''}</div></td>
+      <td style="color:#94A3B8">${s.email}</td>
+      <td style="color:#94A3B8">${s.responsible_name || '—'}</td>
+      <td><span class="status-badge ${s.subscription_status}">${
+        s.subscription_status === 'active'  ? '✓ Actif' :
+        s.subscription_status === 'pending' ? '⏳ Attente' :
+        s.subscription_status === 'expired' ? '✗ Expiré' : s.subscription_status
+      }</span></td>
+      <td style="color:#94A3B8">${s.subscription_expires ? new Date(s.subscription_expires).toLocaleDateString('fr-FR') : '—'}</td>
+      <td style="color:#64748B">${new Date(s.created_at).toLocaleDateString('fr-FR')}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${s.subscription_status !== 'active' ? `<button class="action-btn" onclick="saAction('activate','${s.id}')">Activer</button>` : ''}
+          ${s.subscription_status === 'active'  ? `<button class="action-btn danger" onclick="saAction('suspend','${s.id}')">Suspendre</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function saAction(action, schoolId) {
+  const label = action === 'activate' ? 'Activer' : 'Suspendre';
+  if (!confirm(`${label} cet établissement ?`)) return;
+  try {
+    const r = await fetch('/api/superadmin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${saKey}` },
+      body: JSON.stringify({ action, school_id: schoolId }),
+    });
+    if (r.ok) loadDashboard();
+  } catch (e) { alert('Erreur: ' + e.message); }
+}
+</script>
+</body>
+</html>

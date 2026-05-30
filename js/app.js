@@ -10,7 +10,11 @@ class App {
     }
 
     async init() {
-        console.log('App Initializing...');
+        // Show school name in sidebar
+        const school = typeof Auth !== 'undefined' ? Auth.getSchool() : null;
+        const el = document.getElementById('school-name-display');
+        if (el && school) el.textContent = school.name;
+        else if (el) el.textContent = '';
 
         // 1. Init UI & Theme
         ui.initTheme();

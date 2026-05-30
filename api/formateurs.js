@@ -1,15 +1,15 @@
-// CRUD formateurs + token validation pour la page trainer
 const pool   = require('./db');
+const auth   = require('./auth');
 const crypto = require('crypto');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // ── Validation token (page formateur) ──
+    // Token validation (page formateur — no school auth needed)
     if (req.method === 'GET' && req.query.token) {
       const [rows] = await pool.query(
         `SELECT f.*, fm.name AS formation_name, fm.group_name, fm.id AS formation_id
@@ -19,75 +19,57 @@ module.exports = async (req, res) => {
         [req.query.token]
       );
       if (!rows.length) return res.status(404).json({ error: 'Token invalide' });
-
       const formateur = rows[0];
       const groupFilter = formateur.group_name || formateur.formation_name;
       const [students] = groupFilter
-        ? await pool.query('SELECT * FROM students WHERE `group` = ? ORDER BY name', [groupFilter])
-        : await pool.query('SELECT * FROM students ORDER BY name');
-
+        ? await pool.query('SELECT * FROM students WHERE `group` = ? AND school_id = ? ORDER BY name', [groupFilter, formateur.school_id || 'demo'])
+        : await pool.query('SELECT * FROM students WHERE school_id = ? ORDER BY name', [formateur.school_id || 'demo']);
       return res.json({ formateur, students });
     }
 
-    // ── Liste formateurs ──
+    const school   = auth.getFromReq(req);
+    const schoolId = school?.schoolId || 'demo';
+
     if (req.method === 'GET') {
       const { formation_id } = req.query;
-      let sql = `SELECT f.*, fm.name AS formation_name
-                 FROM formateurs f
-                 LEFT JOIN formations fm ON f.formation_id = fm.id`;
-      const params = [];
-      if (formation_id) { sql += ' WHERE f.formation_id = ?'; params.push(formation_id); }
+      let sql = `SELECT f.*, fm.name AS formation_name FROM formateurs f LEFT JOIN formations fm ON f.formation_id = fm.id WHERE f.school_id = ?`;
+      const params = [schoolId];
+      if (formation_id) { sql += ' AND f.formation_id = ?'; params.push(formation_id); }
       sql += ' ORDER BY f.name';
       const [rows] = await pool.query(sql, params);
       return res.json(rows);
     }
 
-    // ── Créer formateur ──
     if (req.method === 'POST') {
       const { name, email, formation_id } = req.body;
-      const id    = Date.now().toString(36) + Math.random().toString(36).substr(2);
+      const id    = auth.generateId();
       const token = crypto.randomBytes(32).toString('hex');
       await pool.query(
-        'INSERT INTO formateurs (id, name, email, formation_id, token) VALUES (?,?,?,?,?)',
-        [id, name, email || null, formation_id || null, token]
+        'INSERT INTO formateurs (id, name, email, formation_id, token, school_id) VALUES (?,?,?,?,?,?)',
+        [id, name, email || null, formation_id || null, token, schoolId]
       );
       return res.status(201).json({ id, token });
     }
 
-    // ── Modifier formateur ──
     if (req.method === 'PUT') {
       const { id } = req.query;
       const { name, email, formation_id } = req.body;
       await pool.query(
-        'UPDATE formateurs SET name=?, email=?, formation_id=? WHERE id=?',
-        [name, email || null, formation_id || null, id]
+        'UPDATE formateurs SET name=?, email=?, formation_id=? WHERE id=? AND school_id=?',
+        [name, email || null, formation_id || null, id, schoolId]
       );
       return res.json({ updated: true });
     }
 
-    // ── Supprimer formateur ──
     if (req.method === 'DELETE') {
       const { id } = req.query;
-      await pool.query('DELETE FROM formateurs WHERE id=?', [id]);
+      await pool.query('DELETE FROM formateurs WHERE id=? AND school_id=?', [id, schoolId]);
       return res.json({ deleted: true });
-    }
-
-    // ── Présence formateur (admin) ──
-    // POST /api/formateurs?action=presence
-    if (req.method === 'POST' && req.query.action === 'presence') {
-      const { date, formateur_id, status, note } = req.body;
-      await pool.query(
-        `INSERT INTO formateur_presence (date, formateur_id, status, note)
-         VALUES (?,?,?,?)
-         ON DUPLICATE KEY UPDATE status=VALUES(status), note=VALUES(note)`,
-        [date, formateur_id, status || 'present', note || null]
-      );
-      return res.json({ saved: true });
     }
 
     res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
-    console.error(err);
+    console.error('formateurs error:', err.message);
     res.status(500).json({ error: err.message });
   }
 };

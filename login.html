@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — EducTrack</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366F1">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #EEF2FF 0%, #F0FDF4 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #fff; border-radius: 20px; padding: 40px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(99,102,241,.12);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; justify-content: center; }
+    .logo-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: linear-gradient(135deg,#6366F1,#4338CA);
+      display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px;
+    }
+    .logo-text { font-size: 1.5rem; font-weight: 800; color: #4F46E5; letter-spacing: -.03em; }
+    h1 { font-size: 1.4rem; font-weight: 700; color: #111827; text-align: center; margin-bottom: 6px; }
+    .sub { font-size: .9rem; color: #6B7280; text-align: center; margin-bottom: 28px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: .85rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    input {
+      width: 100%; padding: 12px 16px; border: 1.5px solid #E5E7EB; border-radius: 10px;
+      font-size: .95rem; color: #111827; background: #F9FAFB; transition: border .15s;
+      font-family: inherit;
+    }
+    input:focus { outline: none; border-color: #6366F1; background: #fff; box-shadow: 0 0 0 3px rgba(99,102,241,.1); }
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 10px;
+      background: linear-gradient(135deg,#6366F1,#4338CA); color: #fff;
+      font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity .15s; margin-top: 6px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn:hover { opacity: .9; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .error {
+      background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px;
+      padding: 12px 14px; font-size: .85rem; color: #DC2626; margin-bottom: 16px; display: none;
+    }
+    .success {
+      background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 8px;
+      padding: 12px 14px; font-size: .85rem; color: #065F46; margin-bottom: 16px; display: none;
+    }
+    .footer { margin-top: 24px; text-align: center; font-size: .83rem; color: #9CA3AF; }
+    .footer a { color: #6366F1; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+    .divider { border: none; border-top: 1px solid #E5E7EB; margin: 20px 0; }
+    .demo-box {
+      background: #EEF2FF; border-radius: 10px; padding: 14px;
+      font-size: .82rem; color: #4338CA; margin-bottom: 20px;
+    }
+    .demo-box strong { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon"><i class="ph ph-graduation-cap"></i></div>
+      <span class="logo-text">EducTrack</span>
+    </div>
+    <h1>Connexion</h1>
+    <p class="sub">Accédez à votre tableau de bord</p>
+
+    <div class="demo-box">
+      <strong>🧪 Compte démo (test)</strong>
+      Email : demo@eductrack.app<br>
+      Mot de passe : EducTrack2026!
+    </div>
+
+    <div class="error" id="error-msg"></div>
+    <div class="success" id="success-msg"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">Email de l'établissement</label>
+        <input type="email" id="email" placeholder="ecole@exemple.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn" id="submit-btn">
+        <i class="ph ph-sign-in"></i> Se connecter
+      </button>
+    </form>
+
+    <hr class="divider">
+    <div class="footer">
+      Pas encore abonné ? <a href="/register.html">Inscrire mon établissement</a>
+    </div>
+  </div>
+
+  <script>
+    // Auto-redirect if already logged in
+    const token = localStorage.getItem('eductrack_token');
+    if (token) window.location.href = '/';
+
+    // Show success message if coming from registration
+    if (new URLSearchParams(location.search).get('registered') === '1') {
+      const s = document.getElementById('success-msg');
+      s.textContent = '✅ Compte activé ! Vérifiez votre email pour vos identifiants.';
+      s.style.display = 'block';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const err = document.getElementById('error-msg');
+      err.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-spinner" style="animation:spin 1s linear infinite"></i> Connexion…';
+
+      try {
+        const resp = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email:    document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value,
+          }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Erreur de connexion');
+
+        localStorage.setItem('eductrack_token', data.token);
+        localStorage.setItem('eductrack_school', JSON.stringify(data.school));
+        window.location.href = '/';
+      } catch (e) {
+        err.textContent = e.message;
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ph ph-sign-in"></i> Se connecter';
+      }
+    });
+  </script>
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</body>
+</html>

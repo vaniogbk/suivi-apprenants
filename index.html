@@ -32,9 +32,12 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <div class="logo-icon">
-                        <i class="ph ph-student"></i>
+                        <i class="ph ph-graduation-cap"></i>
                     </div>
-                    <span>Suivi Apprenants</span>
+                    <div>
+                        <div class="logo-name">EducTrack</div>
+                        <div id="school-name-display" class="logo-school">Chargement…</div>
+                    </div>
                 </div>
             </div>
             
@@ -73,6 +76,10 @@
                 <button id="theme-toggle" class="nav-item">
                     <i class="ph ph-moon nav-icon"></i>
                     <span>Mode Sombre</span>
+                </button>
+                <button class="nav-item" id="logout-btn" onclick="Auth.logout()">
+                    <i class="ph ph-sign-out nav-icon"></i>
+                    <span>Déconnexion</span>
                 </button>
             </div>
         </aside>
@@ -530,6 +537,12 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
       }
+    </script>
+
+    <!-- Auth guard: redirect to login if not authenticated -->
+    <script src="js/auth.js"></script>
+    <script>
+      if (!Auth.isLoggedIn()) { window.location.href = '/login.html'; }
     </script>
 
     <!-- SCRIPTS -->
