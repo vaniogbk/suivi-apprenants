@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eductrack-v7';
+const CACHE_NAME = 'eductrack-v8';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -17,6 +17,7 @@ const STATIC_ASSETS = [
   '/js/formations.js',
   '/js/formateurs.js',
   '/js/pdf-import.js',
+  '/js/exports.js',
   '/js/trainer.js',
   '/js/app.js',
   '/icons/icon-192.png',
