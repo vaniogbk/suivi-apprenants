@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eductrack-v9';
+const CACHE_NAME = 'eductrack-v10';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -22,6 +22,8 @@ const STATIC_ASSETS = [
   '/js/app.js',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
+  '/icons/apple-touch-icon.png',
+  '/manifest.json',
 ];
 
 self.addEventListener('install', event => {

@@ -202,9 +202,35 @@ class App {
             });
         });
 
-
+        // PWA Install
+        document.getElementById('pwa-install-btn')?.addEventListener('click', () => {
+            if (window._pwaInstallPrompt) {
+                window._pwaInstallPrompt.prompt();
+                window._pwaInstallPrompt.userChoice.then(choice => {
+                    if (choice.outcome === 'accepted') {
+                        ui.toast('EducTrack installé sur votre appareil !', 'success');
+                        document.getElementById('pwa-install-section').style.display = 'none';
+                    }
+                    window._pwaInstallPrompt = null;
+                });
+            }
+        });
     }
 }
+
+// PWA install prompt — intercept before browser handles it
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window._pwaInstallPrompt = e;
+    const section = document.getElementById('pwa-install-section');
+    if (section) section.style.display = '';
+});
+
+window.addEventListener('appinstalled', () => {
+    window._pwaInstallPrompt = null;
+    const section = document.getElementById('pwa-install-section');
+    if (section) section.style.display = 'none';
+});
 
 // Start app
 new App();
