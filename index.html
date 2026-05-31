@@ -12,6 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="EducTrack">
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <script src="js/pwa-install.js"></script>
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
@@ -825,8 +826,7 @@
     <!-- TOAST CONTAINER -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- PWA -->
-    <script src="js/pwa-install.js"></script>
+    <!-- PWA (chargé en fin de body, après head où le script est déclaré) -->
     <script>pwaRegisterSW();</script>
 
     <!-- Auth guard: redirect to login if not authenticated -->
