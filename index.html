@@ -406,14 +406,9 @@
                                 <span class="settings-row-label">EducTrack sur votre écran d'accueil</span>
                                 <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Accès rapide sans navigateur, fonctionne hors-ligne</div>
                             </div>
-                            <button type="button" id="pwa-install-btn" class="btn btn-primary btn-sm" onclick="pwaInstall()" style="display:none">
+                            <button type="button" id="pwa-install-btn" class="btn btn-primary btn-sm" onclick="pwaInstall()">
                                 <i class="ph ph-download-simple"></i> Installer
                             </button>
-                        </div>
-                        <div id="pwa-install-info" style="font-size:.85rem;color:var(--text-secondary);padding:var(--spacing-sm) 0">
-                            <strong>Android / Chrome :</strong> menu ⋮ → <em>Ajouter à l'écran d'accueil</em><br>
-                            <strong>iPhone / Safari :</strong> bouton Partager <i class="ph ph-export"></i> → <em>Sur l'écran d'accueil</em>
-                        </div>
                     </div>
                 </div>
 
@@ -430,7 +425,7 @@
                                 <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Thème de l'interface</div>
                             </div>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="theme-toggle-settings" onchange="ui.toggleThemeFromSettings(this.checked)">
+                                <input type="checkbox" id="theme-toggle-settings" title="Mode sombre" onchange="ui.toggleThemeFromSettings(this.checked)">
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
@@ -701,6 +696,7 @@
                     <label class="form-label">Lien d'accès formateur</label>
                     <div class="flex gap-sm">
                         <input type="text" id="fl-link" class="form-input input-mono" readonly
+                               title="Lien d'accès formateur"
                                style="flex:1;font-size:0.8rem;background:var(--bg-secondary)">
                         <button type="button" class="btn btn-primary" onclick="formateursManager.copyModalLink()">
                             <i class="ph ph-copy"></i> Copier
