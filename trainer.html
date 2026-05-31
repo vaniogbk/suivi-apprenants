@@ -108,12 +108,59 @@
             </div>
 
         </div>
+
+        <!-- Paramètres formateur -->
+        <div class="settings-section" style="margin-top:var(--spacing-xl)">
+            <div class="settings-section-header">
+                <i class="ph ph-gear"></i>
+                <h2>Paramètres</h2>
+            </div>
+            <div class="settings-section-body">
+                <!-- Thème -->
+                <div class="settings-row">
+                    <div>
+                        <span class="settings-row-label">Mode sombre</span>
+                        <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Thème de l'interface</div>
+                    </div>
+                    <label class="toggle-switch" title="Activer le mode sombre">
+                        <input type="checkbox" id="trainer-theme-toggle" title="Mode sombre" onchange="ui.toggleThemeFromSettings(this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <!-- Installer l'application -->
+                <div class="settings-row">
+                    <div>
+                        <span class="settings-row-label">Installer l'application</span>
+                        <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Accès rapide depuis votre écran d'accueil</div>
+                    </div>
+                    <button type="button" id="pwa-install-btn" class="btn btn-primary btn-sm" onclick="pwaInstall()" style="display:none">
+                        <i class="ph ph-download-simple"></i> Installer
+                    </button>
+                </div>
+                <div id="pwa-install-info" style="font-size:.85rem;color:var(--text-secondary);padding:var(--spacing-sm) 0">
+                    <strong>Android / Chrome :</strong> menu ⋮ → <em>Ajouter à l'écran d'accueil</em><br>
+                    <strong>iPhone / Safari :</strong> bouton Partager <i class="ph ph-export"></i> → <em>Sur l'écran d'accueil</em>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Toast container -->
     <div class="toast-container" id="toast-container"></div>
 
+    <!-- PWA -->
+    <script src="js/pwa-install.js"></script>
+    <script>pwaRegisterSW();</script>
+
     <script src="js/ui.js"></script>
     <script src="js/trainer.js"></script>
+    <script>
+        // Sync theme toggle state
+        document.addEventListener('DOMContentLoaded', () => {
+            const tog = document.getElementById('trainer-theme-toggle');
+            if (tog) tog.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+        });
+    </script>
 </body>
 </html>

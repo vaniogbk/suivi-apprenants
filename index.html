@@ -395,7 +395,7 @@
                 </div>
 
                 <!-- Installer l'application -->
-                <div class="settings-section" id="pwa-install-section" style="display:none">
+                <div class="settings-section" id="pwa-install-section">
                     <div class="settings-section-header">
                         <i class="ph ph-device-mobile"></i>
                         <h2>Installer l'application</h2>
@@ -406,9 +406,13 @@
                                 <span class="settings-row-label">EducTrack sur votre écran d'accueil</span>
                                 <div style="font-size:.8rem;color:var(--text-tertiary);margin-top:2px">Accès rapide sans navigateur, fonctionne hors-ligne</div>
                             </div>
-                            <button type="button" id="pwa-install-btn" class="btn btn-primary btn-sm">
+                            <button type="button" id="pwa-install-btn" class="btn btn-primary btn-sm" onclick="pwaInstall()" style="display:none">
                                 <i class="ph ph-download-simple"></i> Installer
                             </button>
+                        </div>
+                        <div id="pwa-install-info" style="font-size:.85rem;color:var(--text-secondary);padding:var(--spacing-sm) 0">
+                            <strong>Android / Chrome :</strong> menu ⋮ → <em>Ajouter à l'écran d'accueil</em><br>
+                            <strong>iPhone / Safari :</strong> bouton Partager <i class="ph ph-export"></i> → <em>Sur l'écran d'accueil</em>
                         </div>
                     </div>
                 </div>
@@ -825,12 +829,9 @@
     <!-- TOAST CONTAINER -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Service Worker PWA -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
-      }
-    </script>
+    <!-- PWA -->
+    <script src="js/pwa-install.js"></script>
+    <script>pwaRegisterSW();</script>
 
     <!-- Auth guard: redirect to login if not authenticated -->
     <script src="js/auth.js"></script>
