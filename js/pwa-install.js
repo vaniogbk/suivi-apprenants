@@ -78,7 +78,7 @@
     _injectStyles();
 
     const isEdge   = /Edg/i.test(navigator.userAgent);
-    const iconName = isEdge ? 'l'icône ⊕' : 'l'icône d'installation';
+    const iconName = isEdge ? "l'icône ⊕" : "l'icône d'installation";
 
     const overlay = document.createElement('div');
     overlay.id = 'pwa-overlay';
