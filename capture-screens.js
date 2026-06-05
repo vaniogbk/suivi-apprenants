@@ -11,7 +11,7 @@ const path = require('path');
 const fs   = require('fs');
 const https = require('https');
 
-const BASE_URL    = 'https://eductrack-app.vercel.app';
+const BASE_URL    = 'http://localhost:8080/Eductrack';
 const TRAINER_URL = BASE_URL + '/trainer.html?token=b8875194653a590e54a94aba53044c40818341653a1e19d869b145af699f4db0';
 const OUT         = path.join(__dirname, 'screens');
 
@@ -25,9 +25,9 @@ const DESKTOP_SCREENS = [
   { view: 'settings',    label: 'desktop-07-parametres',   title: 'Paramètres'          },
   { view: 'dashboard',   label: 'desktop-08-dashboard-dark', title: 'Dashboard Dark', dark: true },
   { url: TRAINER_URL,    label: 'desktop-09-trainer',      title: 'Espace Formateur'    },
-  { url: BASE_URL + '/login.html',    label: 'desktop-10-login',       title: 'Connexion'           },
-  { url: BASE_URL + '/register.html', label: 'desktop-11-inscription', title: 'Inscription'         },
-  { url: BASE_URL + '/superadmin.html', label: 'desktop-12-superadmin', title: 'Super Admin'       },
+  { url: BASE_URL + '/login.html',      label: 'desktop-10-login',       title: 'Connexion'   },
+  { url: BASE_URL + '/register.html',   label: 'desktop-11-inscription', title: 'Inscription' },
+  { url: BASE_URL + '/superadmin.html', label: 'desktop-12-superadmin',  title: 'Super Admin' },
 ];
 
 const MOBILE_SCREENS = [
@@ -46,23 +46,13 @@ const MOBILE_SCREENS = [
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 async function getToken() {
-  return new Promise(resolve => {
-    const body = JSON.stringify({ email: 'demo@eductrack.app', password: 'EducTrack2026!' });
-    const req  = https.request({
-      hostname: 'eductrack-app.vercel.app', path: '/api/login',
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-    }, res => {
-      let data = '';
-      res.on('data', d => data += d);
-      res.on('end', () => { try { resolve(JSON.parse(data).token || ''); } catch { resolve(''); } });
-    });
-    req.on('error', () => resolve(''));
-    req.write(body); req.end();
-  });
+  // Token extrait directement depuis TRAINER_URL (évite l'appel API /login)
+  const match = TRAINER_URL.match(/token=([a-f0-9]+)/);
+  return match ? match[1] : '';
 }
 
 async function authenticate(page, token) {
-  await page.goto(BASE_URL + '/login.html', { waitUntil: 'networkidle0', timeout: 15000 });
+  await page.goto(BASE_URL + '/login.html', { waitUntil: 'domcontentloaded', timeout: 15000 });
   await page.evaluate((tok) => {
     localStorage.setItem('eductrack_token', tok);
     localStorage.setItem('eductrack_school', JSON.stringify({
