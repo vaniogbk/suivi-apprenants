@@ -1,5 +1,5 @@
 // EducTrack — Plugin Figma v3
-// 22 frames : 12 Desktop + 10 Mobile + liens prototype
+// 21 frames : 11 Desktop + 10 Mobile + liens prototype
 
 const DESKTOP_SCREENS = [
   { label: 'Desktop — 01 Dashboard',        w: 1440, h: 900, key: 'desktop-01-dashboard'      },
@@ -11,9 +11,8 @@ const DESKTOP_SCREENS = [
   { label: 'Desktop — 07 Paramètres',       w: 1440, h: 900, key: 'desktop-07-parametres'     },
   { label: 'Desktop — 08 Dashboard Dark',   w: 1440, h: 900, key: 'desktop-08-dashboard-dark' },
   { label: 'Desktop — 09 Espace Formateur', w: 1440, h: 900, key: 'desktop-09-trainer'        },
-  { label: 'Desktop — 10 Connexion',        w: 1440, h: 900, key: 'desktop-10-login'          },
-  { label: 'Desktop — 11 Inscription',      w: 1440, h: 900, key: 'desktop-11-inscription'    },
-  { label: 'Desktop — 12 Super Admin',      w: 1440, h: 900, key: 'desktop-12-superadmin'     },
+  { label: 'Desktop — 10 Inscription',      w: 1440, h: 900, key: 'desktop-11-inscription'    },
+  { label: 'Desktop — 11 Super Admin',      w: 1440, h: 900, key: 'desktop-12-superadmin'     },
 ];
 
 const MOBILE_SCREENS = [
@@ -31,8 +30,6 @@ const MOBILE_SCREENS = [
 
 // Liens prototype Desktop
 const DESKTOP_LINKS = [
-  [9, 0],  // Login → Dashboard (après connexion)
-  [10, 9], // Inscription → Login
   [0, 1],  // Dashboard → Présence
   [0, 2],  // Dashboard → Apprenants
   [0, 3],  // Dashboard → Formations
@@ -43,7 +40,6 @@ const DESKTOP_LINKS = [
   [4, 3],  // Formateurs → Formations
   [4, 8],  // Formateurs → Espace Formateur
   [5, 0],  // Statistiques → Dashboard
-  [6, 9],  // Paramètres → Déconnexion (Login)
 ];
 
 // Liens prototype Mobile
@@ -116,6 +112,6 @@ figma.ui.onmessage = async (msg) => {
   addLinks(mFrames, MOBILE_LINKS);
 
   figma.viewport.scrollAndZoomIntoView([...dFrames, ...mFrames]);
-  figma.notify(`✅ ${dFrames.length + mFrames.length} frames + ${DESKTOP_LINKS.length + MOBILE_LINKS.length} liens prototype !`, { timeout: 5000 });
+  figma.notify(`✅ ${dFrames.length + mFrames.length} frames importées avec ${DESKTOP_LINKS.length + MOBILE_LINKS.length} liens prototype !`, { timeout: 5000 });
   figma.closePlugin();
 };
