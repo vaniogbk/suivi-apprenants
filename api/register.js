@@ -11,6 +11,9 @@ module.exports = async (req, res) => {
   try {
     const { name, email, phone, responsible_name, responsible_contact } = req.body;
     if (!name || !email) return res.status(400).json({ error: 'Nom et email requis' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Email invalide' });
+    }
 
     const [existing] = await pool.query('SELECT id FROM schools WHERE email = ?', [email]);
     if (existing.length > 0) {
@@ -57,7 +60,10 @@ module.exports = async (req, res) => {
         currency:      { iso: 'XOF' },
         callback_url:  `${appUrl}/api/activate-school`,
         customer:      { email, firstname: (responsible_name || name).split(' ')[0], lastname: (responsible_name || name).split(' ').slice(1).join(' ') || '' },
-        metadata:      { school_id: id, password },
+        // Le mot de passe ne transite plus par un tiers (FedaPay) : un nouveau
+        // mot de passe est généré et haché côté serveur au moment de
+        // l'activation (voir api/activate-school.js), jamais transmis ici.
+        metadata:      { school_id: id },
       }),
     });
     const fdata = await fedaResp.json();
@@ -67,7 +73,7 @@ module.exports = async (req, res) => {
     return res.json({ mode: 'fedapay', token: fdata.v1?.token });
   } catch (err) {
     console.error('register error:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Erreur serveur — réessayez plus tard' });
   }
 };
 
@@ -106,16 +112,23 @@ async function sendCredentials(email, name, password, appUrl) {
       <p style="color:#9CA3AF;font-size:.75rem;text-align:center;margin:0">EducTrack — Suivi des Apprenants</p>
     </div>`;
 
-  await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
-    headers: { 'accept': 'application/json', 'api-key': key, 'content-type': 'application/json' },
-    body: JSON.stringify({
-      sender:      { name: 'EducTrack', email: sender },
-      to:          [{ email, name }],
-      subject:     'Votre compte EducTrack est activé — Identifiants de connexion',
-      htmlContent: html,
-    }),
-  }).catch(e => console.error('email error:', e.message));
+  try {
+    const resp = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'accept': 'application/json', 'api-key': key, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        sender:      { name: 'EducTrack', email: sender },
+        to:          [{ email, name }],
+        subject:     'Votre compte EducTrack est activé — Identifiants de connexion',
+        htmlContent: html,
+      }),
+    });
+    if (!resp.ok) {
+      console.error('email error: Brevo a refusé l\'envoi', resp.status, await resp.text());
+    }
+  } catch (e) {
+    console.error('email error:', e.message);
+  }
 }
 
 module.exports.sendCredentials = sendCredentials;

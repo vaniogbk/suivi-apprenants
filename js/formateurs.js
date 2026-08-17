@@ -15,7 +15,7 @@ const formateursManager = {
       ? `/api/formateurs?formation_id=${this.currentFormationId}`
       : '/api/formateurs';
     try {
-      const resp = await fetch(url);
+      const resp = await fetch(url, { headers: Auth.headers() });
       this.formateurs = await resp.json();
     } catch (e) {
       this.formateurs = [];
@@ -148,14 +148,14 @@ const formateursManager = {
     try {
       if (id) {
         await fetch(`/api/formateurs?id=${id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+          method: 'PUT', headers: Auth.headers(), body: JSON.stringify(data)
         });
         ui.toast('Formateur mis à jour', 'success');
         ui.closeModal('formateur-modal');
         this.render();
       } else {
         const resp = await fetch('/api/formateurs', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+          method: 'POST', headers: Auth.headers(), body: JSON.stringify(data)
         });
         if (!resp.ok) throw new Error();
         const { token } = await resp.json();
@@ -180,7 +180,7 @@ const formateursManager = {
     if (email) {
       fetch('/api/send-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: Auth.headers(),
         body: JSON.stringify({ to: email, name, link })
       }).then(r => {
         if (r.ok) ui.toast(`Email envoyé à ${email}`, 'success');
@@ -199,7 +199,7 @@ const formateursManager = {
   async delete(id) {
     const ok = await ui.confirm('Supprimer ce formateur ? Son accès sera immédiatement révoqué.');
     if (!ok) return;
-    await fetch(`/api/formateurs?id=${id}`, { method: 'DELETE' });
+    await fetch(`/api/formateurs?id=${id}`, { method: 'DELETE', headers: Auth.headers() });
     ui.toast('Formateur supprimé', 'success');
     this.render();
   },

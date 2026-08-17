@@ -1,16 +1,33 @@
 const pool = require('../lib/db');
 const auth  = require('../lib/auth');
 
+// Les formateurs accèdent à cette route via leur lien magique (token dédié,
+// distinct du JWT école) plutôt que via Authorization: Bearer — on accepte
+// donc soit un JWT école valide, soit un token de formateur valide, et on
+// rejette (401) si aucun des deux n'est présent. On ne retombe plus jamais
+// silencieusement sur l'école 'demo'.
+async function resolveSchoolId(req) {
+  const school = auth.getFromReq(req);
+  if (school?.schoolId) return school.schoolId;
+
+  const token = req.query?.token || req.body?.token;
+  if (token) {
+    const [rows] = await pool.query('SELECT school_id FROM formateurs WHERE token = ?', [token]);
+    if (rows.length) return rows[0].school_id || 'demo';
+  }
+  return null;
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const school   = auth.getFromReq(req);
-  const schoolId = school?.schoolId || 'demo';
-
   try {
+    const schoolId = await resolveSchoolId(req);
+    if (!schoolId) return res.status(401).json({ error: 'Authentification requise' });
+
     if (req.method === 'GET') {
       // ── Historique complet (export) ──
       if (req.query.all === 'true') {
@@ -57,6 +74,6 @@ module.exports = async (req, res) => {
     res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('attendance error:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Erreur serveur — réessayez plus tard' });
   }
 };

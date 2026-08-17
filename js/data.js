@@ -24,9 +24,44 @@ const dataManager = {
       this.data.sessions = Array.isArray(sessions) && sessions.length
         ? sessions
         : [{ id: 'default', name: 'Formation Principale' }];
+      // L'API répond de nouveau : on tente de renvoyer ce qui n'avait pas pu
+      // être synchronisé pendant une coupure, pour éviter une désync silencieuse.
+      this._flushPendingSync();
     } catch (e) {
       console.warn('API indisponible, mode localStorage de secours', e);
       this._loadFromStorage();
+    }
+  },
+
+  // ── Sync de secours (P2) ──
+  // Quand un appel API échoue (réseau coupé, cold start, etc.), on garde une
+  // trace de l'opération pour la rejouer dès que l'API redevient joignable,
+  // au lieu de laisser la donnée locale et distante diverger sans le dire.
+  _queuePendingSync(url, options) {
+    try {
+      const queue = JSON.parse(localStorage.getItem('eductrack_pending_sync') || '[]');
+      queue.push({ url, options, ts: Date.now() });
+      localStorage.setItem('eductrack_pending_sync', JSON.stringify(queue));
+    } catch (_) {}
+  },
+
+  async _flushPendingSync() {
+    let queue = [];
+    try { queue = JSON.parse(localStorage.getItem('eductrack_pending_sync') || '[]'); } catch (_) { return; }
+    if (!queue.length) return;
+
+    const remaining = [];
+    for (const item of queue) {
+      try {
+        const res = await fetch(item.url, item.options);
+        if (!res.ok) remaining.push(item);
+      } catch (_) {
+        remaining.push(item);
+      }
+    }
+    localStorage.setItem('eductrack_pending_sync', JSON.stringify(remaining));
+    if (remaining.length < queue.length) {
+      console.info(`eductrack: ${queue.length - remaining.length} opération(s) resynchronisée(s) avec le serveur`);
     }
   },
 
@@ -51,7 +86,10 @@ const dataManager = {
       await fetch('/api/students', {
         method: 'POST', headers: this._h(), body: JSON.stringify(student),
       });
-    } catch (e) { console.warn('addStudent API error', e); }
+    } catch (e) {
+      console.warn('addStudent API error', e);
+      this._queuePendingSync('/api/students', { method: 'POST', headers: this._h(), body: JSON.stringify(student) });
+    }
     this.data.students.push(student);
     this._saveToStorage();
     return student;
@@ -65,7 +103,10 @@ const dataManager = {
       await fetch(`/api/students?id=${id}`, {
         method: 'PUT', headers: this._h(), body: JSON.stringify(updates),
       });
-    } catch (e) { console.warn('updateStudent API error', e); }
+    } catch (e) {
+      console.warn('updateStudent API error', e);
+      this._queuePendingSync(`/api/students?id=${id}`, { method: 'PUT', headers: this._h(), body: JSON.stringify(updates) });
+    }
     this._saveToStorage();
     return true;
   },
@@ -73,7 +114,10 @@ const dataManager = {
   async deleteStudent(id) {
     this.data.students = this.data.students.filter(s => s.id !== id);
     try { await fetch(`/api/students?id=${id}`, { method: 'DELETE', headers: this._h() }); }
-    catch (e) { console.warn('deleteStudent API error', e); }
+    catch (e) {
+      console.warn('deleteStudent API error', e);
+      this._queuePendingSync(`/api/students?id=${id}`, { method: 'DELETE', headers: this._h() });
+    }
     this._saveToStorage();
   },
 
@@ -99,7 +143,13 @@ const dataManager = {
         method: 'POST', headers: this._h(),
         body: JSON.stringify({ date, session_id: sessionId, records }),
       });
-    } catch (e) { console.warn('saveAttendance API error', e); }
+    } catch (e) {
+      console.warn('saveAttendance API error', e);
+      this._queuePendingSync('/api/attendance', {
+        method: 'POST', headers: this._h(),
+        body: JSON.stringify({ date, session_id: sessionId, records }),
+      });
+    }
   },
 
   // ── UTILS ──

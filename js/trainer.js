@@ -46,7 +46,7 @@
     const sessionId = formateur.formation_id || 'default';
     let existing    = {};
     try {
-      const r = await fetch(`/api/attendance?date=${date}&session=${sessionId}`);
+      const r = await fetch(`/api/attendance?date=${date}&session=${sessionId}&token=${encodeURIComponent(token)}`);
       existing = await r.json();
     } catch (e) { /* offline — use empty */ }
     renderRows(students, existing);
@@ -122,7 +122,7 @@
       const r = await fetch('/api/attendance', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ date, session_id: sessionId, records }),
+        body:    JSON.stringify({ date, session_id: sessionId, records, token }),
       });
       if (!r.ok) throw new Error();
       ui.toast('Présences enregistrées ✓', 'success');

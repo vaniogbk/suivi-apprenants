@@ -136,8 +136,10 @@
             password: document.getElementById('password').value,
           }),
         });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Erreur de connexion');
+        let data = {};
+        try { data = await resp.json(); } catch { /* réponse vide ou non-JSON (ex: serveur API indisponible) */ }
+        if (!resp.ok) throw new Error(data.error || `Erreur de connexion (${resp.status})`);
+        if (!data.token) throw new Error('Réponse invalide du serveur — API indisponible ?');
 
         localStorage.setItem('eductrack_token', data.token);
         localStorage.setItem('eductrack_school', JSON.stringify(data.school));

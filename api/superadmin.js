@@ -1,4 +1,5 @@
 const pool = require('../lib/db');
+const auth = require('../lib/auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -6,10 +7,10 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Auth super admin
+  // Auth super admin — comparaison à temps constant pour éviter le timing attack
   const key = process.env.SUPERADMIN_KEY;
   const provided = (req.headers.authorization || '').replace('Bearer ', '').trim();
-  if (!key || provided !== key) {
+  if (!key || !auth.safeCompare(provided, key)) {
     return res.status(401).json({ error: 'Accès non autorisé' });
   }
 
@@ -55,6 +56,6 @@ module.exports = async (req, res) => {
     res.status(400).json({ error: 'Action invalide' });
   } catch (err) {
     console.error('superadmin error:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Erreur serveur — réessayez plus tard' });
   }
 };

@@ -1,11 +1,16 @@
 // POST /api/send-email — envoie le lien d'accès formateur via Brevo (ex-Sendinblue)
+const auth = require('../lib/auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Réservé aux écoles authentifiées — sans ça, n'importe qui pouvait envoyer
+  // des emails à n'importe quelle adresse via notre compte Brevo.
+  if (!auth.requireAuth(req, res)) return;
 
   const apiKey      = process.env.BREVO_API_KEY;
   const senderEmail = process.env.BREVO_SENDER_EMAIL || 'noreply@eductrack.app';
@@ -88,6 +93,6 @@ module.exports = async (req, res) => {
     return res.json({ sent: true, messageId: data.messageId });
   } catch (err) {
     console.error('Brevo error:', err.message);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'Erreur serveur — réessayez plus tard' });
   }
 };

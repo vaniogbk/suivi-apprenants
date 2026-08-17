@@ -8,6 +8,17 @@ async function addCol(table, col, def) {
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Route d'administration destructive (crée/modifie le schéma, révèle le mot
+  // de passe démo) — réservée au super admin, même clé que /api/superadmin.
+  const key = process.env.SUPERADMIN_KEY;
+  const provided = (req.headers.authorization || '').replace('Bearer ', '').trim();
+  if (!key || !auth.safeCompare(provided, key)) {
+    return res.status(401).json({ error: 'Accès non autorisé' });
+  }
+
   try {
     // ── Core tables ──
     await pool.query(`
@@ -136,6 +147,6 @@ module.exports = async (req, res) => {
     return res.json({ success: true, message: 'Base initialisée — compte démo: demo@eductrack.app / EducTrack2026!' });
   } catch (err) {
     console.error('init-db error:', err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'Erreur serveur — réessayez plus tard' });
   }
 };

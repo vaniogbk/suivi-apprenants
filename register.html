@@ -190,8 +190,9 @@ async function submitReg() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error || 'Erreur');
+    let data = {};
+    try { data = await resp.json(); } catch { /* réponse vide ou non-JSON (ex: serveur API indisponible) */ }
+    if (!resp.ok) throw new Error(data.error || `Erreur (${resp.status})`);
 
     if (data.mode === 'sandbox') {
       // Sandbox: already activated

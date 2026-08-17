@@ -6,8 +6,9 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const school   = auth.getFromReq(req);
-  const schoolId = school?.schoolId || 'demo';
+  const school = auth.requireAuth(req, res);
+  if (!school) return;
+  const schoolId = school.schoolId;
 
   try {
     const [rows] = await pool.query(
@@ -17,6 +18,6 @@ module.exports = async (req, res) => {
     return res.json(rows);
   } catch (err) {
     console.error('sessions error:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Erreur serveur — réessayez plus tard' });
   }
 };

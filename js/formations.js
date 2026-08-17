@@ -11,7 +11,7 @@ const formationsManager = {
 
   async load() {
     try {
-      const resp = await fetch('/api/formations');
+      const resp = await fetch('/api/formations', { headers: Auth.headers() });
       this.formations = Array.isArray(await resp.clone().json()) ? await resp.json() : [];
     } catch (e) {
       this.formations = [];
@@ -120,14 +120,14 @@ const formationsManager = {
     try {
       if (id) {
         const r = await fetch(`/api/formations?id=${id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+          method: 'PUT', headers: Auth.headers(), body: JSON.stringify(data)
         });
         if (!r.ok) throw new Error();
         ui.toast('Formation mise à jour', 'success');
       } else {
         data.id = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
         const r = await fetch('/api/formations', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+          method: 'POST', headers: Auth.headers(), body: JSON.stringify(data)
         });
         if (!r.ok) throw new Error();
         ui.toast('Formation créée', 'success');
@@ -145,7 +145,7 @@ const formationsManager = {
     const ok = await ui.confirm('Supprimer cette formation ? Les présences associées seront conservées.');
     if (!ok) return;
     try {
-      await fetch(`/api/formations?id=${id}`, { method: 'DELETE' });
+      await fetch(`/api/formations?id=${id}`, { method: 'DELETE', headers: Auth.headers() });
       ui.toast('Formation supprimée', 'success');
       this.render();
     } catch (e) {

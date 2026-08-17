@@ -6,3 +6,4 @@ Thumbs.db
 # screens/
 
 .vercel
+.env*.local

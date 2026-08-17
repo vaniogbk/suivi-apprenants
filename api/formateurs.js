@@ -20,6 +20,14 @@ module.exports = async (req, res) => {
       );
       if (!rows.length) return res.status(404).json({ error: 'Token invalide' });
       const formateur = rows[0];
+
+      // Lien magique à durée de vie limitée (180 jours) — au-delà, le formateur
+      // doit se voir régénérer un lien par l'école.
+      const MAX_AGE_MS = 180 * 24 * 60 * 60 * 1000;
+      if (formateur.created_at && Date.now() - new Date(formateur.created_at).getTime() > MAX_AGE_MS) {
+        return res.status(410).json({ error: 'Lien expiré — demandez un nouveau lien à votre établissement' });
+      }
+
       const groupFilter = formateur.group_name || formateur.formation_name;
       const [students] = groupFilter
         ? await pool.query('SELECT * FROM students WHERE `group` = ? AND school_id = ? ORDER BY name', [groupFilter, formateur.school_id || 'demo'])
@@ -27,8 +35,9 @@ module.exports = async (req, res) => {
       return res.json({ formateur, students });
     }
 
-    const school   = auth.getFromReq(req);
-    const schoolId = school?.schoolId || 'demo';
+    const school = auth.requireAuth(req, res);
+    if (!school) return;
+    const schoolId = school.schoolId;
 
     if (req.method === 'GET') {
       const { formation_id } = req.query;
@@ -70,6 +79,6 @@ module.exports = async (req, res) => {
     res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('formateurs error:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Erreur serveur — réessayez plus tard' });
   }
 };
