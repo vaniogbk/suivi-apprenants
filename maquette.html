@@ -316,6 +316,9 @@ tr.rl td{background:rgba(245,158,11,.04)}
   <button class="mode-btn" id="btn-mobile" onclick="setMode('mobile')">
     <i class="ph ph-device-mobile"></i> Mobile
   </button>
+  <button class="mode-btn" id="btn-auth" onclick="setMode('auth')">
+    <i class="ph ph-sign-in"></i> Connexion / Inscription
+  </button>
   <div style="width:1px;height:20px;background:var(--border);margin:0 4px"></div>
   <button class="mode-btn" onclick="toggleTheme()" style="padding:6px 10px">
     <i class="ph ph-moon" id="theme-icon"></i>
@@ -727,6 +730,69 @@ tr.rl td{background:rgba(245,158,11,.04)}
   </div><!-- /phone -->
 </div><!-- /mobile-shell -->
 
+<!-- ============================================================
+     ██████  AUTH SHELL — Connexion / Inscription
+     (synchronisé avec login.html et register.html)
+============================================================ -->
+<div id="auth-shell" style="display:none;min-height:100vh;padding:40px 20px;background:var(--bg2)">
+  <div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1.3fr;gap:24px;align-items:start">
+
+    <!-- CONNEXION -->
+    <div class="card" style="padding:32px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;justify-content:center">
+        <div class="sb-logo-icon" style="width:40px;height:40px"><i class="ph ph-graduation-cap"></i></div>
+        <span style="font-weight:800;font-size:1.2rem;color:var(--p600)">EducTrack</span>
+      </div>
+      <h1 style="text-align:center;font-size:1.2rem;margin-bottom:4px">Connexion</h1>
+      <p style="text-align:center;color:var(--tx3);font-size:.85rem;margin-bottom:18px">Accédez à votre tableau de bord</p>
+      <div style="background:var(--p50);border-radius:10px;padding:12px 14px;font-size:.78rem;color:var(--p700);margin-bottom:18px">
+        <strong style="display:block;margin-bottom:2px">🧪 Compte démo (test)</strong>
+        Email : demo@eductrack.app<br>Mot de passe : EducTrack2026!
+      </div>
+      <div class="form-group"><label class="form-label">Email de l'établissement</label><input class="form-input" placeholder="ecole@exemple.com" disabled></div>
+      <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" type="password" placeholder="••••••••••••" disabled></div>
+      <button class="btn btn-primary btn-w100"><i class="ph ph-sign-in"></i> Se connecter</button>
+      <p style="text-align:center;font-size:.8rem;color:var(--tx3);margin-top:16px">Pas encore abonné ? <span style="color:var(--p600);font-weight:600">Inscrire mon établissement</span></p>
+    </div>
+
+    <!-- INSCRIPTION -->
+    <div>
+      <div class="card" style="background:linear-gradient(135deg,var(--p600),var(--p700));color:#fff;padding:28px;margin-bottom:16px">
+        <div style="font-weight:800;font-size:1.3rem;margin-bottom:6px">Inscrivez votre établissement</div>
+        <p style="opacity:.85;font-size:.85rem;margin-bottom:14px">Suivi des présences, formateurs, statistiques — Bénin, Côte d'Ivoire, Togo et environs.</p>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:20px;padding:6px 14px;font-weight:700;font-size:.85rem"><i class="ph ph-seal-check"></i> 20 $ US / an</span>
+      </div>
+      <div class="card" style="padding:24px">
+        <h2 class="card-title" style="margin-bottom:14px"><i class="ph ph-buildings"></i> Informations de l'établissement</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group" style="grid-column:1/-1"><label class="form-label">Nom de l'établissement *</label><input class="form-input" placeholder="École Numérique de Cotonou" disabled></div>
+          <div class="form-group"><label class="form-label">Email professionnel *</label><input class="form-input" placeholder="contact@ecole.bj" disabled></div>
+          <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" placeholder="+229 01 XX XX XX XX" disabled></div>
+          <div class="form-group"><label class="form-label">Pays *</label>
+            <select class="form-select" disabled><option>Bénin</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Langue / Language *</label>
+            <select class="form-select" disabled><option>Français</option></select>
+          </div>
+        </div>
+        <h2 class="card-title" style="margin:18px 0 12px"><i class="ph ph-credit-card"></i> Paiement</h2>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <span class="badge bi" style="padding:8px 14px"><i class="ph ph-device-mobile"></i> MTN MoMo</span>
+          <span class="badge bi" style="padding:8px 14px"><i class="ph ph-device-mobile-camera"></i> Moov Money</span>
+          <span class="badge bi" style="padding:8px 14px"><i class="ph ph-credit-card"></i> Carte Visa/MC</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);margin-bottom:14px">
+          <span style="font-weight:700">Total</span>
+          <span style="font-weight:700;color:var(--p600)">20 $ US (≈ 12 000 FCFA)</span>
+        </div>
+        <button class="btn btn-primary btn-w100"><i class="ph ph-lock"></i> Payer et activer mon compte</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- /auth-shell -->
+
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-add" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
@@ -812,8 +878,10 @@ function setMode(m){
   document.getElementById('desktop-shell').style.display = m==='desktop' ? 'flex' : 'none';
   const mob = document.getElementById('mobile-shell');
   mob.style.display = m==='mobile' ? 'flex' : 'none';
+  document.getElementById('auth-shell').style.display = m==='auth' ? 'block' : 'none';
   document.getElementById('btn-desktop').classList.toggle('active', m==='desktop');
   document.getElementById('btn-mobile').classList.toggle('active', m==='mobile');
+  document.getElementById('btn-auth').classList.toggle('active', m==='auth');
   if(m==='mobile'){
     renderMAttendance();
     renderMStudents(STUDENTS);
