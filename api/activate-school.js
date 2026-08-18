@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
       [expires.toISOString().split('T')[0], hash, school.id]
     );
 
-    await sendCredentials(school.email, school.name, password, appUrl);
+    await sendCredentials(school.email, school.name, password, appUrl, school.language);
 
     return res.redirect(`${appUrl}/login.html?registered=1`);
   } catch (err) {

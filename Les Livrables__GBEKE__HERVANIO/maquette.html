@@ -343,6 +343,12 @@ tr.rl td{background:rgba(245,158,11,.04)}
       <button class="sb-item" id="d-nav-students" onclick="dShow('students',this)">
         <i class="ph ph-users"></i><span>Apprenants</span>
       </button>
+      <button class="sb-item" id="d-nav-formations" onclick="dShow('formations',this)">
+        <i class="ph ph-book-open"></i><span>Formations</span>
+      </button>
+      <button class="sb-item" id="d-nav-formateurs" onclick="dShow('formateurs',this)">
+        <i class="ph ph-chalkboard-teacher"></i><span>Formateurs</span>
+      </button>
       <button class="sb-item" id="d-nav-statistics" onclick="dShow('statistics',this)">
         <i class="ph ph-chart-line-up"></i><span>Statistiques</span>
       </button>
@@ -467,6 +473,41 @@ tr.rl td{background:rgba(245,158,11,.04)}
           </div>
         </div>
         <div id="d-students-grid" class="students-grid"></div>
+      </div>
+
+      <!-- FORMATIONS -->
+      <div id="d-view-formations" class="view">
+        <div class="pg-header row">
+          <div><h1 class="pg-title">Formations</h1><p class="pg-sub">Gérer les formations et groupes</p></div>
+          <button class="btn btn-primary" onclick="showToast('Formation créée','success')"><i class="ph ph-plus"></i> Nouvelle formation</button>
+        </div>
+        <div class="table-wrap card">
+          <table>
+            <thead><tr><th>Formation</th><th>Groupe</th><th>Formateur</th><th>Période</th><th>Statut</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>Marketing Digital</td><td>Marketing Digital</td><td>Vanio GBK</td><td>01/03/2026 → 31/08/2026</td><td><span class="badge bp">Active</span></td><td><i class="ph ph-pencil-simple"></i></td></tr>
+              <tr><td>Développement Web et Mobile</td><td>Développement Web et Mobile</td><td>Chana Hervanio</td><td>15/02/2026 → 15/09/2026</td><td><span class="badge bp">Active</span></td><td><i class="ph ph-pencil-simple"></i></td></tr>
+              <tr><td>Cybersécurité</td><td>Analyste Cybersécurité</td><td>— non assigné —</td><td>01/04/2026 → 30/10/2026</td><td><span class="badge bl">À venir</span></td><td><i class="ph ph-pencil-simple"></i></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FORMATEURS -->
+      <div id="d-view-formateurs" class="view">
+        <div class="pg-header row">
+          <div><h1 class="pg-title">Formateurs</h1><p class="pg-sub">Gérer les comptes et liens d'accès formateurs</p></div>
+          <button class="btn btn-primary" onclick="showToast('Formateur ajouté — lien d\'accès généré','success')"><i class="ph ph-user-plus"></i> Ajouter</button>
+        </div>
+        <div class="table-wrap card">
+          <table>
+            <thead><tr><th>Formateur</th><th>Formation assignée</th><th>Lien d'accès</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>Vanio GBK</td><td>Marketing Digital</td><td class="text-secondary text-xs">trainer.html?token=•••••••• <i class="ph ph-copy"></i></td><td><i class="ph ph-trash"></i></td></tr>
+              <tr><td>Chana Hervanio</td><td>Développement Web et Mobile</td><td class="text-secondary text-xs">trainer.html?token=•••••••• <i class="ph ph-copy"></i></td><td><i class="ph ph-trash"></i></td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- STATISTICS -->
@@ -751,11 +792,13 @@ const ATT = [
   {n:"Célia Vasseur", s:"late",   note:"09:10"},
 ];
 
-const VIEW_ORDER = ['dashboard','attendance','students','statistics','settings'];
+const VIEW_ORDER = ['dashboard','attendance','students','formations','formateurs','statistics','settings'];
 const M_HEADERS = {
   dashboard:  {title:'Tableau de bord',  sub:'Vue d\'ensemble'},
   attendance: {title:'Présence',          sub:'Faire l\'appel'},
   students:   {title:'Apprenants',        sub:'Gérer les étudiants'},
+  formations: {title:'Formations',        sub:'Gérer les formations'},
+  formateurs: {title:'Formateurs',        sub:'Gérer les formateurs'},
   statistics: {title:'Statistiques',      sub:'Analyses de présence'},
   settings:   {title:'Paramètres',        sub:'Configuration'},
 };

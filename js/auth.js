@@ -38,4 +38,29 @@ const Auth = {
     }
     return true;
   },
+
+  // Intercepte toute réponse API 402 (abonnement expiré/suspendu — voir
+  // lib/auth.js requireAuth côté serveur) pour déconnecter l'école et la
+  // renvoyer se réabonner, au lieu de laisser chaque appel fetch échouer
+  // silencieusement un par un.
+  installSubscriptionGuard() {
+    if (window.__eductrackFetchGuarded) return;
+    window.__eductrackFetchGuarded = true;
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = async (...args) => {
+      const res = await originalFetch(...args);
+      if (res.status === 402 && this.isLoggedIn()) {
+        const school = this.getSchool();
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.SCHOOL_KEY);
+        const params = new URLSearchParams({ renew: '1' });
+        if (school?.email) params.set('email', school.email);
+        if (school?.name)  params.set('name', school.name);
+        window.location.href = `/register.html?${params.toString()}`;
+      }
+      return res;
+    };
+  },
 };
+
+Auth.installSubscriptionGuard();

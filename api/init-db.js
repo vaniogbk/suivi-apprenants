@@ -113,6 +113,10 @@ module.exports = async (req, res) => {
     await addCol('formations', 'school_id VARCHAR(100) DEFAULT \'demo\'', '');
     await addCol('formateurs', 'school_id VARCHAR(100) DEFAULT \'demo\'', '');
 
+    // ── Migrations: pays + langue de l'école (inscription) ──
+    await addCol('schools', 'country VARCHAR(2)', '');
+    await addCol('schools', "language VARCHAR(2) DEFAULT 'fr'", '');
+
     // Backfill existing rows
     await pool.query("UPDATE sessions   SET school_id='demo' WHERE school_id IS NULL");
     await pool.query("UPDATE students   SET school_id='demo' WHERE school_id IS NULL");

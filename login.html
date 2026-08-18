@@ -138,7 +138,14 @@
         });
         let data = {};
         try { data = await resp.json(); } catch { /* réponse vide ou non-JSON (ex: serveur API indisponible) */ }
-        if (!resp.ok) throw new Error(data.error || `Erreur de connexion (${resp.status})`);
+        if (!resp.ok) {
+          if (data.status === 'expired') {
+            const email = document.getElementById('email').value.trim();
+            window.location.href = `/register.html?renew=1&email=${encodeURIComponent(email)}`;
+            return;
+          }
+          throw new Error(data.error || `Erreur de connexion (${resp.status})`);
+        }
         if (!data.token) throw new Error('Réponse invalide du serveur — API indisponible ?');
 
         localStorage.setItem('eductrack_token', data.token);

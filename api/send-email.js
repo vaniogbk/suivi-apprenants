@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
 
   // Réservé aux écoles authentifiées — sans ça, n'importe qui pouvait envoyer
   // des emails à n'importe quelle adresse via notre compte Brevo.
-  if (!auth.requireAuth(req, res)) return;
+  if (!(await auth.requireAuth(req, res))) return;
 
   const apiKey      = process.env.BREVO_API_KEY;
   const senderEmail = process.env.BREVO_SENDER_EMAIL || 'noreply@eductrack.app';

@@ -80,11 +80,11 @@
       <div class="hero-icon"><i class="ph ph-graduation-cap"></i></div>
       <span style="font-size:1.3rem;font-weight:800">EducTrack</span>
     </div>
-    <h1>Inscrivez votre établissement</h1>
-    <p>Solution complète de suivi des apprenants — présences, formateurs, statistiques.</p>
+    <h1 id="hero-title">Inscrivez votre établissement</h1>
+    <p id="hero-sub">Solution complète de suivi des apprenants — présences, formateurs, statistiques.</p>
     <div class="price-badge">
       <i class="ph ph-seal-check"></i>
-      <span id="price-label">50 000 FCFA / an</span>
+      <span id="price-label">20 $ US / an</span>
     </div>
   </div>
 
@@ -105,6 +105,27 @@
         <div class="form-group">
           <label>Téléphone</label>
           <input id="r-phone" type="tel" placeholder="+229 01 XX XX XX XX">
+        </div>
+        <div class="form-group">
+          <label>Pays *</label>
+          <select id="r-country" required onchange="onCountryChange()" aria-label="Pays">
+            <option value="">Sélectionner…</option>
+            <option value="BJ">Bénin</option>
+            <option value="CI">Côte d'Ivoire</option>
+            <option value="TG">Togo</option>
+            <option value="SN">Sénégal</option>
+            <option value="BF">Burkina Faso</option>
+            <option value="NG">Nigeria</option>
+            <option value="GH">Ghana</option>
+            <option value="OTHER">Autre / Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Langue / Language *</label>
+          <select id="r-lang" required aria-label="Langue / Language">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
         </div>
         <div class="form-group full">
           <label>Nom & Prénom du responsable des études *</label>
@@ -160,6 +181,14 @@
 <script>
 let selectedMethod = 'mtn';
 
+// Nigéria/Ghana sont anglophones : on présélectionne l'anglais, mais
+// l'utilisateur reste libre de changer (ex: écoles francophones au Ghana).
+const ANGLOPHONE = ['NG', 'GH'];
+function onCountryChange() {
+  const country = document.getElementById('r-country').value;
+  document.getElementById('r-lang').value = ANGLOPHONE.includes(country) ? 'en' : 'fr';
+}
+
 function selectPay(el, method) {
   document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
@@ -180,6 +209,8 @@ async function submitReg() {
     name:               document.getElementById('r-name').value.trim(),
     email:              document.getElementById('r-email').value.trim(),
     phone:              document.getElementById('r-phone').value.trim(),
+    country:            document.getElementById('r-country').value,
+    language:           document.getElementById('r-lang').value,
     responsible_name:   document.getElementById('r-resp-name').value.trim(),
     responsible_contact:document.getElementById('r-resp-contact').value.trim(),
   };
@@ -225,10 +256,24 @@ async function submitReg() {
   }
 }
 
-// Load price from env-like meta or default
-const priceXof = parseInt('50000');
-document.getElementById('price-display').textContent = priceXof.toLocaleString('fr-FR') + ' FCFA';
-document.getElementById('price-label').textContent   = priceXof.toLocaleString('fr-FR') + ' FCFA / an';
+// Tarif unique : 20 $ US / an (≈ 12 000 FCFA, traité en XOF côté FedaPay
+// pour le paiement carte/mobile money au Bénin, en Côte d'Ivoire et au Togo).
+const priceXof = 12000;
+document.getElementById('price-display').textContent = '20 $ US (≈ ' + priceXof.toLocaleString('fr-FR') + ' FCFA)';
+
+// Arrivée depuis une déconnexion pour abonnement expiré (voir js/auth.js) :
+// on adapte le message et on préremplit ce qu'on connaît déjà de l'école.
+const params = new URLSearchParams(location.search);
+if (params.get('renew') === '1') {
+  document.getElementById('hero-title').textContent = 'Renouvelez votre abonnement';
+  document.getElementById('hero-sub').textContent =
+    'Votre abonnement EducTrack a expiré. Réabonnez-vous pour retrouver l\'accès à votre tableau de bord.';
+  document.getElementById('pay-btn').innerHTML = '<i class="ph ph-lock"></i> Payer et réactiver mon compte';
+  const email = params.get('email');
+  const name  = params.get('name');
+  if (email) document.getElementById('r-email').value = email;
+  if (name)  document.getElementById('r-name').value  = name;
+}
 </script>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </body>

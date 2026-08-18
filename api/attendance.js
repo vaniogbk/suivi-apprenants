@@ -28,6 +28,15 @@ module.exports = async (req, res) => {
     const schoolId = await resolveSchoolId(req);
     if (!schoolId) return res.status(401).json({ error: 'Authentification requise' });
 
+    const { active, status } = await auth.checkSubscriptionActive(schoolId);
+    if (!active) {
+      return res.status(402).json({
+        error: 'Abonnement inactif — veuillez vous réabonner pour retrouver l\'accès',
+        code: 'SUBSCRIPTION_INACTIVE',
+        status,
+      });
+    }
+
     if (req.method === 'GET') {
       // ── Historique complet (export) ──
       if (req.query.all === 'true') {

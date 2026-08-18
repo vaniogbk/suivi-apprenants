@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
       return res.json({ formateur, students });
     }
 
-    const school = auth.requireAuth(req, res);
+    const school = await auth.requireAuth(req, res);
     if (!school) return;
     const schoolId = school.schoolId;
 

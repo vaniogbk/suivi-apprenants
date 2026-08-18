@@ -22,10 +22,17 @@ module.exports = async (req, res) => {
     if (!auth.checkPassword(password, school.password_hash)) {
       return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     }
-    if (school.subscription_status === 'pending') {
+    // Pas de cron : une école 'active' dont subscription_expires est dépassée
+    // est basculée en 'expired' au moment où elle se reconnecte.
+    let status = school.subscription_status;
+    if (auth.isSubscriptionExpired(status, school.subscription_expires)) {
+      await pool.query("UPDATE schools SET subscription_status='expired' WHERE id=?", [school.id]);
+      status = 'expired';
+    }
+    if (status === 'pending') {
       return res.status(403).json({ error: 'Abonnement en attente de paiement', status: 'pending' });
     }
-    if (school.subscription_status === 'expired') {
+    if (status === 'expired') {
       return res.status(403).json({ error: 'Abonnement expiré — veuillez renouveler', status: 'expired' });
     }
 

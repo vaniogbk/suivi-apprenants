@@ -1,1393 +1,404 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cahier de Charges — Suivi des Apprenants</title>
-    <style>
-        /* ==============================
-           RESET & BASE
-        ============================== */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<title>EducTrack : Cahier des Charges</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1F2937; font-size: 10.5pt; }
+  .page { width: 210mm; min-height: 297mm; padding: 18mm 16mm; page-break-after: always; position: relative; }
+  .cover { background: #211F54; color: #fff; display: flex; flex-direction: column; justify-content: center; }
+  .cover .badge { display:inline-block; border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:5px 14px; font-size:8.5pt; letter-spacing:1px; margin-bottom:22px; color:#C7D2FE; }
+  .cover h1 { font-family: Georgia, serif; font-size: 52pt; color:#C7D2FE; margin-bottom:10px; }
+  .cover .sub { font-size:13pt; color:#D1D5DB; margin-bottom:8px; }
+  .cover .doctype { font-size:12pt; font-weight:700; color:#A5B4FC; margin-bottom:20px; }
+  .cover blockquote { border-left:3px solid #4F46E5; padding-left:14px; color:#9CA3AF; font-size:9.5pt; line-height:1.6; max-width:420px; }
+  .cover .footer { position:absolute; bottom:20mm; left:16mm; right:16mm; }
+  .cover .footer .line { width:60px; height:2px; background:#7C3AED; margin-bottom:14px; }
+  .cover .footer div { font-size:9pt; color:#9CA3AF; margin-bottom:4px; }
+  .cover .footer b { color:#E5E7EB; }
+  h2.stitle { background:#4338CA; color:#fff; padding:16px 18px; font-size:15pt; margin: -18mm -16mm 14px -16mm; padding-left:20mm; padding-right:20mm; }
+  h2.stitle .n { display:inline-block; background:rgba(255,255,255,.2); border-radius:50%; width:22px; height:22px; text-align:center; line-height:22px; font-size:10pt; margin-right:8px; }
+  h2.stitle .sub { display:block; font-size:9pt; font-weight:400; color:#C7D2FE; margin-top:3px; }
+  h3 { font-size:11.5pt; color:#4338CA; margin:14px 0 6px; }
+  p { line-height:1.55; margin-bottom:8px; text-align:justify; }
+  table { width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:9pt; }
+  th { background:#4338CA; color:#fff; text-align:left; padding:6px 8px; }
+  td { padding:6px 8px; border-bottom:1px solid #E5E7EB; vertical-align:top; }
+  tr:nth-child(even) td { background:#F9FAFB; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:10px 0; }
+  .box { border:1px solid #E5E7EB; border-radius:8px; padding:10px 12px; }
+  .box b { display:block; color:#111827; margin-bottom:3px; font-size:9.5pt; }
+  .box span { font-size:8.8pt; color:#6B7280; }
+  .info { background:#EEF2FF; border-left:4px solid #4F46E5; border-radius:4px; padding:10px 14px; font-size:9.5pt; margin:10px 0; }
+  .warn { background:#FFFBEB; border-left:4px solid #D97706; border-radius:4px; padding:10px 14px; font-size:9.5pt; margin:10px 0; }
+  .new  { background:#ECFDF5; border-left:4px solid #059669; border-radius:4px; padding:10px 14px; font-size:9.5pt; margin:10px 0; }
+  .pill { display:inline-block; background:#EEF2FF; color:#4338CA; border-radius:20px; padding:3px 10px; font-size:8pt; font-weight:600; margin:2px; }
+  .crit { color:#DC2626; font-weight:700; }
+  .haute { color:#4338CA; font-weight:700; }
+  .moy { color:#D97706; font-weight:700; }
+  code { background:#F3F4F6; padding:1px 5px; border-radius:3px; font-family:Consolas,monospace; font-size:9pt; }
+  pre { background:#111827; color:#93C5FD; padding:10px 12px; border-radius:6px; font-size:8.3pt; overflow:hidden; margin:8px 0; }
+  .foot { position:absolute; bottom:8mm; left:16mm; right:16mm; display:flex; justify-content:space-between; font-size:7.5pt; color:#9CA3AF; border-top:1px solid #E5E7EB; padding-top:4px; }
+  .toc a { text-decoration:none; color:#1F2937; }
+  .toc ol { list-style:none; }
+  .toc li { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed #E5E7EB; font-size:9.5pt; }
+  .archbox { border:1px solid #E5E7EB; border-radius:8px; padding:14px; text-align:center; font-size:8.5pt; }
+  .arrow { text-align:center; font-size:8pt; color:#9CA3AF; padding:6px 0; }
 
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-size: 14px;
-            line-height: 1.7;
-            color: #1F2937;
-            background: #F9FAFB;
-        }
-
-        /* ==============================
-           LAYOUT — PAGE
-        ============================== */
-        .page-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px 80px;
-        }
-
-        /* ==============================
-           COVER PAGE
-        ============================== */
-        .cover {
-            background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%);
-            color: white;
-            border-radius: 16px;
-            padding: 60px 50px;
-            margin-bottom: 50px;
-            position: relative;
-            overflow: hidden;
-        }
-        .cover::after {
-            content: '';
-            position: absolute;
-            top: -80px; right: -80px;
-            width: 280px; height: 280px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 50%;
-        }
-        .cover-logo {
-            font-size: 40px;
-            margin-bottom: 24px;
-        }
-        .cover h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-        .cover .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.85;
-            margin-bottom: 40px;
-        }
-        .cover-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-        .cover-meta-item label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            opacity: 0.7;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .cover-meta-item span {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        /* ==============================
-           TABLE DES MATIÈRES
-        ============================== */
-        .toc {
-            background: white;
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            padding: 30px 35px;
-            margin-bottom: 40px;
-        }
-        .toc h2 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #4F46E5;
-            margin-bottom: 18px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .toc ol {
-            padding-left: 20px;
-        }
-        .toc li {
-            margin-bottom: 6px;
-            color: #374151;
-        }
-        .toc li a {
-            color: #374151;
-            text-decoration: none;
-        }
-        .toc li a:hover {
-            color: #4F46E5;
-        }
-        .toc li ol {
-            margin-top: 4px;
-        }
-        .toc li ol li {
-            font-size: 0.9rem;
-            color: #6B7280;
-            margin-bottom: 3px;
-        }
-
-        /* ==============================
-           SECTIONS
-        ============================== */
-        .section {
-            background: white;
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            padding: 35px 40px;
-            margin-bottom: 30px;
-        }
-
-        h2.section-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #4F46E5;
-            margin-bottom: 6px;
-            padding-bottom: 12px;
-            border-bottom: 3px solid #EEF2FF;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        h2.section-title .num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px; height: 32px;
-            background: #4F46E5;
-            color: white;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        h3 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #1F2937;
-            margin: 24px 0 10px;
-        }
-        h4 {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #374151;
-            margin: 16px 0 8px;
-        }
-
-        p { margin-bottom: 12px; color: #374151; }
-
-        ul, ol {
-            padding-left: 22px;
-            margin-bottom: 12px;
-            color: #374151;
-        }
-        li { margin-bottom: 5px; }
-
-        /* ==============================
-           FEATURE TABLE
-        ============================== */
-        .feature-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-            font-size: 0.875rem;
-        }
-        .feature-table th {
-            background: #EEF2FF;
-            color: #4338CA;
-            font-weight: 700;
-            padding: 10px 14px;
-            text-align: left;
-            border: 1px solid #C7D2FE;
-        }
-        .feature-table td {
-            padding: 9px 14px;
-            border: 1px solid #E5E7EB;
-            vertical-align: top;
-        }
-        .feature-table tr:nth-child(even) td {
-            background: #F9FAFB;
-        }
-        .feature-table tr:hover td {
-            background: #EEF2FF;
-        }
-
-        /* ==============================
-           BADGES / PILLS
-        ============================== */
-        .badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 100px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .badge-p1  { background: #FEE2E2; color: #B91C1C; }
-        .badge-p2  { background: #FEF3C7; color: #92400E; }
-        .badge-p3  { background: #ECFDF5; color: #065F46; }
-        .badge-tech { background: #EEF2FF; color: #4338CA; }
-        .badge-done { background: #DCFCE7; color: #166534; }
-        .badge-wip  { background: #FEF9C3; color: #854D0E; }
-
-        /* ==============================
-           INFO BOXES
-        ============================== */
-        .info-box {
-            padding: 14px 18px;
-            border-radius: 8px;
-            margin: 16px 0;
-            font-size: 0.875rem;
-        }
-        .info-box.blue   { background: #EFF6FF; border-left: 4px solid #3B82F6; color: #1E40AF; }
-        .info-box.green  { background: #F0FDF4; border-left: 4px solid #22C55E; color: #166534; }
-        .info-box.yellow { background: #FEFCE8; border-left: 4px solid #EAB308; color: #713F12; }
-        .info-box.red    { background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; }
-
-        /* ==============================
-           SCREEN WIREFRAME (Ascii-art box)
-        ============================== */
-        .wireframe {
-            font-family: 'Courier New', monospace;
-            font-size: 0.78rem;
-            background: #F8FAFC;
-            border: 1px solid #CBD5E1;
-            border-radius: 8px;
-            padding: 16px 20px;
-            margin: 16px 0;
-            white-space: pre;
-            overflow-x: auto;
-            line-height: 1.5;
-            color: #334155;
-        }
-
-        /* ==============================
-           TWO-COLUMN GRID
-        ============================== */
-        .two-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 16px 0;
-        }
-        .two-col .card-mini {
-            background: #F9FAFB;
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            padding: 16px;
-        }
-        .two-col .card-mini h4 {
-            margin-top: 0;
-            color: #4F46E5;
-        }
-
-        /* ==============================
-           FOOTER
-        ============================== */
-        .doc-footer {
-            text-align: center;
-            color: #9CA3AF;
-            font-size: 0.8rem;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid #E5E7EB;
-        }
-
-        /* ==============================
-           PRINT
-        ============================== */
-        @media print {
-            body { background: white; font-size: 12px; }
-            .page-wrapper { padding: 0; max-width: 100%; }
-            .section { break-inside: avoid; }
-            .cover { break-after: page; }
-        }
-    </style>
+  /* Aperçu à l'écran uniquement : centrage + adaptation mobile.
+     Ignoré à l'impression/export PDF (media print), qui garde le format A4 fixe. */
+  @media screen {
+    body { background:#F3F4F6; display:flex; flex-direction:column; align-items:center; gap:20px; padding:24px 0; min-height:100vh; }
+    .page { box-shadow:0 2px 10px rgba(0,0,0,.12); flex-shrink:0; }
+  }
+</style>
 </head>
 <body>
-<div class="page-wrapper">
 
-    <!-- ============================================================
-         COUVERTURE
-    ============================================================ -->
-    <div class="cover">
-        <div class="cover-logo">📊</div>
-        <h1>Cahier de Charges<br>Suivi des Apprenants</h1>
-        <div class="subtitle">Application web de gestion de présences et de suivi pédagogique</div>
-        <div class="cover-meta">
-            <div class="cover-meta-item">
-                <label>Projet</label>
-                <span>Suivi Apprenants</span>
-            </div>
-            <div class="cover-meta-item">
-                <label>Version</label>
-                <span>1.0</span>
-            </div>
-            <div class="cover-meta-item">
-                <label>Date</label>
-                <span>Avril 2026</span>
-            </div>
-            <div class="cover-meta-item">
-                <label>Statut</label>
-                <span>Réalisé</span>
-            </div>
-            <div class="cover-meta-item">
-                <label>Type</label>
-                <span>Application Web SPA</span>
-            </div>
-            <div class="cover-meta-item">
-                <label>Public cible</label>
-                <span>Formateurs / Enseignants</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         TABLE DES MATIÈRES
-    ============================================================ -->
-    <div class="toc">
-        <h2>📋 Table des matières</h2>
-        <ol>
-            <li><a href="#s1">Présentation du projet</a>
-                <ol>
-                    <li><a href="#s1-1">Contexte et problématique</a></li>
-                    <li><a href="#s1-2">Objectifs</a></li>
-                    <li><a href="#s1-3">Public cible</a></li>
-                </ol>
-            </li>
-            <li><a href="#s2">Périmètre fonctionnel</a>
-                <ol>
-                    <li><a href="#s2-1">Tableau de bord</a></li>
-                    <li><a href="#s2-2">Gestion des présences</a></li>
-                    <li><a href="#s2-3">Gestion des apprenants</a></li>
-                    <li><a href="#s2-4">Statistiques et export</a></li>
-                    <li><a href="#s2-5">Paramètres</a></li>
-                </ol>
-            </li>
-            <li><a href="#s3">Architecture technique</a></li>
-            <li><a href="#s4">Conception UX/UI</a></li>
-            <li><a href="#s5">Données et persistance</a></li>
-            <li><a href="#s6">Contraintes et exigences non-fonctionnelles</a></li>
-            <li><a href="#s7">Livrables</a></li>
-            <li><a href="#s8">Glossaire</a></li>
-        </ol>
-    </div>
-
-    <!-- ============================================================
-         SECTION 1 — PRÉSENTATION
-    ============================================================ -->
-    <div class="section" id="s1">
-        <h2 class="section-title"><span class="num">1</span> Présentation du projet</h2>
-
-        <h3 id="s1-1">1.1 Contexte et problématique</h3>
-        <p>
-            Les formateurs et enseignants gérant des groupes d'apprenants en formation professionnelle ou académique
-            font face à un défi quotidien : enregistrer, suivre et analyser les présences de manière simple et rapide,
-            sans dépendre d'un réseau ou d'un serveur tiers.
-        </p>
-        <p>
-            Les solutions existantes (tableurs, logiciels de gestion lourds, plateformes cloud) présentent plusieurs
-            limites : complexité d'utilisation, dépendance internet, coût, ou manque de fonctionnalités d'analyse.
-        </p>
-        <div class="info-box yellow">
-            <strong>Problème central :</strong> Comment permettre à un formateur de faire l'appel, consulter l'historique
-            des présences et générer des rapports, depuis n'importe quel navigateur, sans installation ni connexion serveur ?
-        </div>
-
-        <h3 id="s1-2">1.2 Objectifs</h3>
-        <ul>
-            <li><strong>Objectif principal :</strong> Fournir une interface web intuitive de suivi des présences, utilisable sans connexion à un serveur.</li>
-            <li><strong>Objectif secondaire :</strong> Permettre l'analyse statistique de la présence et l'export de rapports (PDF, CSV).</li>
-            <li><strong>Objectif tertiaire :</strong> Offrir une expérience soignée avec thème sombre, responsive design et animations fluides.</li>
-        </ul>
-
-        <h3 id="s1-3">1.3 Public cible</h3>
-        <div class="two-col">
-            <div class="card-mini">
-                <h4>👩‍🏫 Utilisateur principal</h4>
-                <p>Formateur / Enseignant gérant 1 à 3 groupes de 10 à 50 apprenants. Utilise l'application quotidiennement pour faire l'appel.</p>
-            </div>
-            <div class="card-mini">
-                <h4>👨‍💼 Utilisateur secondaire</h4>
-                <p>Responsable pédagogique souhaitant consulter les statistiques de présence et exporter des rapports pour des bilans mensuels.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         SECTION 2 — PÉRIMÈTRE FONCTIONNEL
-    ============================================================ -->
-    <div class="section" id="s2">
-        <h2 class="section-title"><span class="num">2</span> Périmètre fonctionnel</h2>
-
-        <p>L'application est organisée en <strong>5 modules</strong> accessibles via une barre de navigation latérale permanente.</p>
-
-        <!-- 2.1 TABLEAU DE BORD -->
-        <h3 id="s2-1">2.1 Module — Tableau de bord</h3>
-        <p>Écran d'accueil offrant une vue synthétique de l'activité pédagogique.</p>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Fonctionnalité</th>
-                    <th>Description</th>
-                    <th>Priorité</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>KPI Total Apprenants</td>
-                    <td>Affiche le nombre total d'apprenants enregistrés dans le système.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>KPI Taux de Présence</td>
-                    <td>Calcul du taux de présence global (présents + retards / total) sur toutes les sessions enregistrées.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>KPI Nombre de Sessions</td>
-                    <td>Nombre de groupes/sessions configurés dans l'application.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Résumé du jour</td>
-                    <td>Affiche la présence enregistrée pour la date du jour avec accès rapide à l'appel.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="wireframe">┌─────────────────────────────────────────────────────────────────┐
-│  Tableau de bord          Vue d'ensemble de l'activité          │
-├──────────────┬──────────────┬───────────────────────────────────┤
-│ 48           │ 87%          │ 2                                  │
-│ Total        │ Taux Présence│ Sessions                           │
-│ Apprenants   │ ↑ tendance   │ Formations                         │
-├──────────────┴──────────────┴───────────────────────────────────┤
-│  Aujourd'hui                          [Faire l'appel →]         │
-│                                                                  │
-│  ✓ Présence du 15/04/2026 enregistrée — 42 présents, 6 absents  │
-└─────────────────────────────────────────────────────────────────┘</div>
-
-        <!-- 2.2 PRÉSENCE -->
-        <h3 id="s2-2">2.2 Module — Suivi de Présence</h3>
-        <p>Module central permettant de réaliser l'appel quotidien par groupe.</p>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Fonctionnalité</th>
-                    <th>Description</th>
-                    <th>Priorité</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Sélection de date</td>
-                    <td>Saisie de la date via un champ de type date (par défaut : date du jour).</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Sélection de session/groupe</td>
-                    <td>Choix du groupe parmi les sessions configurées (ex. Marketing Digital, Dév. Web).</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Liste d'appel</td>
-                    <td>Affiche tous les apprenants du groupe sélectionné dans un tableau interactif.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Statut de présence</td>
-                    <td>3 statuts possibles par apprenant : <strong>Présent</strong>, <strong>Absent</strong>, <strong>Retard</strong>. Marquage en un clic.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Note / Heure</td>
-                    <td>Champ libre pour saisir l'heure d'arrivée ou une note pour chaque apprenant.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Compteurs présents/absents</td>
-                    <td>Badges affichant en temps réel le nombre de présents et absents.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Enregistrement</td>
-                    <td>Sauvegarde des présences en localStorage via le bouton "Enregistrer".</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h4>Règle métier :</h4>
-        <ul>
-            <li>Un retard est comptabilisé comme présent dans le calcul du taux de présence.</li>
-            <li>Les données de présence sont structurées par date → session → apprenant.</li>
-            <li>Il est possible de modifier une présence déjà enregistrée en rechargeant la même date.</li>
-        </ul>
-
-        <div class="wireframe">┌─────────────────────────────────────────────────────────────────┐
-│  Suivi de Présence                                               │
-├──────────────────────────────────────────────────────────────────┤
-│  Date: [15/04/2026]   Session: [Marketing Digital ▼]   [Charger]│
-├──────────────────────────────────────────────────────────────────┤
-│  Liste d'appel              [✓ 40 Présents] [✗ 7 Absents]        │
-├────────────────┬────────────────┬──────────────┬────────────────┤
-│  Apprenant     │  Statut         │  Heure/Note  │  Actions       │
-├────────────────┼────────────────┼──────────────┼────────────────┤
-│  Sophie Martin │ [✓Présent]      │              │  [P] [A] [R]   │
-│  Lucas Bernard │ [✗Absent]       │              │  [P] [A] [R]   │
-│  Emma Thomas   │ [~Retard]       │  09:15       │  [P] [A] [R]   │
-├────────────────┴────────────────┴──────────────┴────────────────┤
-│                                               [💾 Enregistrer]   │
-└─────────────────────────────────────────────────────────────────┘</div>
-
-        <!-- 2.3 APPRENANTS -->
-        <h3 id="s2-3">2.3 Module — Gestion des Apprenants</h3>
-        <p>Gestion complète (CRUD) des fiches apprenants.</p>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Fonctionnalité</th>
-                    <th>Description</th>
-                    <th>Priorité</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Grille des apprenants</td>
-                    <td>Affichage en grille responsive de cartes par apprenant (avatar, nom, groupe).</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Recherche dynamique</td>
-                    <td>Filtrage en temps réel par nom ou groupe, sans rechargement de page.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Filtrage par groupe</td>
-                    <td>Menu déroulant pour n'afficher qu'un groupe spécifique.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Ajout d'apprenant</td>
-                    <td>Formulaire modal avec champs : Nom complet*, Email, Groupe, Photo (upload).</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Modification</td>
-                    <td>Pré-remplissage du modal avec les données existantes pour édition.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Suppression avec confirmation</td>
-                    <td>Dialogue de confirmation avant suppression définitive d'un apprenant.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Photo de profil</td>
-                    <td>Upload d'image, encodée en base64 et stockée localement. Avatar généré par initiales si absent.</td>
-                    <td><span class="badge badge-p3">P3 — Souhaitable</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h4>Champs du profil apprenant :</h4>
-        <ul>
-            <li><strong>id</strong> : Identifiant unique généré automatiquement</li>
-            <li><strong>name</strong> : Nom complet (obligatoire)</li>
-            <li><strong>email</strong> : Adresse email (optionnel)</li>
-            <li><strong>group</strong> : Nom du groupe/session (optionnel, avec auto-complétion)</li>
-            <li><strong>photo</strong> : Image encodée base64 (optionnel)</li>
-            <li><strong>createdAt</strong> : Date de création (automatique)</li>
-        </ul>
-
-        <!-- 2.4 STATISTIQUES -->
-        <h3 id="s2-4">2.4 Module — Statistiques et Export</h3>
-        <p>Analyse des données de présence avec visualisation graphique et export.</p>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Fonctionnalité</th>
-                    <th>Description</th>
-                    <th>Priorité</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Graphique circulaire</td>
-                    <td>Donut chart CSS (conic-gradient) affichant le taux de présence global, coloré selon le seuil (vert ≥80%, orange ≥50%, rouge &lt;50%).</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Tableau de rapport par apprenant</td>
-                    <td>Tableau listant pour chaque apprenant : taux de présence (barre visuelle), nombre de présences, absences, retards.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Export CSV</td>
-                    <td>Téléchargement d'un fichier CSV contenant les statistiques de tous les apprenants.</td>
-                    <td><span class="badge badge-p1">P1 — Critique</span></td>
-                </tr>
-                <tr>
-                    <td>Export PDF</td>
-                    <td>Génération d'un PDF de rapport via jsPDF, avec en-tête, date et tableau détaillé par apprenant.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- 2.5 PARAMÈTRES -->
-        <h3 id="s2-5">2.5 Module — Paramètres</h3>
-        <p>Configuration, gestion des données et outils de maintenance.</p>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Fonctionnalité</th>
-                    <th>Description</th>
-                    <th>Priorité</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Export de sauvegarde (JSON)</td>
-                    <td>Téléchargement de l'intégralité des données (apprenants + présences) en fichier JSON horodaté.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Import de sauvegarde</td>
-                    <td>Restauration complète depuis un fichier JSON précédemment exporté.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Génération de données démo</td>
-                    <td>Peuplement automatique avec 48 apprenants fictifs répartis en 2 groupes (Marketing Digital : 27, Dév. Web : 21) et 5 jours d'historique de présences.</td>
-                    <td><span class="badge badge-p3">P3 — Souhaitable</span></td>
-                </tr>
-                <tr>
-                    <td>Réinitialisation complète</td>
-                    <td>Suppression de toutes les données après double confirmation utilisateur. Action irréversible.</td>
-                    <td><span class="badge badge-p2">P2 — Important</span></td>
-                </tr>
-                <tr>
-                    <td>Mode sombre / clair</td>
-                    <td>Bascule entre thème clair et thème sombre, accessible depuis la navigation latérale. Persistance en localStorage.</td>
-                    <td><span class="badge badge-p3">P3 — Souhaitable</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- ============================================================
-         SECTION 3 — ARCHITECTURE TECHNIQUE
-    ============================================================ -->
-    <div class="section" id="s3">
-        <h2 class="section-title"><span class="num">3</span> Architecture technique</h2>
-
-        <h3>3.1 Choix technologiques</h3>
-        <p>L'application adopte une approche <strong>zéro dépendance de framework</strong> pour maximiser la portabilité et minimiser les points de défaillance.</p>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Composant</th>
-                    <th>Technologie</th>
-                    <th>Justification</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Structure</td>
-                    <td><span class="badge badge-tech">HTML5</span></td>
-                    <td>Sémantique, accessible, universel</td>
-                </tr>
-                <tr>
-                    <td>Style</td>
-                    <td><span class="badge badge-tech">CSS3 Vanilla</span></td>
-                    <td>Variables CSS, transitions, responsive sans framework</td>
-                </tr>
-                <tr>
-                    <td>Logique</td>
-                    <td><span class="badge badge-tech">JavaScript ES6+ Vanilla</span></td>
-                    <td>Modules objet (singleton pattern), sans dépendance</td>
-                </tr>
-                <tr>
-                    <td>Persistance</td>
-                    <td><span class="badge badge-tech">localStorage</span></td>
-                    <td>Données persistantes côté client, sans serveur</td>
-                </tr>
-                <tr>
-                    <td>Icônes</td>
-                    <td><span class="badge badge-tech">Phosphor Icons</span></td>
-                    <td>Library légère, complète, chargée via CDN</td>
-                </tr>
-                <tr>
-                    <td>Export PDF</td>
-                    <td><span class="badge badge-tech">jsPDF 2.5.1</span></td>
-                    <td>Génération PDF client-side, éprouvée</td>
-                </tr>
-                <tr>
-                    <td>Capture HTML</td>
-                    <td><span class="badge badge-tech">html2canvas 1.4.1</span></td>
-                    <td>Rendu HTML vers image pour intégration PDF</td>
-                </tr>
-                <tr>
-                    <td>Police</td>
-                    <td><span class="badge badge-tech">Inter (Google Fonts)</span></td>
-                    <td>Lisibilité optimale pour interfaces de données</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>3.2 Architecture des fichiers</h3>
-        <div class="wireframe">suivi/
-├── index.html              ← Point d'entrée unique de l'application
-├── css/
-│   ├── styles.css          ← Design system : variables, layout, composants UI
-│   ├── components.css      ← Composants spécifiques (modals, tables, toasts)
-│   └── responsive.css      ← Media queries et adaptations mobiles
-└── js/
-    ├── app.js              ← Point d'entrée JS — navigation, paramètres
-    ├── data.js             ← Couche données — CRUD localStorage, migrations
-    ├── students.js         ← Module apprenants — CRUD + rendu cartes
-    ├── attendance.js       ← Module présences — appel, enregistrement
-    ├── statistics.js       ← Module stats — calculs, graphiques, exports
-    └── ui.js               ← Utilitaires UI — modals, toasts, thème, avatars</div>
-
-        <h3>3.3 Architecture des données (localStorage)</h3>
-        <p>Clé de stockage : <code>suivi_apprenants_data</code></p>
-        <div class="wireframe">{
-  "students": [
-    {
-      "id": "string (unique)",
-      "name": "string",
-      "email": "string | null",
-      "group": "string | null",
-      "photo": "base64 string | null",
-      "createdAt": "ISO 8601 datetime"
-    }
-  ],
-  "attendance": {
-    "YYYY-MM-DD": {
-      "sessionId": {
-        "studentId": {
-          "status": "present | absent | late",
-          "note": "string"
-        }
-      }
-    }
-  },
-  "sessions": [
-    { "id": "string", "name": "string" }
-  ],
-  "settings": {}
-}</div>
-
-        <h3>3.4 Pattern d'architecture JS</h3>
-        <p>Chaque module est un objet singleton exposé globalement. L'ordre de chargement des scripts garantit les dépendances :</p>
-        <div class="wireframe">ui.js → data.js → students.js → attendance.js → statistics.js → app.js
-         ↑                                                                            ↑
-   (dépendance de tous les modules)                                    (point d'entrée, initialise tout)</div>
-    </div>
-
-    <!-- ============================================================
-         SECTION 4 — CONCEPTION UX/UI
-    ============================================================ -->
-    <div class="section" id="s4">
-        <h2 class="section-title"><span class="num">4</span> Conception UX/UI</h2>
-
-        <h3>4.1 Layout général</h3>
-        <p>L'interface adopte un layout <strong>sidebar + main content</strong> standard pour les tableaux de bord professionnels :</p>
-        <div class="wireframe">┌─────────────────────────────────────────────────────────────────┐
-│ SIDEBAR (280px fixe)       MAIN CONTENT (flex, max 1400px)      │
-│ ┌──────────────┐           ┌──────────────────────────────────┐  │
-│ │ 🎓 Suivi     │           │  En-tête de page                  │  │
-│ │  Apprenants  │           │  (titre + sous-titre)             │  │
-│ ├──────────────┤           ├──────────────────────────────────┤  │
-│ │ ⬜ Dashboard  │           │                                   │  │
-│ │ ☑ Présence   │           │   CONTENU DYNAMIQUE               │  │
-│ │ 👥 Apprenants│           │   (section active)                │  │
-│ │ 📊 Stats     │           │                                   │  │
-│ │ ⚙ Paramètres │           │                                   │  │
-│ ├──────────────┤           └──────────────────────────────────┘  │
-│ │ 🌙 Mode sombre│                                                  │
-│ └──────────────┘                                                  │
-└─────────────────────────────────────────────────────────────────┘</div>
-
-        <h3>4.2 Système de design</h3>
-
-        <div class="two-col">
-            <div class="card-mini">
-                <h4>Palette de couleurs — Thème Clair</h4>
-                <p><strong>Primaire :</strong> Indigo (#4F46E5)<br>
-                <strong>Fond :</strong> Blanc / Gris très clair<br>
-                <strong>Texte :</strong> #1F2937 / #6B7280<br>
-                <strong>Succès :</strong> #10B981 (vert émeraude)<br>
-                <strong>Danger :</strong> #EF4444 (rouge)<br>
-                <strong>Avertissement :</strong> #F59E0B (ambre)</p>
-            </div>
-            <div class="card-mini">
-                <h4>Palette de couleurs — Thème Sombre</h4>
-                <p><strong>Fond principal :</strong> #0F172A (slate 900)<br>
-                <strong>Fond secondaire :</strong> #1E293B (slate 800)<br>
-                <strong>Texte :</strong> #F1F5F9 / #CBD5E1<br>
-                <strong>Bordures :</strong> #334155 (slate 700)<br>
-                <strong>Primaire :</strong> Indigo 400 (#818CF8)</p>
-            </div>
-        </div>
-
-        <h4>Typographie</h4>
-        <ul>
-            <li><strong>Police :</strong> Inter (Google Fonts) — poids 300, 400, 500, 600, 700</li>
-            <li><strong>Taille de base :</strong> 16px / line-height 1.6</li>
-            <li><strong>Titres de page :</strong> 2rem, weight 700</li>
-            <li><strong>Valeurs KPI :</strong> 2.5rem, weight 700</li>
-            <li><strong>Labels :</strong> 0.875rem, weight 500</li>
-        </ul>
-
-        <h4>Espacements (système 8pt)</h4>
-        <ul>
-            <li>xs : 4px | sm : 8px | md : 16px | lg : 24px | xl : 32px | 2xl : 48px</li>
-        </ul>
-
-        <h4>Rayons de bordure</h4>
-        <ul>
-            <li>sm : 6px | md : 8px | lg : 12px | xl : 16px | full : 9999px</li>
-        </ul>
-
-        <h3>4.3 Composants UI</h3>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Composant</th>
-                    <th>Variantes</th>
-                    <th>Usage</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Bouton (btn)</td>
-                    <td>Primary, Secondary, Danger, Ghost, Success + tailles SM/MD/LG</td>
-                    <td>Actions principales et secondaires</td>
-                </tr>
-                <tr>
-                    <td>Carte (card)</td>
-                    <td>Standard, Stat Card (avec barre colorée gauche)</td>
-                    <td>Conteneur de sections et KPIs</td>
-                </tr>
-                <tr>
-                    <td>Badge</td>
-                    <td>Present (vert), Absent (rouge), Late (jaune), Info (bleu)</td>
-                    <td>Statuts de présence</td>
-                </tr>
-                <tr>
-                    <td>Modal</td>
-                    <td>Standard avec overlay, en-tête, corps, pied</td>
-                    <td>Formulaires ajout/édition apprenant</td>
-                </tr>
-                <tr>
-                    <td>Toast</td>
-                    <td>Success, Error, Info — apparition/disparition animée</td>
-                    <td>Notifications d'actions</td>
-                </tr>
-                <tr>
-                    <td>Tableau</td>
-                    <td>Responsive avec container scrollable, zébrures</td>
-                    <td>Liste d'appel, statistiques</td>
-                </tr>
-                <tr>
-                    <td>Avatar</td>
-                    <td>Photo (base64) ou initiales générées + SM/MD/LG</td>
-                    <td>Cartes apprenants</td>
-                </tr>
-                <tr>
-                    <td>Champ de recherche</td>
-                    <td>Icône intégrée à gauche</td>
-                    <td>Filtre apprenants</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>4.4 Responsive Design</h3>
-        <div class="two-col">
-            <div class="card-mini">
-                <h4>Desktop (≥ 1024px)</h4>
-                <ul>
-                    <li>Sidebar fixe de 280px</li>
-                    <li>Grille apprenants : 3 colonnes</li>
-                    <li>Stats grid : 3 KPIs en ligne</li>
-                </ul>
-            </div>
-            <div class="card-mini">
-                <h4>Mobile / Tablette (&lt; 768px)</h4>
-                <ul>
-                    <li>Sidebar rétractable (hamburger)</li>
-                    <li>Grille apprenants : 1 colonne</li>
-                    <li>Stats grid : 1 KPI par ligne</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         SECTION 5 — DONNÉES ET PERSISTANCE
-    ============================================================ -->
-    <div class="section" id="s5">
-        <h2 class="section-title"><span class="num">5</span> Données et persistance</h2>
-
-        <h3>5.1 Stratégie de stockage</h3>
-        <p>
-            L'application utilise exclusivement le <strong>localStorage du navigateur</strong> comme mécanisme de persistance.
-            Aucun serveur, aucune base de données externe, aucune connexion réseau ne sont nécessaires pour le fonctionnement nominal.
-        </p>
-        <div class="info-box blue">
-            <strong>Capacité :</strong> Le localStorage offre typiquement 5 à 10 Mo par domaine.
-            Pour 48 apprenants avec photos base64 (≈ 50 Ko/photo), la limite peut être atteinte.
-            Sans photos, les données textuelles de milliers d'apprenants restent dans les limites.
-        </div>
-
-        <h3>5.2 Initialisation</h3>
-        <ul>
-            <li><strong>Première visite :</strong> Génération automatique de données de démonstration (48 apprenants, 2 groupes, 5 jours de présences).</li>
-            <li><strong>Visite suivante :</strong> Chargement depuis localStorage avec validation de structure.</li>
-            <li><strong>Données corrompues :</strong> Détection automatique, réinitialisation et régénération des données démo.</li>
-        </ul>
-
-        <h3>5.3 Sauvegarde et restauration</h3>
-        <ul>
-            <li><strong>Export JSON :</strong> Téléchargement d'un snapshot complet nommé <code>suivi_backup_YYYY-MM-DD.json</code></li>
-            <li><strong>Import JSON :</strong> Restauration avec validation du format avant écrasement des données actuelles</li>
-            <li><strong>Portabilité :</strong> Un fichier de sauvegarde peut être importé sur n'importe quel appareil/navigateur</li>
-        </ul>
-
-        <h3>5.4 Sécurité et confidentialité</h3>
-        <div class="info-box yellow">
-            <strong>Important :</strong> Les données sont stockées en clair dans le localStorage du navigateur.
-            Il est déconseillé de stocker des données personnelles sensibles sans protection supplémentaire.
-            L'application est à usage local — le formateur est responsable de la sécurité de son poste.
-        </div>
-    </div>
-
-    <!-- ============================================================
-         SECTION 6 — EXIGENCES NON-FONCTIONNELLES
-    ============================================================ -->
-    <div class="section" id="s6">
-        <h2 class="section-title"><span class="num">6</span> Contraintes et exigences non-fonctionnelles</h2>
-
-        <h3>6.1 Performance</h3>
-        <ul>
-            <li>Chargement initial en moins de 2 secondes sur connexion standard (bibliothèques CDN mises en cache).</li>
-            <li>Rendu des listes de 50+ apprenants sans délai perceptible.</li>
-            <li>Aucune latence réseau pour les opérations de lecture/écriture (tout en mémoire + localStorage).</li>
-        </ul>
-
-        <h3>6.2 Compatibilité navigateurs</h3>
-        <ul>
-            <li>Chrome 90+ / Edge 90+ / Firefox 88+ / Safari 14+</li>
-            <li>Aucun support requis pour Internet Explorer.</li>
-            <li>Fonctionnement hors-ligne une fois la page chargée (sauf rechargement des CDN).</li>
-        </ul>
-
-        <h3>6.3 Accessibilité</h3>
-        <ul>
-            <li>Navigation clavier fonctionnelle (focus visible, tabindex).</li>
-            <li>Contraste de couleurs conforme aux recommandations WCAG AA.</li>
-            <li>Labels explicites sur tous les champs de formulaire.</li>
-        </ul>
-
-        <h3>6.4 Expérience utilisateur</h3>
-        <ul>
-            <li>Retour visuel immédiat pour toute action (toast de confirmation).</li>
-            <li>Double confirmation pour les actions destructives (suppression, réinitialisation).</li>
-            <li>Animation de transition pour les changements d'état (fade-in, slide-in).</li>
-            <li>Mode sombre disponible pour usage en environnement peu éclairé.</li>
-        </ul>
-
-        <h3>6.5 Maintenabilité</h3>
-        <ul>
-            <li>Code organisé en modules distincts à responsabilité unique (SRP).</li>
-            <li>Mécanisme de migration de données prévu pour les évolutions futures du schéma.</li>
-            <li>Variables CSS centralisées pour faciliter la personnalisation du thème.</li>
-        </ul>
-    </div>
-
-    <!-- ============================================================
-         SECTION 7 — LIVRABLES
-    ============================================================ -->
-    <div class="section" id="s7">
-        <h2 class="section-title"><span class="num">7</span> Livrables</h2>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Livrable</th>
-                    <th>Format</th>
-                    <th>Statut</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Application web</td>
-                    <td>HTML/CSS/JS</td>
-                    <td><span class="badge badge-done">✓ Réalisé</span></td>
-                    <td>Code source complet, fonctionnel, testable en ouvrant index.html</td>
-                </tr>
-                <tr>
-                    <td>Cahier de charges</td>
-                    <td>HTML (imprimable PDF)</td>
-                    <td><span class="badge badge-done">✓ Réalisé</span></td>
-                    <td>Ce document — spécifications complètes du projet</td>
-                </tr>
-                <tr>
-                    <td>Maquette Figma</td>
-                    <td>Guide + Kit Figma</td>
-                    <td><span class="badge badge-wip">À réaliser</span></td>
-                    <td>Guide détaillé fourni dans figma_guide.html</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>Structure des sources</h3>
-        <div class="wireframe">suivi/
-├── index.html                  ← Application complète
-├── cahier_de_charges.html      ← Ce document
-├── figma_guide.html            ← Guide de création de la maquette Figma
-├── css/
-│   ├── styles.css
-│   ├── components.css
-│   └── responsive.css
-└── js/
-    ├── app.js
-    ├── data.js
-    ├── students.js
-    ├── attendance.js
-    ├── statistics.js
-    └── ui.js</div>
-    </div>
-
-    <!-- ============================================================
-         SECTION 8 — GLOSSAIRE
-    ============================================================ -->
-    <div class="section" id="s8">
-        <h2 class="section-title"><span class="num">8</span> Glossaire</h2>
-
-        <table class="feature-table">
-            <thead>
-                <tr>
-                    <th>Terme</th>
-                    <th>Définition</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Apprenant</strong></td>
-                    <td>Étudiant ou stagiaire inscrit dans une formation, dont on suit la présence.</td>
-                </tr>
-                <tr>
-                    <td><strong>Session</strong></td>
-                    <td>Groupe d'apprenants suivant une même formation (ex. "Marketing Digital").</td>
-                </tr>
-                <tr>
-                    <td><strong>Présent</strong></td>
-                    <td>Apprenant arrivé dans les délais lors d'une journée de formation.</td>
-                </tr>
-                <tr>
-                    <td><strong>Absent</strong></td>
-                    <td>Apprenant non présent lors d'une journée de formation.</td>
-                </tr>
-                <tr>
-                    <td><strong>Retard</strong></td>
-                    <td>Apprenant arrivé après l'heure prévue. Compté comme présent dans le taux global.</td>
-                </tr>
-                <tr>
-                    <td><strong>Taux de présence</strong></td>
-                    <td>Ratio (Présents + Retards) / Total des enregistrements, exprimé en pourcentage.</td>
-                </tr>
-                <tr>
-                    <td><strong>KPI</strong></td>
-                    <td>Key Performance Indicator — indicateur clé de performance affiché sur le tableau de bord.</td>
-                </tr>
-                <tr>
-                    <td><strong>SPA</strong></td>
-                    <td>Single Page Application — application web dont la navigation se fait sans rechargement complet de la page.</td>
-                </tr>
-                <tr>
-                    <td><strong>localStorage</strong></td>
-                    <td>Mécanisme de stockage côté navigateur, persistant entre les sessions, limité à 5-10 Mo.</td>
-                </tr>
-                <tr>
-                    <td><strong>Base64</strong></td>
-                    <td>Format d'encodage d'images binaires en texte, permettant le stockage dans localStorage.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- ===========================
-         SECTION 8 — DIAGRAMMES UML
-    ============================ -->
-    <div class="section">
-        <h2 class="section-title">8. Diagrammes UML</h2>
-
-        <!-- 8.1 Use Case -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.1 Diagramme des cas d'utilisation</h3>
-        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Interactions entre les 3 acteurs du système : Super Admin (Vanio), Administrateur École et Formateur.
-        </p>
-        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
-flowchart LR
-    SA([👑 Super Admin\nVanio]) --- SA1 & SA2 & SA3
-
-    A([👤 Admin\nÉcole]) --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8 & UC9
-
-    B([👤 Formateur]) --- UC6 & UC10 & UC11
-
-    subgraph sys ["🖥️ Système EducTrack"]
-        SA1["S'inscrire / Payer\nl'abonnement"]
-        SA2["Se connecter\n(login.html)"]
-        SA3["—"]
-        UC1["Gérer les formations"]
-        UC2["Gérer les apprenants\n+ Import PDF"]
-        UC3["Gérer les formateurs\n+ Générer lien"]
-        UC4["Faire l'appel"]
-        UC5["Consulter statistiques"]
-        UC6["Enregistrer présences"]
-        UC7["Exporter listes PDF/CSV"]
-        UC8["Configurer paramètres"]
-        UC9["Voir super admin"]
-        UC10["Accéder via lien token"]
-        UC11["Voir sa liste d'appel"]
-    end
-
-    subgraph sadm ["🛡️ Super Admin"]
-        SA2
-        SA1
-        SAV["Voir toutes les\nécoles inscrites"]
-        SAC["Activer / Suspendre\nun abonnement"]
-    end
-
-    SA --- SAV & SAC
-
-    style sys fill:#EEF2FF,stroke:#6366F1,stroke-width:2px
-    style sadm fill:#FDF4FF,stroke:#A855F7,stroke-width:2px
-    style SA fill:#A855F7,color:#fff,stroke:none
-    style A fill:#6366F1,color:#fff,stroke:none
-    style B fill:#10B981,color:#fff,stroke:none
-        </div>
-
-        <!-- 8.2 Diagramme de classes -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.2 Diagramme de classes — Modèle de données complet</h3>
-        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Structure de la base de données MySQL (Railway) — version finale avec multi-école et authentification.
-        </p>
-        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
-classDiagram
-    class School {
-        +String id
-        +String name
-        +String email
-        +String phone
-        +String responsible_name
-        +String responsible_contact
-        +String password_hash
-        +String subscription_status
-        +Date subscription_expires
-        +String payment_ref
-        +DateTime created_at
-    }
-
-    class Formation {
-        +String id
-        +String name
-        +String description
-        +String group_name
-        +Date start_date
-        +Date end_date
-        +String school_id
-        +DateTime created_at
-    }
-
-    class Formateur {
-        +String id
-        +String name
-        +String email
-        +String formation_id
-        +String token
-        +String school_id
-        +DateTime created_at
-    }
-
-    class Student {
-        +String id
-        +String name
-        +String email
-        +String group
-        +LongText photo
-        +String school_id
-        +DateTime created_at
-    }
-
-    class Attendance {
-        +BigInt id
-        +Date date
-        +String session_id
-        +String student_id
-        +String status
-        +Text note
-        +String school_id
-    }
-
-    class FormateurPresence {
-        +BigInt id
-        +Date date
-        +String formateur_id
-        +String status
-        +Text note
-    }
-
-    class Session {
-        +String id
-        +String name
-        +String school_id
-    }
-
-    School "1" --> "0..*" Formation    : possède
-    School "1" --> "0..*" Student      : inscrit
-    School "1" --> "0..*" Formateur    : emploie
-    School "1" --> "0..*" Session      : gère
-    Formation "1" --> "0..*" Formateur : assigne
-    Formation "1" --> "1"   Session    : sync
-    Formateur "1" --> "0..*" FormateurPresence : suivi
-    Student   "0..*" --> "0..*" Attendance     : enregistre
-    Session   "1"    --> "0..*" Attendance     : regroupe
-        </div>
-
-        <!-- 8.3 Séquence : Inscription + Paiement -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.3 Diagramme de séquence — Inscription d'un établissement</h3>
-        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Flux complet d'inscription : formulaire → paiement FedaPay → activation → envoi des identifiants par email.
-        </p>
-        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
-sequenceDiagram
-    actor E as Établissement
-    participant R as register.html
-    participant API as Vercel API
-    participant FP as FedaPay
-    participant DB as Railway MySQL
-    participant BR as Brevo (Email)
-
-    E->>R: Remplit le formulaire d'inscription
-    R->>API: POST /api/register { nom, email, ... }
-    API->>DB: INSERT schools (status=pending)
-    API->>FP: Crée transaction XOF
-    FP-->>API: token transaction
-    API-->>R: { mode:'fedapay', token }
-    R->>FP: Ouvre modal paiement (MTN/Moov/Visa)
-    E->>FP: Effectue le paiement
-    FP->>API: Callback /api/activate-school?id=TX&status=approved
-    API->>DB: UPDATE schools SET status='active'
-    API->>BR: POST /api/send-email (identifiants)
-    BR-->>E: Email avec login + mot de passe
-    API-->>R: Redirect /login.html?registered=1
-    E->>R: Se connecte avec ses identifiants
-        </div>
-
-        <!-- 8.4 Séquence : Présence Formateur -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.4 Diagramme de séquence — Appel de présence (Formateur)</h3>
-        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Flux d'enregistrement des présences depuis l'espace formateur (accès par token unique).
-        </p>
-        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB;margin-bottom:32px">
-sequenceDiagram
-    actor F as Formateur
-    participant T as trainer.html
-    participant API as Vercel API
-    participant DB as Railway MySQL
-    actor A as Admin École
-
-    F->>T: Ouvre lien token unique
-    T->>API: GET /api/formateurs?token=xxx
-    API->>DB: SELECT formateur + students (school_id)
-    DB-->>API: Données
-    API-->>T: formateur + liste apprenants
-    T-->>F: Affiche liste d'appel
-
-    F->>T: Coche P/A/R pour chaque apprenant
-    F->>T: Clique Enregistrer
-    T->>API: POST /api/attendance { date, session_id, records }
-    API->>DB: UPSERT attendance (school_id tagué)
-    DB-->>API: OK
-    API-->>T: saved: true
-    T-->>F: Confirmation toast
-
-    Note over A,DB: Côté Admin — en temps réel
-    A->>API: GET /api/attendance?date=&session=
-    API->>DB: SELECT avec school_id filter
-    DB-->>API: Enregistrements
-    API-->>A: Rapport complet
-        </div>
-
-        <!-- 8.5 Déploiement -->
-        <h3 style="font-size:1.1rem;font-weight:700;color:#374151;margin:0 0 12px">8.5 Diagramme de déploiement — Architecture finale</h3>
-        <p style="color:#6B7280;margin-bottom:20px;font-size:0.9rem">
-            Infrastructure complète : PWA multi-école, API serverless, base MySQL, email transactionnel et paiement mobile.
-        </p>
-        <div class="mermaid" style="background:#F9FAFB;border-radius:12px;padding:24px;border:1px solid #E5E7EB">
-flowchart TD
-    subgraph client ["📱 Client PWA (Navigateur / Mobile)"]
-        UI["index.html · login.html · register.html\ntrainer.html · superadmin.html"]
-    end
-
-    subgraph vercel ["☁️ Vercel (Serverless — 11 fonctions)"]
-        A1["/api/login"]
-        A2["/api/register · /api/activate-school"]
-        A3["/api/students · /api/attendance"]
-        A4["/api/formations · /api/formateurs"]
-        A5["/api/sessions · /api/send-email"]
-        A6["/api/superadmin · /api/init-db"]
-    end
-
-    subgraph railway ["🚂 Railway (MySQL)"]
-        DB[("schools · students\nformations · formateurs\nattendance · sessions\nformateur_presence")]
-    end
-
-    subgraph brevo ["📧 Brevo"]
-        SMTP["Email transactionnel\n(identifiants + liens formateur)"]
-    end
-
-    subgraph fedapay ["💳 FedaPay"]
-        PAY["Paiement MTN MoMo\nMoov Money · Visa/MC"]
-    end
-
-    UI -->|"HTTPS + Bearer JWT"| A1 & A2 & A3 & A4 & A5 & A6
-    A1 & A3 & A4 & A6 -->|"mysql2 + school_id filter"| DB
-    A2 -->|"mysql2"| DB
-    A5 -->|"REST API"| SMTP
-    A2 -->|"REST API"| PAY
-
-    style client fill:#EEF2FF,stroke:#6366F1
-    style vercel fill:#F0FDF4,stroke:#10B981
-    style railway fill:#FFF7ED,stroke:#F59E0B
-    style brevo fill:#FDF4FF,stroke:#A855F7
-    style fedapay fill:#FEF3C7,stroke:#D97706
-        </div>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="doc-footer">
-        <p>Cahier de Charges — EducTrack v3.0 — Mai 2026</p>
-        <p>Document généré le 30 mai 2026 · Pour impression : Fichier → Imprimer → Enregistrer en PDF</p>
-    </div>
-
+<!-- COVER -->
+<div class="page cover">
+  <span class="badge">DOCUMENT OFFICIEL · 2025–2026 · v1.1</span>
+  <h1>EducTrack</h1>
+  <div class="sub">Application de suivi des apprenants</div>
+  <div class="doctype">Cahier des Charges Technique et Fonctionnel</div>
+  <blockquote>Ce document définit l'ensemble des exigences fonctionnelles et techniques du projet EducTrack, couvrant l'architecture, les API, la base de données, la sécurité, la tarification et les contraintes de déploiement.</blockquote>
+  <div class="footer">
+    <div class="line"></div>
+    <div>Rédigé par <b>GBEKE GODIS CHANA A. HERVANIO</b></div>
+    <div><b>École des Métiers Numériques du Bénin</b></div>
+    <div>Année académique <b>2025–2026</b></div>
+    <div>Production → <b>eductrack-app.vercel.app</b></div>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({ startOnLoad: true, theme: 'neutral', fontFamily: 'Segoe UI, Arial, sans-serif' });</script>
+<!-- TOC -->
+<div class="page">
+  <h2 class="stitle">Table des Matières<span class="sub">Structure du document · 18 sections</span></h2>
+  <div class="toc">
+    <ol>
+      <li><a>1. Présentation du Projet</a><span>3</span></li>
+      <li><a>2. Objectifs et Périmètre</a><span>3</span></li>
+      <li><a>3. Acteurs et Rôles</a><span>4</span></li>
+      <li><a>4. Exigences Fonctionnelles</a><span>5</span></li>
+      <li><a>5. Exigences Non Fonctionnelles</a><span>6</span></li>
+      <li><a>6. Architecture Technique</a><span>7</span></li>
+      <li><a>7. Stack Technologique</a><span>7</span></li>
+      <li><a>8. Modèle de Données (MCD)</a><span>8</span></li>
+      <li><a>9. Spécification des API REST</a><span>9</span></li>
+      <li><a>10. Sécurité et Authentification</a><span>11</span></li>
+      <li><a>11. Progressive Web App (PWA)</a><span>12</span></li>
+      <li><a>12. Interface Utilisateur</a><span>13</span></li>
+      <li><a>13. Gestion Multi-Établissements</a><span>14</span></li>
+      <li><a>14. Tarification et Paiement</a><span>14</span></li>
+      <li><a>15. Import et Export de Données</a><span>15</span></li>
+      <li><a>16. Déploiement et Infrastructure</a><span>15</span></li>
+      <li><a>17. Tests et Validation</a><span>16</span></li>
+      <li><a>18. Contraintes, Limites et Évolutions</a><span>17</span></li>
+    </ol>
+  </div>
+  <div class="info"><b>Objet du document :</b> Ce cahier des charges décrit de façon exhaustive les spécifications fonctionnelles et techniques d'EducTrack. Il sert de référence pour le développement, la validation et la maintenance de l'application.</div>
+  <h3>Historique des révisions</h3>
+  <table>
+    <tr><th>Version</th><th>Date</th><th>Auteur</th><th>Modifications</th></tr>
+    <tr><td>v0.1</td><td>Oct. 2025</td><td>GBEKE H.</td><td>Rédaction initiale (besoins et périmètre)</td></tr>
+    <tr><td>v0.5</td><td>Déc. 2025</td><td>GBEKE H.</td><td>Ajout spécifications API et MCD complet</td></tr>
+    <tr><td>v0.9</td><td>Fév. 2026</td><td>GBEKE H.</td><td>Intégration PWA, sécurité et multi-écoles</td></tr>
+    <tr><td>v1.0</td><td>Mai 2026</td><td>GBEKE H.</td><td>Version finale validée, mise en production</td></tr>
+    <tr><td><b>v1.1</b></td><td><b>Août 2026</b></td><td>GBEKE H.</td><td><b>Tarification unique 20$US/an, sélection pays + langue à l'inscription, gestion de l'expiration d'abonnement automatisée, correction du périmètre paiement (déjà implémenté et non plus hors-scope)</b></td></tr>
+  </table>
+</div>
+
+<!-- SECTION 1 & 2 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">1</span>Présentation et Objectifs<span class="sub">Contexte, vision produit et périmètre fonctionnel</span></h2>
+  <h3>1.1 Contexte</h3>
+  <p>Les établissements de formation professionnelle en Afrique de l'Ouest gèrent encore majoritairement les présences de leurs apprenants sur papier ou via des tableurs non adaptés. Cette situation engendre des pertes de données, une absence de vision analytique et une charge administrative élevée pour les responsables pédagogiques.</p>
+  <h3>1.2 Solution proposée</h3>
+  <p>EducTrack est une application web progressive (PWA) multi-établissements dédiée au suivi des apprenants. Elle centralise la gestion des présences, des formations, des formateurs et des statistiques pédagogiques dans un outil unique, accessible depuis tout appareil connecté sans installation préalable. Le produit cible en priorité le Bénin, la Côte d'Ivoire et le Togo, avec une ouverture au marché anglophone (Nigéria, Ghana).</p>
+  <div class="grid2">
+    <div class="box"><b>TYPE</b>PWA SaaS<br><span>Multi-établissements, cloud-native, sans installation</span></div>
+    <div class="box"><b>DÉPLOIEMENT</b>Vercel<br><span>Serverless, CI/CD GitHub, HTTPS natif</span></div>
+    <div class="box"><b>BASE DE DONNÉES</b>MySQL 8<br><span>Railway, pool de connexions mysql2</span></div>
+    <div class="box"><b>PRODUCTION</b>En ligne<br><span>eductrack-app.vercel.app</span></div>
+  </div>
+  <h3 style="margin-top:18px;font-size:13pt">2 · Objectifs et Périmètre</h3>
+  <h3>2.2 Périmètre inclus</h3>
+  <p>Authentification multi-rôles (JWT), gestion CRUD apprenants/formations/formateurs, saisie des présences avec historique, tableau de bord analytique, export CSV et PDF, PWA installable, mode sombre/clair, interface formateur dédiée, super-administration multi-écoles, gestion des abonnements avec expiration automatique, <b>paiement en ligne (FedaPay : carte bancaire et mobile money MTN/Moov, zone UEMOA)</b>, <b>sélection obligatoire du pays et de la langue (Français/Anglais) à l'inscription</b>.</p>
+  <h3>2.3 Périmètre exclu (hors scope v1.0)</h3>
+  <p>Notifications push, QR code pour l'appel, application mobile native Flutter, intelligence artificielle prédictive, OCR sur PDFs scannés, gestion des notes et bulletins scolaires, moyens de paiement spécifiques au Nigéria/Ghana (Paystack/Flutterwave), traités pour l'instant via le même circuit XOF FedaPay.</p>
+</div>
+
+<!-- SECTION 3 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">3</span>Acteurs et Rôles<span class="sub">Définition des profils utilisateurs et de leurs droits</span></h2>
+  <table>
+    <tr><th>Acteur</th><th>Interface</th><th>Authentification</th><th>Périmètre de données</th></tr>
+    <tr><td>Super Administrateur</td><td>superadmin.html</td><td>Identifiants fixes (env)</td><td>Tous les établissements</td></tr>
+    <tr><td>Administrateur École</td><td>index.html</td><td>Email + mot de passe / JWT</td><td>Son établissement uniquement</td></tr>
+    <tr><td>Formateur</td><td>trainer.html</td><td>Token dédié haché</td><td>Ses formations assignées uniquement</td></tr>
+  </table>
+  <h3>3.1 Super Administrateur</h3>
+  <div class="grid2">
+    <div class="box"><b>CRÉATION</b><span>Crée de nouveaux établissements avec nom, email, responsable et mot de passe généré automatiquement.</span></div>
+    <div class="box"><b>GESTION ABONNEMENTS</b><span>Active ou suspend les abonnements. L'expiration par date est désormais automatique (voir §14).</span></div>
+    <div class="box"><b>SUPERVISION GLOBALE</b><span>Consulte la liste de tous les établissements avec statut d'abonnement, pays et date d'expiration.</span></div>
+    <div class="box"><b>ENVOI D'EMAILS</b><span>Peut envoyer les identifiants d'accès à l'administrateur d'un établissement via l'API send-email.</span></div>
+  </div>
+  <h3>3.2 Administrateur École</h3>
+  <p>Gestion complète des apprenants (CRUD, import PDF, photo), des formations (nom, description, groupe, dates, formateur associé), des formateurs (compte + token d'accès unique haché), suivi et correction des présences, statistiques et exports (CSV/PDF), paramètres de l'établissement.</p>
+  <h3>3.3 Formateur</h3>
+  <p>Accède à une interface simplifiée (trainer.html) via son token unique. Il ne voit que les formations qui lui sont assignées et saisit quotidiennement les présences. Il ne peut ni lire ni modifier les données d'autres formateurs ou formations.</p>
+</div>
+
+<!-- SECTION 4 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">4</span>Exigences Fonctionnelles<span class="sub">Spécification détaillée des fonctionnalités attendues</span></h2>
+  <table>
+    <tr><th>ID</th><th>Fonctionnalité</th><th>Description</th><th>Priorité</th></tr>
+    <tr><td>EF-01</td><td>Authentification JWT</td><td>Login email/password avec émission d'un token HMAC-SHA256 (TTL 7 jours). Vérification de l'abonnement avant émission.</td><td class="crit">Critique</td></tr>
+    <tr><td>EF-02</td><td>Saisie des présences</td><td>Sélection date + session, statut (présent/absent/retard) + note. Sauvegarde via INSERT ON DUPLICATE KEY UPDATE.</td><td class="crit">Critique</td></tr>
+    <tr><td>EF-03</td><td>Gestion apprenants</td><td>CRUD complet, import PDF via PDF.js, filtrage par groupe et nom.</td><td class="crit">Critique</td></tr>
+    <tr><td>EF-04</td><td>Gestion formations</td><td>CRUD : nom, description, groupe, dates, formateur associé.</td><td class="crit">Critique</td></tr>
+    <tr><td>EF-05</td><td>Gestion formateurs</td><td>CRUD, génération d'un token unique haché, affiché en clair une seule fois.</td><td class="crit">Critique</td></tr>
+    <tr><td>EF-06</td><td>Tableau de bord</td><td>KPIs temps réel : apprenants, formations actives, taux de présence.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-07</td><td>Statistiques</td><td>Taux de présence par formation et période, filtrage par session.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-08</td><td>Export CSV / PDF</td><td>Historique complet ; rapport visuel jsPDF + html2canvas.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-09</td><td>Import PDF</td><td>Extraction ligne par ligne via PDF.js, prévisualisation avant import.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-10</td><td>Mode sombre/clair</td><td>Persistance localStorage, CSS custom properties.</td><td class="moy">Moyenne</td></tr>
+    <tr><td>EF-11</td><td>Interface formateur</td><td>Accès par token, saisie d'appel identique à l'admin.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-12</td><td>Super administration</td><td>Création d'établissements, activation/suspension, envoi d'identifiants.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-13</td><td>Gestion abonnements</td><td>Statuts active/pending/expired/suspended. Expiration détectée automatiquement (au login et à chaque requête API) dès que la date d'échéance est dépassée, sans action manuelle requise. L'école est alors déconnectée et redirigée vers la page de réabonnement.</td><td class="crit">Critique</td></tr>
+    <tr><td>EF-14</td><td>Inscription multi-pays</td><td>Sélection obligatoire du pays (Bénin, Côte d'Ivoire, Togo, Sénégal, Burkina Faso, Nigéria, Ghana, autre). Langue Français/Anglais présélectionnée selon le pays (Anglais pour Nigéria/Ghana), modifiable par l'utilisateur.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-15</td><td>Tarification et paiement</td><td>Abonnement annuel à tarif unique 20 $ US, payable par carte ou mobile money (MTN MoMo, Moov Money) via FedaPay. Email de confirmation systématique à l'activation/renouvellement.</td><td class="crit">Critique</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 5 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">5</span>Exigences Non Fonctionnelles<span class="sub">Performance, sécurité, disponibilité, compatibilité</span></h2>
+  <h3>5.1 Performance</h3>
+  <table>
+    <tr><th>Indicateur</th><th>Cible</th><th>Méthode de mesure</th></tr>
+    <tr><td>Chargement initial (FCP)</td><td>&lt; 3 secondes sur 3G</td><td>Chrome Lighthouse</td></tr>
+    <tr><td>Temps de réponse API (p95)</td><td>&lt; 800 ms</td><td>Postman / logs Vercel</td></tr>
+    <tr><td>Score Lighthouse Performance</td><td>&gt; 80 / 100</td><td>Chrome DevTools</td></tr>
+    <tr><td>Score Lighthouse PWA</td><td>100 / 100</td><td>Chrome DevTools</td></tr>
+  </table>
+  <h3>5.2 Disponibilité</h3>
+  <p>L'application doit être disponible 24h/24, 7j/7, taux cible 99.5% mensuel, garanti par l'infrastructure Vercel (CDN mondial). En cas d'indisponibilité de la base Railway, l'interface affiche un message d'erreur explicite sans crash.</p>
+  <h3>5.3 Sécurité</h3>
+  <table>
+    <tr><th>Exigence</th><th>Implémentation</th><th>Standard</th></tr>
+    <tr><td>Hachage des mots de passe</td><td>scrypt (Node.js crypto natif), sel aléatoire 16 octets</td><td>OWASP</td></tr>
+    <tr><td>Tokens d'authentification</td><td>HMAC-SHA256, payload base64url, secret JWT_SECRET, expiration 7 jours</td><td>RFC 7519 simplifié</td></tr>
+    <tr><td>Protection injection SQL</td><td>Requêtes préparées mysql2, paramètres liés systématiquement</td><td>OWASP Top 10</td></tr>
+    <tr><td>Isolation multi-tenant</td><td>Filtrage obligatoire sur school_id extrait du token</td><td>Zero Trust Data</td></tr>
+    <tr><td>Transport sécurisé</td><td>HTTPS imposé par Vercel (TLS 1.3)</td><td>RFC 8446</td></tr>
+  </table>
+  <h3>5.4 Compatibilité navigateurs</h3>
+  <p>Chrome v100+, Firefox v100+, Safari iOS v15.4+ (PWA partielle), Edge v100+ (Chromium).</p>
+</div>
+
+<!-- SECTION 6 & 7 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">6</span>Architecture et Stack Technologique<span class="sub">Choix d'architecture et justification des technologies</span></h2>
+  <p>EducTrack adopte une architecture <b>JAMstack serverless</b> : le frontend est un ensemble de fichiers statiques servis par Vercel CDN, et le backend est composé de fonctions serverless Node.js déclenchées à la demande. La base MySQL est hébergée sur Railway et contactée exclusivement depuis les fonctions serverless via un pool de connexions partagé.</p>
+  <div class="grid3" style="margin-top:12px">
+    <div class="archbox"><b>NAVIGATEUR</b><br>HTML/CSS/JS Vanilla<br>PWA · localStorage</div>
+    <div class="archbox"><b>VERCEL SERVERLESS</b><br>10 fonctions api/*.js<br>HTTPS/REST</div>
+    <div class="archbox"><b>RAILWAY</b><br>MySQL 8<br>mysql2/TCP</div>
+  </div>
+  <h3 style="margin-top:16px">7 · Stack Technologique</h3>
+  <table>
+    <tr><th>Couche</th><th>Technologie</th><th>Version</th></tr>
+    <tr><td>Frontend</td><td>HTML5 / CSS3 / JavaScript ES6+</td><td>Natif</td></tr>
+    <tr><td>Icônes UI</td><td>Phosphor Icons</td><td>2.x</td></tr>
+    <tr><td>Import/Export PDF</td><td>PDF.js (Mozilla) · jsPDF + html2canvas</td><td>3.11 · 2.5.1</td></tr>
+    <tr><td>PWA</td><td>Service Worker API + Web App Manifest</td><td>W3C</td></tr>
+    <tr><td>Backend</td><td>Node.js (Vercel Serverless Functions)</td><td>18 LTS</td></tr>
+    <tr><td>Driver BDD</td><td>mysql2/promise</td><td>3.22.0</td></tr>
+    <tr><td>Base de données</td><td>MySQL 8.0 (Railway)</td><td>8.0</td></tr>
+    <tr><td>Sécurité auth</td><td>Node.js crypto (scrypt + HMAC-SHA256)</td><td>Natif</td></tr>
+    <tr><td>Email transactionnel</td><td>Brevo API v3 (SMTP)</td><td>API v3</td></tr>
+    <tr><td>Paiement</td><td>FedaPay (carte, MTN MoMo, Moov Money)</td><td>API v1</td></tr>
+    <tr><td>Screenshots</td><td>puppeteer-core</td><td>24.41.0</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 8 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">8</span>Modèle de Données<span class="sub">Schéma relationnel complet de la base MySQL</span></h2>
+  <h3>8.1 Table schools (extrait, mise à jour v1.1)</h3>
+  <table>
+    <tr><th>Colonne</th><th>Type</th><th>Rôle</th></tr>
+    <tr><td>id</td><td>VARCHAR PK</td><td>Identifiant unique</td></tr>
+    <tr><td>name, email (UNIQUE)</td><td>VARCHAR</td><td>Identité de l'établissement</td></tr>
+    <tr><td>password_hash</td><td>VARCHAR</td><td>Mot de passe haché (scrypt)</td></tr>
+    <tr><td>subscription_status</td><td>VARCHAR(20)</td><td>active / pending / expired / suspended</td></tr>
+    <tr><td>subscription_expires</td><td>DATE</td><td>Date d'échéance, contrôlée à chaque requête</td></tr>
+    <tr><td class="new"><b>country</b></td><td>VARCHAR(2)</td><td><b>Nouveau v1.1 : code pays ISO (BJ, CI, TG, NG, GH…)</b></td></tr>
+    <tr><td class="new"><b>language</b></td><td>VARCHAR(2)</td><td><b>Nouveau v1.1 : 'fr' ou 'en', pilote la langue des emails</b></td></tr>
+    <tr><td>payment_ref</td><td>VARCHAR(255)</td><td>Référence transaction FedaPay</td></tr>
+  </table>
+  <div class="info"><b>Contrainte d'intégrité :</b> UNIQUE(email) sur schools, un seul compte par adresse. Un compte expiré/suspendu qui se réinscrit avec le même email est traité comme un <b>renouvellement</b> (même ligne, historique conservé) plutôt que bloqué ou dupliqué.</div>
+  <h3>8.2 Autres tables</h3>
+  <p><b>students</b> (id, name, email, group, photo LONGTEXT, school_id) · <b>attendance</b> (date, session_id, student_id, status, note, school_id, UNIQUE sur date+session+student+school) · <b>formations</b> (id, name, description, group_name, start_date, end_date, school_id) · <b>formateurs</b> (id, name, email, formation_id, token, school_id).</p>
+</div>
+
+<!-- SECTION 9 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">9</span>Spécification des API REST<span class="sub">Endpoints, méthodes, paramètres et réponses</span></h2>
+  <table>
+    <tr><th>Endpoint</th><th>Méthode</th><th>Auth</th><th>Réponse</th></tr>
+    <tr><td>/api/login</td><td>POST</td><td>Aucune</td><td>{token, school} ou 401/403 (pending/expired)</td></tr>
+    <tr><td>/api/register</td><td>POST</td><td>Aucune</td><td>{name, email, country, language, …} → {mode, activated} ou {mode:'fedapay', token}</td></tr>
+    <tr><td>/api/students</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD apprenants, filtré school_id</td></tr>
+    <tr><td>/api/attendance</td><td>GET/POST</td><td>JWT ou token formateur</td><td>Lecture/écriture des présences</td></tr>
+    <tr><td>/api/formations</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD formations</td></tr>
+    <tr><td>/api/formateurs</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD formateurs + génération token</td></tr>
+    <tr><td>/api/sessions</td><td>GET/POST/DELETE</td><td>JWT</td><td>Sessions rattachées aux formations</td></tr>
+    <tr><td>/api/superadmin</td><td>GET/POST</td><td>Clé superadmin</td><td>Liste écoles, création, stats</td></tr>
+    <tr><td>/api/activate-school</td><td>GET (callback)</td><td>Vérif. FedaPay serveur</td><td>Active l'abonnement après paiement confirmé</td></tr>
+    <tr><td>/api/send-email</td><td>POST</td><td>JWT</td><td>Envoi identifiants formateur</td></tr>
+  </table>
+  <div class="warn"><b>Toutes les erreurs</b> retournent {error: "message lisible"} avec le code HTTP approprié (400/401/402/403/404/409/500). Le code <b>402</b> est utilisé spécifiquement pour signaler un abonnement inactif (voir §14).</div>
+</div>
+
+<!-- SECTION 10 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">10</span>Sécurité et Authentification<span class="sub">Mécanismes de protection, tokens et isolation des données</span></h2>
+  <h3>10.1 Isolation multi-tenant (school_id)</h3>
+  <p>C'est le mécanisme de sécurité le plus critique d'EducTrack. Le school_id n'est jamais fourni par le client dans les paramètres de la requête : il est systématiquement extrait du token JWT vérifié côté serveur. Toute requête SQL filtre obligatoirement sur ce champ.</p>
+  <h3>10.2 Gestion des abonnements (mise à jour v1.1)</h3>
+  <table>
+    <tr><th>Statut</th><th>Comportement</th><th>Code HTTP</th></tr>
+    <tr><td>active</td><td>Accès complet</td><td>200</td></tr>
+    <tr><td>pending</td><td>Bloqué : "Abonnement en attente de paiement"</td><td>403</td></tr>
+    <tr><td>expired</td><td>Bloqué au login ; déconnexion immédiate si déjà connecté</td><td>403 / 402</td></tr>
+    <tr><td>suspended</td><td>Exclu de la requête d'authentification (401 générique)</td><td>401</td></tr>
+  </table>
+  <div class="new"><b>Détection sans tâche planifiée (v1.1) :</b> la comparaison entre <code>subscription_expires</code> et la date du jour est évaluée <i>paresseusement</i>, au moment du login et à chaque appel API authentifié, plutôt que par une tâche cron quotidienne. Dès qu'une école active dépasse son échéance, son statut bascule en <code>expired</code> dès la requête suivante, et toute session déjà ouverte reçoit un <b>402</b> qui déclenche côté client une déconnexion immédiate et une redirection vers la page de réabonnement (pré-remplie avec l'email et le nom connus).</div>
+</div>
+
+<!-- SECTION 11 & 12 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">11</span>PWA et Interface Utilisateur<span class="sub">Progressive Web App, responsive design et navigation</span></h2>
+  <p>Le fichier manifest.json définit les métadonnées de l'application installable (nom, couleur #6366F1, mode standalone). Le Service Worker implémente une stratégie <b>Cache First</b> pour les ressources statiques et <b>Network First</b> pour /api/.</p>
+  <h3 style="margin-top:14px">12 · Structure de navigation</h3>
+  <table>
+    <tr><th>Vue</th><th>Rôle requis</th><th>Description</th></tr>
+    <tr><td>Dashboard</td><td>Admin</td><td>KPIs, taux de présence, formations actives</td></tr>
+    <tr><td>Présences</td><td>Admin / Formateur</td><td>Saisie quotidienne de l'appel</td></tr>
+    <tr><td>Apprenants</td><td>Admin</td><td>Liste, ajout, import PDF</td></tr>
+    <tr><td>Formations</td><td>Admin</td><td>CRUD formations avec dates et formateur</td></tr>
+    <tr><td>Formateurs</td><td>Admin</td><td>Gestion comptes et tokens</td></tr>
+    <tr><td>Statistiques</td><td>Admin</td><td>Taux de présence, graphiques, exports</td></tr>
+    <tr><td>Paramètres</td><td>Admin</td><td>Profil établissement, mot de passe, thème</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 13 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">13</span>Gestion Multi-Établissements<span class="sub">Architecture multi-tenant par colonne discriminante</span></h2>
+  <p>Toutes les tables métier (students, attendance, formations, formateurs) contiennent un champ <code>school_id</code> qui isole les données de chaque établissement dans la même base physique.</p>
+  <h3>Cycle de vie d'un établissement</h3>
+  <table>
+    <tr><th>Étape</th><th>Déclencheur</th><th>Statut résultant</th></tr>
+    <tr><td>1. Inscription</td><td>POST /api/register avec nom, email, pays, langue</td><td>pending</td></tr>
+    <tr><td>2. Activation</td><td>Paiement FedaPay confirmé (ou sandbox)</td><td>active + email de confirmation</td></tr>
+    <tr><td>3. Expiration</td><td>Automatique, détectée au prochain accès après la date d'échéance</td><td>expired</td></tr>
+    <tr><td>4. Renouvellement</td><td>Nouvelle soumission du formulaire d'inscription (même email)</td><td>active (même compte, historique conservé)</td></tr>
+    <tr><td>5. Suspension</td><td>Action manuelle super admin</td><td>suspended</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 14 (nouvelle section v1.1) -->
+<div class="page">
+  <h2 class="stitle"><span class="n">14</span>Tarification et Paiement<span class="sub">Nouveau : modèle économique et couverture géographique</span></h2>
+  <h3>14.1 Tarif</h3>
+  <p>EducTrack applique un <b>tarif unique de 20 $ US par an et par établissement</b>, sans palier ni fonctionnalité payante additionnelle. Le montant est converti et prélevé en Francs CFA (XOF) via FedaPay, seule devise supportée pour le mobile money dans la zone visée.</p>
+  <h3>14.2 Moyens de paiement</h3>
+  <div class="grid3">
+    <div class="box"><b>Carte bancaire</b><span>Visa / Mastercard via FedaPay</span></div>
+    <div class="box"><b>MTN Mobile Money</b><span>Bénin, Côte d'Ivoire, Togo</span></div>
+    <div class="box"><b>Moov Money</b><span>Bénin, Côte d'Ivoire, Togo</span></div>
+  </div>
+  <h3>14.3 Couverture géographique et langue</h3>
+  <p>Le pays est un champ <b>obligatoire</b> du formulaire d'inscription (register.html) : Bénin, Côte d'Ivoire, Togo, Sénégal, Burkina Faso, Nigéria, Ghana, ou Autre. La langue de l'interface et des emails transactionnels (Français/Anglais) est présélectionnée selon le pays choisi (anglais par défaut pour le Nigéria et le Ghana), et reste modifiable par l'utilisateur avant soumission.</p>
+  <div class="warn"><b>Limite connue :</b> le circuit de paiement reste unique (FedaPay/XOF) pour tous les pays à ce stade. L'extension à un gateway dédié (Paystack/Flutterwave) pour le Nigéria/Ghana est identifiée comme évolution v1.2 (voir §18).</div>
+  <h3>14.4 Notification email systématique</h3>
+  <p>À chaque activation ou renouvellement, un email de confirmation est envoyé (Brevo API), dans la langue de l'école, rappelant explicitement les identifiants de connexion et la formule "Abonnement annuel — 20 $ US / an".</p>
+</div>
+
+<!-- SECTION 15 & 16 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">15</span>Import/Export & Déploiement<span class="sub">Données et infrastructure de production</span></h2>
+  <h3>15.1 Import PDF</h3>
+  <p>Lecture côté client via PDF.js, sans upload serveur. Fonctionne uniquement sur PDFs natifs (couche texte).</p>
+  <h3>15.2 Exports</h3>
+  <p>CSV (UTF-8 BOM, séparateur ;) et PDF (jsPDF + html2canvas), 100% côté client.</p>
+  <h3 style="margin-top:14px">16 · Pipeline CI/CD</h3>
+  <table>
+    <tr><th>Étape</th><th>Outil</th><th>Action</th></tr>
+    <tr><td>1. Push</td><td>GitHub</td><td>Push sur branche main du dépôt vaniogbk/suivi-apprenants</td></tr>
+    <tr><td>2. Build</td><td>Vercel CI</td><td>Détection automatique des fonctions serverless</td></tr>
+    <tr><td>3. Deploy</td><td>Vercel CDN</td><td>Mise en ligne en ~30 secondes</td></tr>
+  </table>
+</div>
+
+<!-- SECTION 17 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">17</span>Tests et Validation<span class="sub">Stratégie de vérification</span></h2>
+  <table>
+    <tr><th>Endpoint / Flux</th><th>Cas testés</th><th>Statut</th></tr>
+    <tr><td>/api/login</td><td>Credentials valides, mot de passe erroné, abonnement expiré</td><td>Validé</td></tr>
+    <tr><td>/api/register</td><td>Inscription neuve, doublon actif bloqué (409), renouvellement d'un compte expiré</td><td>Validé</td></tr>
+    <tr><td>Expiration abonnement</td><td>Bascule active→expired en base, 402 sur token déjà émis, blocage au login</td><td>Validé</td></tr>
+    <tr><td>/api/students, /sessions, /formations</td><td>Token valide accepté, absence de token rejetée (401)</td><td>Validé</td></tr>
+    <tr><td>/api/superadmin</td><td>Clé correcte/incorrecte</td><td>Validé</td></tr>
+  </table>
+  <p>Tests exécutés via un script Node dédié (test-endpoints.js) rejouant les scénarios directement contre la base de production Railway, sans effet de bord destructeur.</p>
+</div>
+
+<!-- SECTION 18 -->
+<div class="page">
+  <h2 class="stitle"><span class="n">18</span>Contraintes, Limites et Évolutions<span class="sub">Limites techniques connues et roadmap produit</span></h2>
+  <h3>18.1 Contraintes connues</h3>
+  <table>
+    <tr><th>Contrainte</th><th>Description</th></tr>
+    <tr><td>Cold start serverless</td><td>Première requête après inactivité : +1 à 3 s (warm-up Vercel)</td></tr>
+    <tr><td>Connexions MySQL</td><td>Plan Railway gratuit limité à 5–10 connexions simultanées</td></tr>
+    <tr><td>Paiement Nigéria/Ghana</td><td>Circuit XOF unique (FedaPay) pour tous les pays actuellement</td></tr>
+  </table>
+  <h3>18.2 Roadmap</h3>
+  <table>
+    <tr><th>Version</th><th>Fonctionnalité</th><th>Priorité</th></tr>
+    <tr><td>v1.2</td><td>Passerelle de paiement dédiée Nigéria/Ghana (Paystack/Flutterwave)</td><td class="haute">Haute</td></tr>
+    <tr><td>v1.2</td><td>Notifications push Web (alerte seuil absences)</td><td class="haute">Haute</td></tr>
+    <tr><td>v1.3</td><td>QR Code pour pointage autonome des apprenants</td><td class="haute">Haute</td></tr>
+    <tr><td>v2.0</td><td>Application mobile native Flutter (iOS + Android)</td><td class="haute">Haute</td></tr>
+  </table>
+  <div class="info"><b>Engagement qualité :</b> EducTrack est développé selon les bonnes pratiques du développement web moderne : code versionné sur GitHub, variables d'environnement sécurisées hors du code source, requêtes SQL paramétrées, et déploiement automatisé reproductible.</div>
+</div>
+
+<script>
+// Mise à l'échelle des pages pour les petits écrans (aperçu navigateur
+// uniquement) — ignoré pendant l'export PDF, qui tourne en media "print"
+// et n'a donc pas besoin d'être redimensionné.
+function fitPagesToScreen() {
+  if (window.matchMedia('print').matches) return;
+  const pageWidthPx = 210 * 96 / 25.4; // 210mm en pixels CSS (96dpi)
+  const scale = Math.min(1, (window.innerWidth - 24) / pageWidthPx);
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.zoom = scale < 1 ? scale : '';
+  });
+}
+window.addEventListener('resize', fitPagesToScreen);
+window.addEventListener('load', fitPagesToScreen);
+fitPagesToScreen();
+</script>
 </body>
 </html>
