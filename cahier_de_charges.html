@@ -6,8 +6,8 @@
 <style>
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1F2937; font-size: 10.5pt; }
-  .page { width: 210mm; min-height: 297mm; padding: 18mm 16mm; page-break-after: always; position: relative; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1F2937; font-size: 9pt; }
+  .page { width: 210mm; min-height: 297mm; padding: 14mm 14mm; page-break-after: always; position: relative; }
   .cover { background: #211F54; color: #fff; display: flex; flex-direction: column; justify-content: center; }
   .cover .badge { display:inline-block; border:1px solid rgba(255,255,255,.3); border-radius:20px; padding:5px 14px; font-size:8.5pt; letter-spacing:1px; margin-bottom:22px; color:#C7D2FE; }
   .cover h1 { font-family: Georgia, serif; font-size: 52pt; color:#C7D2FE; margin-bottom:10px; }
@@ -18,35 +18,33 @@
   .cover .footer .line { width:60px; height:2px; background:#7C3AED; margin-bottom:14px; }
   .cover .footer div { font-size:9pt; color:#9CA3AF; margin-bottom:4px; }
   .cover .footer b { color:#E5E7EB; }
-  h2.stitle { background:#4338CA; color:#fff; padding:16px 18px; font-size:15pt; margin: -18mm -16mm 14px -16mm; padding-left:20mm; padding-right:20mm; }
-  h2.stitle .n { display:inline-block; background:rgba(255,255,255,.2); border-radius:50%; width:22px; height:22px; text-align:center; line-height:22px; font-size:10pt; margin-right:8px; }
-  h2.stitle .sub { display:block; font-size:9pt; font-weight:400; color:#C7D2FE; margin-top:3px; }
-  h3 { font-size:11.5pt; color:#4338CA; margin:14px 0 6px; }
-  p { line-height:1.55; margin-bottom:8px; text-align:justify; }
-  table { width:100%; border-collapse:collapse; margin:8px 0 14px; font-size:9pt; }
-  th { background:#4338CA; color:#fff; text-align:left; padding:6px 8px; }
-  td { padding:6px 8px; border-bottom:1px solid #E5E7EB; vertical-align:top; }
+  h2.stitle { background:#4338CA; color:#fff; padding:10px 14px; font-size:13pt; margin: -14mm -14mm 10px -14mm; padding-left:18mm; padding-right:18mm; }
+  h2.stitle .n { display:inline-block; background:rgba(255,255,255,.2); border-radius:50%; width:19px; height:19px; text-align:center; line-height:19px; font-size:9pt; margin-right:7px; }
+  h2.stitle .sub { display:block; font-size:8pt; font-weight:400; color:#C7D2FE; margin-top:2px; }
+  .stitle2 { font-size:11pt; color:#4338CA; margin:10px 0 5px; padding-top:8px; border-top:2px solid #E0E7FF; }
+  h3 { font-size:10pt; color:#4338CA; margin:8px 0 4px; }
+  p { line-height:1.4; margin-bottom:6px; text-align:justify; }
+  table { width:100%; border-collapse:collapse; margin:5px 0 8px; font-size:8pt; }
+  th { background:#4338CA; color:#fff; text-align:left; padding:4px 6px; }
+  td { padding:4px 6px; border-bottom:1px solid #E5E7EB; vertical-align:top; }
   tr:nth-child(even) td { background:#F9FAFB; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0; }
-  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:10px 0; }
-  .box { border:1px solid #E5E7EB; border-radius:8px; padding:10px 12px; }
-  .box b { display:block; color:#111827; margin-bottom:3px; font-size:9.5pt; }
-  .box span { font-size:8.8pt; color:#6B7280; }
-  .info { background:#EEF2FF; border-left:4px solid #4F46E5; border-radius:4px; padding:10px 14px; font-size:9.5pt; margin:10px 0; }
-  .warn { background:#FFFBEB; border-left:4px solid #D97706; border-radius:4px; padding:10px 14px; font-size:9.5pt; margin:10px 0; }
-  .new  { background:#ECFDF5; border-left:4px solid #059669; border-radius:4px; padding:10px 14px; font-size:9.5pt; margin:10px 0; }
-  .pill { display:inline-block; background:#EEF2FF; color:#4338CA; border-radius:20px; padding:3px 10px; font-size:8pt; font-weight:600; margin:2px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin:6px 0; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; margin:6px 0; }
+  .box { border:1px solid #E5E7EB; border-radius:6px; padding:7px 9px; }
+  .box b { display:block; color:#111827; margin-bottom:2px; font-size:8.3pt; }
+  .box span { font-size:7.8pt; color:#6B7280; }
+  .info { background:#EEF2FF; border-left:3px solid #4F46E5; border-radius:4px; padding:7px 10px; font-size:8.3pt; margin:6px 0; }
+  .warn { background:#FFFBEB; border-left:3px solid #D97706; border-radius:4px; padding:7px 10px; font-size:8.3pt; margin:6px 0; }
+  .pill { display:inline-block; background:#EEF2FF; color:#4338CA; border-radius:20px; padding:2px 9px; font-size:7.3pt; font-weight:600; margin:2px; }
   .crit { color:#DC2626; font-weight:700; }
   .haute { color:#4338CA; font-weight:700; }
   .moy { color:#D97706; font-weight:700; }
-  code { background:#F3F4F6; padding:1px 5px; border-radius:3px; font-family:Consolas,monospace; font-size:9pt; }
-  pre { background:#111827; color:#93C5FD; padding:10px 12px; border-radius:6px; font-size:8.3pt; overflow:hidden; margin:8px 0; }
-  .foot { position:absolute; bottom:8mm; left:16mm; right:16mm; display:flex; justify-content:space-between; font-size:7.5pt; color:#9CA3AF; border-top:1px solid #E5E7EB; padding-top:4px; }
+  code { background:#F3F4F6; padding:1px 4px; border-radius:3px; font-family:Consolas,monospace; font-size:7.8pt; }
+  .foot { position:absolute; bottom:8mm; left:14mm; right:14mm; display:flex; justify-content:space-between; font-size:7pt; color:#9CA3AF; border-top:1px solid #E5E7EB; padding-top:3px; }
   .toc a { text-decoration:none; color:#1F2937; }
   .toc ol { list-style:none; }
-  .toc li { display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed #E5E7EB; font-size:9.5pt; }
-  .archbox { border:1px solid #E5E7EB; border-radius:8px; padding:14px; text-align:center; font-size:8.5pt; }
-  .arrow { text-align:center; font-size:8pt; color:#9CA3AF; padding:6px 0; }
+  .toc li { display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed #E5E7EB; font-size:9pt; }
+  .archbox { border:1px solid #E5E7EB; border-radius:6px; padding:10px; text-align:center; font-size:8pt; }
 
   /* Aperçu à l'écran uniquement : centrage + adaptation mobile.
      Ignoré à l'impression/export PDF (media print), qui garde le format A4 fixe. */
@@ -60,7 +58,7 @@
 
 <!-- COVER -->
 <div class="page cover">
-  <span class="badge">DOCUMENT OFFICIEL · 2025–2026 · v1.1</span>
+  <span class="badge">DOCUMENT OFFICIEL · 2025–2026</span>
   <h1>EducTrack</h1>
   <div class="sub">Application de suivi des apprenants</div>
   <div class="doctype">Cahier des Charges Technique et Fonctionnel</div>
@@ -82,40 +80,31 @@
       <li><a>1. Présentation du Projet</a><span>3</span></li>
       <li><a>2. Objectifs et Périmètre</a><span>3</span></li>
       <li><a>3. Acteurs et Rôles</a><span>4</span></li>
-      <li><a>4. Exigences Fonctionnelles</a><span>5</span></li>
-      <li><a>5. Exigences Non Fonctionnelles</a><span>6</span></li>
-      <li><a>6. Architecture Technique</a><span>7</span></li>
-      <li><a>7. Stack Technologique</a><span>7</span></li>
-      <li><a>8. Modèle de Données (MCD)</a><span>8</span></li>
-      <li><a>9. Spécification des API REST</a><span>9</span></li>
-      <li><a>10. Sécurité et Authentification</a><span>11</span></li>
-      <li><a>11. Progressive Web App (PWA)</a><span>12</span></li>
-      <li><a>12. Interface Utilisateur</a><span>13</span></li>
-      <li><a>13. Gestion Multi-Établissements</a><span>14</span></li>
-      <li><a>14. Tarification et Paiement</a><span>14</span></li>
-      <li><a>15. Import et Export de Données</a><span>15</span></li>
-      <li><a>16. Déploiement et Infrastructure</a><span>15</span></li>
-      <li><a>17. Tests et Validation</a><span>16</span></li>
-      <li><a>18. Contraintes, Limites et Évolutions</a><span>17</span></li>
+      <li><a>4. Exigences Fonctionnelles</a><span>4</span></li>
+      <li><a>5. Exigences Non Fonctionnelles</a><span>5</span></li>
+      <li><a>6. Architecture Technique</a><span>5</span></li>
+      <li><a>7. Stack Technologique</a><span>6</span></li>
+      <li><a>8. Modèle de Données (MCD)</a><span>6</span></li>
+      <li><a>9. Spécification des API REST</a><span>7</span></li>
+      <li><a>10. Sécurité et Authentification</a><span>7</span></li>
+      <li><a>11. Progressive Web App (PWA)</a><span>8</span></li>
+      <li><a>12. Interface Utilisateur</a><span>8</span></li>
+      <li><a>13. Gestion Multi-Établissements</a><span>8</span></li>
+      <li><a>14. Tarification et Paiement</a><span>9</span></li>
+      <li><a>15. Import et Export de Données</a><span>9</span></li>
+      <li><a>16. Déploiement et Infrastructure</a><span>9</span></li>
+      <li><a>17. Tests et Validation</a><span>10</span></li>
+      <li><a>18. Contraintes, Limites et Évolutions</a><span>10</span></li>
     </ol>
   </div>
-  <div class="info"><b>Objet du document :</b> Ce cahier des charges décrit de façon exhaustive les spécifications fonctionnelles et techniques d'EducTrack. Il sert de référence pour le développement, la validation et la maintenance de l'application.</div>
-  <h3>Historique des révisions</h3>
-  <table>
-    <tr><th>Version</th><th>Date</th><th>Auteur</th><th>Modifications</th></tr>
-    <tr><td>v0.1</td><td>Oct. 2025</td><td>GBEKE H.</td><td>Rédaction initiale (besoins et périmètre)</td></tr>
-    <tr><td>v0.5</td><td>Déc. 2025</td><td>GBEKE H.</td><td>Ajout spécifications API et MCD complet</td></tr>
-    <tr><td>v0.9</td><td>Fév. 2026</td><td>GBEKE H.</td><td>Intégration PWA, sécurité et multi-écoles</td></tr>
-    <tr><td>v1.0</td><td>Mai 2026</td><td>GBEKE H.</td><td>Version finale validée, mise en production</td></tr>
-    <tr><td><b>v1.1</b></td><td><b>Août 2026</b></td><td>GBEKE H.</td><td><b>Tarification unique 20$US/an, sélection pays + langue à l'inscription, gestion de l'expiration d'abonnement automatisée, correction du périmètre paiement (déjà implémenté et non plus hors-scope)</b></td></tr>
-  </table>
+  <div class="info"><b>Objet du document :</b> Ce cahier des charges décrit de façon exhaustive les spécifications fonctionnelles et techniques d'EducTrack. Il sert de référence pour le développement, la validation et la maintenance de l'application. Il s'adresse aux développeurs, aux responsables pédagogiques et aux décideurs techniques.</div>
 </div>
 
 <!-- SECTION 1 & 2 -->
 <div class="page">
   <h2 class="stitle"><span class="n">1</span>Présentation et Objectifs<span class="sub">Contexte, vision produit et périmètre fonctionnel</span></h2>
   <h3>1.1 Contexte</h3>
-  <p>Les établissements de formation professionnelle en Afrique de l'Ouest gèrent encore majoritairement les présences de leurs apprenants sur papier ou via des tableurs non adaptés. Cette situation engendre des pertes de données, une absence de vision analytique et une charge administrative élevée pour les responsables pédagogiques.</p>
+  <p>Les établissements de formation professionnelle en Afrique de l'Ouest gèrent encore majoritairement les présences de leurs apprenants sur papier ou via des tableurs non adaptés, ce qui engendre des pertes de données, une absence de vision analytique et une charge administrative élevée.</p>
   <h3>1.2 Solution proposée</h3>
   <p>EducTrack est une application web progressive (PWA) multi-établissements dédiée au suivi des apprenants. Elle centralise la gestion des présences, des formations, des formateurs et des statistiques pédagogiques dans un outil unique, accessible depuis tout appareil connecté sans installation préalable. Le produit cible en priorité le Bénin, la Côte d'Ivoire et le Togo, avec une ouverture au marché anglophone (Nigéria, Ghana).</p>
   <div class="grid2">
@@ -124,14 +113,14 @@
     <div class="box"><b>BASE DE DONNÉES</b>MySQL 8<br><span>Railway, pool de connexions mysql2</span></div>
     <div class="box"><b>PRODUCTION</b>En ligne<br><span>eductrack-app.vercel.app</span></div>
   </div>
-  <h3 style="margin-top:18px;font-size:13pt">2 · Objectifs et Périmètre</h3>
-  <h3>2.2 Périmètre inclus</h3>
+  <div class="stitle2"><span class="n" style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">2</span>Objectifs et Périmètre</div>
+  <h3>2.1 Périmètre inclus</h3>
   <p>Authentification multi-rôles (JWT), gestion CRUD apprenants/formations/formateurs, saisie des présences avec historique, tableau de bord analytique, export CSV et PDF, PWA installable, mode sombre/clair, interface formateur dédiée, super-administration multi-écoles, gestion des abonnements avec expiration automatique, <b>paiement en ligne (FedaPay : carte bancaire et mobile money MTN/Moov, zone UEMOA)</b>, <b>sélection obligatoire du pays et de la langue (Français/Anglais) à l'inscription</b>.</p>
-  <h3>2.3 Périmètre exclu (hors scope v1.0)</h3>
-  <p>Notifications push, QR code pour l'appel, application mobile native Flutter, intelligence artificielle prédictive, OCR sur PDFs scannés, gestion des notes et bulletins scolaires, moyens de paiement spécifiques au Nigéria/Ghana (Paystack/Flutterwave), traités pour l'instant via le même circuit XOF FedaPay.</p>
+  <h3>2.2 Périmètre exclu</h3>
+  <p>Notifications push, QR code pour l'appel, application mobile native Flutter, intelligence artificielle prédictive, OCR sur PDFs scannés, gestion des notes et bulletins scolaires, moyens de paiement spécifiques au Nigéria/Ghana (traités pour l'instant via le même circuit XOF FedaPay).</p>
 </div>
 
-<!-- SECTION 3 -->
+<!-- SECTION 3 & 4 -->
 <div class="page">
   <h2 class="stitle"><span class="n">3</span>Acteurs et Rôles<span class="sub">Définition des profils utilisateurs et de leurs droits</span></h2>
   <table>
@@ -140,248 +129,192 @@
     <tr><td>Administrateur École</td><td>index.html</td><td>Email + mot de passe / JWT</td><td>Son établissement uniquement</td></tr>
     <tr><td>Formateur</td><td>trainer.html</td><td>Token dédié haché</td><td>Ses formations assignées uniquement</td></tr>
   </table>
-  <h3>3.1 Super Administrateur</h3>
-  <div class="grid2">
-    <div class="box"><b>CRÉATION</b><span>Crée de nouveaux établissements avec nom, email, responsable et mot de passe généré automatiquement.</span></div>
-    <div class="box"><b>GESTION ABONNEMENTS</b><span>Active ou suspend les abonnements. L'expiration par date est désormais automatique (voir §14).</span></div>
-    <div class="box"><b>SUPERVISION GLOBALE</b><span>Consulte la liste de tous les établissements avec statut d'abonnement, pays et date d'expiration.</span></div>
-    <div class="box"><b>ENVOI D'EMAILS</b><span>Peut envoyer les identifiants d'accès à l'administrateur d'un établissement via l'API send-email.</span></div>
-  </div>
-  <h3>3.2 Administrateur École</h3>
-  <p>Gestion complète des apprenants (CRUD, import PDF, photo), des formations (nom, description, groupe, dates, formateur associé), des formateurs (compte + token d'accès unique haché), suivi et correction des présences, statistiques et exports (CSV/PDF), paramètres de l'établissement.</p>
-  <h3>3.3 Formateur</h3>
-  <p>Accède à une interface simplifiée (trainer.html) via son token unique. Il ne voit que les formations qui lui sont assignées et saisit quotidiennement les présences. Il ne peut ni lire ni modifier les données d'autres formateurs ou formations.</p>
-</div>
+  <p><b>Super Administrateur</b> : crée les établissements, active/suspend les abonnements, supervise le parc global, envoie les identifiants par email. <b>Administrateur École</b> : gestion complète des apprenants, formations, formateurs, présences, statistiques et paramètres de son établissement. <b>Formateur</b> : accès simplifié via token à ses seules formations assignées, saisie quotidienne des présences.</p>
 
-<!-- SECTION 4 -->
-<div class="page">
-  <h2 class="stitle"><span class="n">4</span>Exigences Fonctionnelles<span class="sub">Spécification détaillée des fonctionnalités attendues</span></h2>
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">4</span>Exigences Fonctionnelles</div>
   <table>
-    <tr><th>ID</th><th>Fonctionnalité</th><th>Description</th><th>Priorité</th></tr>
-    <tr><td>EF-01</td><td>Authentification JWT</td><td>Login email/password avec émission d'un token HMAC-SHA256 (TTL 7 jours). Vérification de l'abonnement avant émission.</td><td class="crit">Critique</td></tr>
-    <tr><td>EF-02</td><td>Saisie des présences</td><td>Sélection date + session, statut (présent/absent/retard) + note. Sauvegarde via INSERT ON DUPLICATE KEY UPDATE.</td><td class="crit">Critique</td></tr>
-    <tr><td>EF-03</td><td>Gestion apprenants</td><td>CRUD complet, import PDF via PDF.js, filtrage par groupe et nom.</td><td class="crit">Critique</td></tr>
-    <tr><td>EF-04</td><td>Gestion formations</td><td>CRUD : nom, description, groupe, dates, formateur associé.</td><td class="crit">Critique</td></tr>
-    <tr><td>EF-05</td><td>Gestion formateurs</td><td>CRUD, génération d'un token unique haché, affiché en clair une seule fois.</td><td class="crit">Critique</td></tr>
-    <tr><td>EF-06</td><td>Tableau de bord</td><td>KPIs temps réel : apprenants, formations actives, taux de présence.</td><td class="haute">Haute</td></tr>
-    <tr><td>EF-07</td><td>Statistiques</td><td>Taux de présence par formation et période, filtrage par session.</td><td class="haute">Haute</td></tr>
-    <tr><td>EF-08</td><td>Export CSV / PDF</td><td>Historique complet ; rapport visuel jsPDF + html2canvas.</td><td class="haute">Haute</td></tr>
-    <tr><td>EF-09</td><td>Import PDF</td><td>Extraction ligne par ligne via PDF.js, prévisualisation avant import.</td><td class="haute">Haute</td></tr>
-    <tr><td>EF-10</td><td>Mode sombre/clair</td><td>Persistance localStorage, CSS custom properties.</td><td class="moy">Moyenne</td></tr>
+    <tr><th>ID</th><th>Fonctionnalité</th><th>Description</th><th>Prio.</th></tr>
+    <tr><td>EF-01</td><td>Auth. JWT</td><td>Login email/password, token HMAC-SHA256 (TTL 7j), vérification abonnement avant émission.</td><td class="crit">Crit.</td></tr>
+    <tr><td>EF-02</td><td>Présences</td><td>Date + session, statut présent/absent/retard + note, sauvegarde idempotente.</td><td class="crit">Crit.</td></tr>
+    <tr><td>EF-03</td><td>Apprenants</td><td>CRUD complet, import PDF via PDF.js, filtrage groupe/nom.</td><td class="crit">Crit.</td></tr>
+    <tr><td>EF-04</td><td>Formations</td><td>CRUD : nom, description, groupe, dates, formateur associé.</td><td class="crit">Crit.</td></tr>
+    <tr><td>EF-05</td><td>Formateurs</td><td>CRUD, token unique haché, affiché en clair une seule fois.</td><td class="crit">Crit.</td></tr>
+    <tr><td>EF-06</td><td>Dashboard</td><td>KPIs temps réel : apprenants, formations actives, taux de présence.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-07</td><td>Statistiques</td><td>Taux de présence par formation/période, filtrage par session.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-08</td><td>Exports</td><td>CSV historique complet ; rapport PDF visuel (jsPDF + html2canvas).</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-09</td><td>Import PDF</td><td>Extraction ligne par ligne, prévisualisation avant import.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-10</td><td>Thème</td><td>Mode sombre/clair, persistance localStorage.</td><td class="moy">Moy.</td></tr>
     <tr><td>EF-11</td><td>Interface formateur</td><td>Accès par token, saisie d'appel identique à l'admin.</td><td class="haute">Haute</td></tr>
-    <tr><td>EF-12</td><td>Super administration</td><td>Création d'établissements, activation/suspension, envoi d'identifiants.</td><td class="haute">Haute</td></tr>
-    <tr><td>EF-13</td><td>Gestion abonnements</td><td>Statuts active/pending/expired/suspended. Expiration détectée automatiquement (au login et à chaque requête API) dès que la date d'échéance est dépassée, sans action manuelle requise. L'école est alors déconnectée et redirigée vers la page de réabonnement.</td><td class="crit">Critique</td></tr>
-    <tr><td>EF-14</td><td>Inscription multi-pays</td><td>Sélection obligatoire du pays (Bénin, Côte d'Ivoire, Togo, Sénégal, Burkina Faso, Nigéria, Ghana, autre). Langue Français/Anglais présélectionnée selon le pays (Anglais pour Nigéria/Ghana), modifiable par l'utilisateur.</td><td class="haute">Haute</td></tr>
-    <tr><td>EF-15</td><td>Tarification et paiement</td><td>Abonnement annuel à tarif unique 20 $ US, payable par carte ou mobile money (MTN MoMo, Moov Money) via FedaPay. Email de confirmation systématique à l'activation/renouvellement.</td><td class="crit">Critique</td></tr>
+    <tr><td>EF-12</td><td>Super admin</td><td>Création d'établissements, activation/suspension, envoi identifiants.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-13</td><td>Abonnements</td><td>Statuts active/pending/expired/suspended, expiration détectée automatiquement (login + chaque appel API), déconnexion immédiate et redirection réabonnement.</td><td class="crit">Crit.</td></tr>
+    <tr><td>EF-14</td><td>Inscription multi-pays</td><td>Pays obligatoire (Bénin, Côte d'Ivoire, Togo, Sénégal, Burkina Faso, Nigéria, Ghana, autre), langue FR/EN présélectionnée selon le pays, modifiable.</td><td class="haute">Haute</td></tr>
+    <tr><td>EF-15</td><td>Tarification</td><td>Abonnement annuel, tarif unique 20 $ US, carte ou mobile money via FedaPay, email de confirmation systématique.</td><td class="crit">Crit.</td></tr>
   </table>
 </div>
 
-<!-- SECTION 5 -->
+<!-- SECTION 5 & 6 -->
 <div class="page">
   <h2 class="stitle"><span class="n">5</span>Exigences Non Fonctionnelles<span class="sub">Performance, sécurité, disponibilité, compatibilité</span></h2>
-  <h3>5.1 Performance</h3>
   <table>
-    <tr><th>Indicateur</th><th>Cible</th><th>Méthode de mesure</th></tr>
-    <tr><td>Chargement initial (FCP)</td><td>&lt; 3 secondes sur 3G</td><td>Chrome Lighthouse</td></tr>
-    <tr><td>Temps de réponse API (p95)</td><td>&lt; 800 ms</td><td>Postman / logs Vercel</td></tr>
-    <tr><td>Score Lighthouse Performance</td><td>&gt; 80 / 100</td><td>Chrome DevTools</td></tr>
-    <tr><td>Score Lighthouse PWA</td><td>100 / 100</td><td>Chrome DevTools</td></tr>
+    <tr><th>Indicateur</th><th>Cible</th></tr>
+    <tr><td>Chargement initial (FCP)</td><td>&lt; 3 s sur 3G</td></tr>
+    <tr><td>Temps de réponse API (p95)</td><td>&lt; 800 ms</td></tr>
+    <tr><td>Score Lighthouse Performance / PWA</td><td>&gt; 80/100 · 100/100</td></tr>
   </table>
-  <h3>5.2 Disponibilité</h3>
-  <p>L'application doit être disponible 24h/24, 7j/7, taux cible 99.5% mensuel, garanti par l'infrastructure Vercel (CDN mondial). En cas d'indisponibilité de la base Railway, l'interface affiche un message d'erreur explicite sans crash.</p>
-  <h3>5.3 Sécurité</h3>
+  <p><b>Disponibilité :</b> 24h/24, 7j/7, cible 99,5 % mensuel via l'infrastructure Vercel (CDN mondial). En cas d'indisponibilité de la base Railway, l'interface affiche un message d'erreur explicite sans crash.</p>
   <table>
-    <tr><th>Exigence</th><th>Implémentation</th><th>Standard</th></tr>
-    <tr><td>Hachage des mots de passe</td><td>scrypt (Node.js crypto natif), sel aléatoire 16 octets</td><td>OWASP</td></tr>
-    <tr><td>Tokens d'authentification</td><td>HMAC-SHA256, payload base64url, secret JWT_SECRET, expiration 7 jours</td><td>RFC 7519 simplifié</td></tr>
-    <tr><td>Protection injection SQL</td><td>Requêtes préparées mysql2, paramètres liés systématiquement</td><td>OWASP Top 10</td></tr>
-    <tr><td>Isolation multi-tenant</td><td>Filtrage obligatoire sur school_id extrait du token</td><td>Zero Trust Data</td></tr>
-    <tr><td>Transport sécurisé</td><td>HTTPS imposé par Vercel (TLS 1.3)</td><td>RFC 8446</td></tr>
+    <tr><th>Sécurité</th><th>Implémentation</th></tr>
+    <tr><td>Mots de passe</td><td>scrypt (crypto natif Node.js), sel aléatoire 16 octets</td></tr>
+    <tr><td>Tokens</td><td>HMAC-SHA256, payload base64url, secret JWT_SECRET, expiration 7 jours</td></tr>
+    <tr><td>Injection SQL</td><td>Requêtes préparées mysql2, paramètres liés systématiquement</td></tr>
+    <tr><td>Isolation multi-tenant</td><td>Filtrage obligatoire sur school_id extrait du token</td></tr>
   </table>
-  <h3>5.4 Compatibilité navigateurs</h3>
-  <p>Chrome v100+, Firefox v100+, Safari iOS v15.4+ (PWA partielle), Edge v100+ (Chromium).</p>
-</div>
+  <p><b>Compatibilité :</b> Chrome 100+, Firefox 100+, Safari iOS 15.4+ (PWA partielle), Edge 100+ (Chromium).</p>
 
-<!-- SECTION 6 & 7 -->
-<div class="page">
-  <h2 class="stitle"><span class="n">6</span>Architecture et Stack Technologique<span class="sub">Choix d'architecture et justification des technologies</span></h2>
-  <p>EducTrack adopte une architecture <b>JAMstack serverless</b> : le frontend est un ensemble de fichiers statiques servis par Vercel CDN, et le backend est composé de fonctions serverless Node.js déclenchées à la demande. La base MySQL est hébergée sur Railway et contactée exclusivement depuis les fonctions serverless via un pool de connexions partagé.</p>
-  <div class="grid3" style="margin-top:12px">
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">6</span>Architecture Technique</div>
+  <p>EducTrack adopte une architecture <b>JAMstack serverless</b> : le frontend est un ensemble de fichiers statiques servis par Vercel CDN, le backend est composé de fonctions serverless Node.js déclenchées à la demande, et la base MySQL est hébergée sur Railway via un pool de connexions partagé.</p>
+  <div class="grid3">
     <div class="archbox"><b>NAVIGATEUR</b><br>HTML/CSS/JS Vanilla<br>PWA · localStorage</div>
     <div class="archbox"><b>VERCEL SERVERLESS</b><br>10 fonctions api/*.js<br>HTTPS/REST</div>
     <div class="archbox"><b>RAILWAY</b><br>MySQL 8<br>mysql2/TCP</div>
   </div>
-  <h3 style="margin-top:16px">7 · Stack Technologique</h3>
-  <table>
-    <tr><th>Couche</th><th>Technologie</th><th>Version</th></tr>
-    <tr><td>Frontend</td><td>HTML5 / CSS3 / JavaScript ES6+</td><td>Natif</td></tr>
-    <tr><td>Icônes UI</td><td>Phosphor Icons</td><td>2.x</td></tr>
-    <tr><td>Import/Export PDF</td><td>PDF.js (Mozilla) · jsPDF + html2canvas</td><td>3.11 · 2.5.1</td></tr>
-    <tr><td>PWA</td><td>Service Worker API + Web App Manifest</td><td>W3C</td></tr>
-    <tr><td>Backend</td><td>Node.js (Vercel Serverless Functions)</td><td>18 LTS</td></tr>
-    <tr><td>Driver BDD</td><td>mysql2/promise</td><td>3.22.0</td></tr>
-    <tr><td>Base de données</td><td>MySQL 8.0 (Railway)</td><td>8.0</td></tr>
-    <tr><td>Sécurité auth</td><td>Node.js crypto (scrypt + HMAC-SHA256)</td><td>Natif</td></tr>
-    <tr><td>Email transactionnel</td><td>Brevo API v3 (SMTP)</td><td>API v3</td></tr>
-    <tr><td>Paiement</td><td>FedaPay (carte, MTN MoMo, Moov Money)</td><td>API v1</td></tr>
-    <tr><td>Screenshots</td><td>puppeteer-core</td><td>24.41.0</td></tr>
-  </table>
 </div>
 
-<!-- SECTION 8 -->
+<!-- SECTION 7 & 8 -->
 <div class="page">
-  <h2 class="stitle"><span class="n">8</span>Modèle de Données<span class="sub">Schéma relationnel complet de la base MySQL</span></h2>
-  <h3>8.1 Table schools (extrait, mise à jour v1.1)</h3>
+  <h2 class="stitle"><span class="n">7</span>Stack Technologique<span class="sub">Choix technologiques et justification</span></h2>
   <table>
-    <tr><th>Colonne</th><th>Type</th><th>Rôle</th></tr>
+    <tr><th>Couche</th><th>Technologie</th><th>Justification</th></tr>
+    <tr><td>Frontend</td><td>HTML5 / CSS3 / JS ES6+ natif</td><td>Légèreté, 0 dépendance framework</td></tr>
+    <tr><td>Icônes</td><td>Phosphor Icons</td><td>SVG léger, cohérence visuelle</td></tr>
+    <tr><td>PDF</td><td>PDF.js (import) · jsPDF + html2canvas (export)</td><td>Traitement 100% côté client</td></tr>
+    <tr><td>PWA</td><td>Service Worker + Web App Manifest</td><td>Installation native, cache offline</td></tr>
+    <tr><td>Backend</td><td>Node.js (Vercel Serverless Functions)</td><td>Scalabilité auto, 0 serveur à maintenir</td></tr>
+    <tr><td>Driver BDD</td><td>mysql2/promise</td><td>Pool de connexions, requêtes préparées</td></tr>
+    <tr><td>Base de données</td><td>MySQL 8 (Railway)</td><td>Intégrité référentielle, contraintes UNIQUE</td></tr>
+    <tr><td>Sécurité auth</td><td>Node.js crypto (scrypt + HMAC-SHA256)</td><td>Aucune dépendance externe</td></tr>
+    <tr><td>Email</td><td>Brevo (API SMTP)</td><td>Envoi identifiants et notifications</td></tr>
+    <tr><td>Paiement</td><td>FedaPay (carte, MTN MoMo, Moov Money)</td><td>Couverture UEMOA, intégration simple</td></tr>
+  </table>
+
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">8</span>Modèle de Données (MCD)</div>
+  <table>
+    <tr><th>Colonne (schools)</th><th>Type</th><th>Rôle</th></tr>
     <tr><td>id</td><td>VARCHAR PK</td><td>Identifiant unique</td></tr>
     <tr><td>name, email (UNIQUE)</td><td>VARCHAR</td><td>Identité de l'établissement</td></tr>
     <tr><td>password_hash</td><td>VARCHAR</td><td>Mot de passe haché (scrypt)</td></tr>
-    <tr><td>subscription_status</td><td>VARCHAR(20)</td><td>active / pending / expired / suspended</td></tr>
-    <tr><td>subscription_expires</td><td>DATE</td><td>Date d'échéance, contrôlée à chaque requête</td></tr>
-    <tr><td class="new"><b>country</b></td><td>VARCHAR(2)</td><td><b>Nouveau v1.1 : code pays ISO (BJ, CI, TG, NG, GH…)</b></td></tr>
-    <tr><td class="new"><b>language</b></td><td>VARCHAR(2)</td><td><b>Nouveau v1.1 : 'fr' ou 'en', pilote la langue des emails</b></td></tr>
-    <tr><td>payment_ref</td><td>VARCHAR(255)</td><td>Référence transaction FedaPay</td></tr>
+    <tr><td>subscription_status / expires</td><td>VARCHAR / DATE</td><td>active/pending/expired/suspended + échéance</td></tr>
+    <tr><td>country / language</td><td>VARCHAR(2)</td><td>Code pays ISO, langue 'fr'/'en' (pilote les emails)</td></tr>
+    <tr><td>payment_ref</td><td>VARCHAR</td><td>Référence transaction FedaPay</td></tr>
   </table>
-  <div class="info"><b>Contrainte d'intégrité :</b> UNIQUE(email) sur schools, un seul compte par adresse. Un compte expiré/suspendu qui se réinscrit avec le même email est traité comme un <b>renouvellement</b> (même ligne, historique conservé) plutôt que bloqué ou dupliqué.</div>
-  <h3>8.2 Autres tables</h3>
-  <p><b>students</b> (id, name, email, group, photo LONGTEXT, school_id) · <b>attendance</b> (date, session_id, student_id, status, note, school_id, UNIQUE sur date+session+student+school) · <b>formations</b> (id, name, description, group_name, start_date, end_date, school_id) · <b>formateurs</b> (id, name, email, formation_id, token, school_id).</p>
+  <div class="info"><b>Contrainte d'intégrité :</b> UNIQUE(email), un seul compte par adresse. Un compte expiré/suspendu qui se réinscrit avec le même email est traité comme un <b>renouvellement</b> (même ligne, historique conservé) plutôt que bloqué ou dupliqué.</div>
+  <p style="font-size:8pt"><b>Autres tables :</b> students (nom, email, groupe, photo, school_id) · attendance (date, session, student, status, note — UNIQUE date+session+student+school) · formations (nom, description, groupe, dates, school_id) · formateurs (nom, email, formation_id, token, school_id).</p>
 </div>
 
-<!-- SECTION 9 -->
+<!-- SECTION 9 & 10 -->
 <div class="page">
-  <h2 class="stitle"><span class="n">9</span>Spécification des API REST<span class="sub">Endpoints, méthodes, paramètres et réponses</span></h2>
+  <h2 class="stitle"><span class="n">9</span>Spécification des API REST<span class="sub">Endpoints, méthodes, réponses</span></h2>
   <table>
     <tr><th>Endpoint</th><th>Méthode</th><th>Auth</th><th>Réponse</th></tr>
-    <tr><td>/api/login</td><td>POST</td><td>Aucune</td><td>{token, school} ou 401/403 (pending/expired)</td></tr>
-    <tr><td>/api/register</td><td>POST</td><td>Aucune</td><td>{name, email, country, language, …} → {mode, activated} ou {mode:'fedapay', token}</td></tr>
-    <tr><td>/api/students</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD apprenants, filtré school_id</td></tr>
-    <tr><td>/api/attendance</td><td>GET/POST</td><td>JWT ou token formateur</td><td>Lecture/écriture des présences</td></tr>
-    <tr><td>/api/formations</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD formations</td></tr>
-    <tr><td>/api/formateurs</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD formateurs + génération token</td></tr>
-    <tr><td>/api/sessions</td><td>GET/POST/DELETE</td><td>JWT</td><td>Sessions rattachées aux formations</td></tr>
+    <tr><td>/api/login</td><td>POST</td><td>Aucune</td><td>{token, school} ou 401/403</td></tr>
+    <tr><td>/api/register</td><td>POST</td><td>Aucune</td><td>{name, email, country, language,…} → {mode, activated}</td></tr>
+    <tr><td>/api/students, formations, sessions</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD filtré school_id</td></tr>
+    <tr><td>/api/attendance</td><td>GET/POST</td><td>JWT ou token formateur</td><td>Lecture/écriture présences</td></tr>
+    <tr><td>/api/formateurs</td><td>GET/POST/PUT/DELETE</td><td>JWT</td><td>CRUD + génération token</td></tr>
     <tr><td>/api/superadmin</td><td>GET/POST</td><td>Clé superadmin</td><td>Liste écoles, création, stats</td></tr>
-    <tr><td>/api/activate-school</td><td>GET (callback)</td><td>Vérif. FedaPay serveur</td><td>Active l'abonnement après paiement confirmé</td></tr>
+    <tr><td>/api/activate-school</td><td>GET (callback)</td><td>Vérif. FedaPay</td><td>Active l'abonnement après paiement</td></tr>
     <tr><td>/api/send-email</td><td>POST</td><td>JWT</td><td>Envoi identifiants formateur</td></tr>
   </table>
-  <div class="warn"><b>Toutes les erreurs</b> retournent {error: "message lisible"} avec le code HTTP approprié (400/401/402/403/404/409/500). Le code <b>402</b> est utilisé spécifiquement pour signaler un abonnement inactif (voir §14).</div>
-</div>
+  <div class="warn"><b>Erreurs :</b> {error:"message"} avec code HTTP approprié (400/401/402/403/404/409/500). Le <b>402</b> signale spécifiquement un abonnement inactif (voir §14).</div>
 
-<!-- SECTION 10 -->
-<div class="page">
-  <h2 class="stitle"><span class="n">10</span>Sécurité et Authentification<span class="sub">Mécanismes de protection, tokens et isolation des données</span></h2>
-  <h3>10.1 Isolation multi-tenant (school_id)</h3>
-  <p>C'est le mécanisme de sécurité le plus critique d'EducTrack. Le school_id n'est jamais fourni par le client dans les paramètres de la requête : il est systématiquement extrait du token JWT vérifié côté serveur. Toute requête SQL filtre obligatoirement sur ce champ.</p>
-  <h3>10.2 Gestion des abonnements (mise à jour v1.1)</h3>
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">10</span>Sécurité et Authentification</div>
+  <p><b>Isolation multi-tenant :</b> le school_id n'est jamais fourni par le client — il est systématiquement extrait du token JWT vérifié côté serveur, et toute requête SQL filtre obligatoirement sur ce champ.</p>
   <table>
-    <tr><th>Statut</th><th>Comportement</th><th>Code HTTP</th></tr>
-    <tr><td>active</td><td>Accès complet</td><td>200</td></tr>
-    <tr><td>pending</td><td>Bloqué : "Abonnement en attente de paiement"</td><td>403</td></tr>
-    <tr><td>expired</td><td>Bloqué au login ; déconnexion immédiate si déjà connecté</td><td>403 / 402</td></tr>
-    <tr><td>suspended</td><td>Exclu de la requête d'authentification (401 générique)</td><td>401</td></tr>
+    <tr><th>Statut abonnement</th><th>Comportement</th></tr>
+    <tr><td>active</td><td>Accès complet (200)</td></tr>
+    <tr><td>pending</td><td>Bloqué, "en attente de paiement" (403)</td></tr>
+    <tr><td>expired</td><td>Bloqué au login ; déconnexion immédiate si déjà connecté (403/402)</td></tr>
+    <tr><td>suspended</td><td>Exclu de l'authentification (401)</td></tr>
   </table>
-  <div class="new"><b>Détection sans tâche planifiée (v1.1) :</b> la comparaison entre <code>subscription_expires</code> et la date du jour est évaluée <i>paresseusement</i>, au moment du login et à chaque appel API authentifié, plutôt que par une tâche cron quotidienne. Dès qu'une école active dépasse son échéance, son statut bascule en <code>expired</code> dès la requête suivante, et toute session déjà ouverte reçoit un <b>402</b> qui déclenche côté client une déconnexion immédiate et une redirection vers la page de réabonnement (pré-remplie avec l'email et le nom connus).</div>
+  <div class="info"><b>Détection sans tâche planifiée :</b> la comparaison entre <code>subscription_expires</code> et la date du jour est évaluée paresseusement, au login et à chaque appel API, plutôt que par une tâche périodique. Toute session déjà ouverte reçoit un 402 déclenchant une déconnexion immédiate et une redirection vers la page de réabonnement.</div>
 </div>
 
-<!-- SECTION 11 & 12 -->
+<!-- SECTION 11, 12 & 13 -->
 <div class="page">
-  <h2 class="stitle"><span class="n">11</span>PWA et Interface Utilisateur<span class="sub">Progressive Web App, responsive design et navigation</span></h2>
-  <p>Le fichier manifest.json définit les métadonnées de l'application installable (nom, couleur #6366F1, mode standalone). Le Service Worker implémente une stratégie <b>Cache First</b> pour les ressources statiques et <b>Network First</b> pour /api/.</p>
-  <h3 style="margin-top:14px">12 · Structure de navigation</h3>
+  <h2 class="stitle"><span class="n">11</span>PWA, Interface et Multi-Établissements<span class="sub">Progressive Web App, navigation et isolation des données</span></h2>
+  <p>Le fichier manifest.json définit les métadonnées de l'application installable (nom, couleur #6366F1, mode standalone). Le Service Worker implémente une stratégie <b>Cache First</b> pour les ressources statiques et <b>Network First</b> pour /api/, avec un identifiant de cache changé à chaque mise à jour significative pour garantir un rafraîchissement propre.</p>
+
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">12</span>Interface Utilisateur — Structure de navigation</div>
   <table>
     <tr><th>Vue</th><th>Rôle requis</th><th>Description</th></tr>
     <tr><td>Dashboard</td><td>Admin</td><td>KPIs, taux de présence, formations actives</td></tr>
     <tr><td>Présences</td><td>Admin / Formateur</td><td>Saisie quotidienne de l'appel</td></tr>
-    <tr><td>Apprenants</td><td>Admin</td><td>Liste, ajout, import PDF</td></tr>
-    <tr><td>Formations</td><td>Admin</td><td>CRUD formations avec dates et formateur</td></tr>
-    <tr><td>Formateurs</td><td>Admin</td><td>Gestion comptes et tokens</td></tr>
+    <tr><td>Apprenants / Formations / Formateurs</td><td>Admin</td><td>CRUD, import PDF, dates, tokens</td></tr>
     <tr><td>Statistiques</td><td>Admin</td><td>Taux de présence, graphiques, exports</td></tr>
     <tr><td>Paramètres</td><td>Admin</td><td>Profil établissement, mot de passe, thème</td></tr>
   </table>
-</div>
 
-<!-- SECTION 13 -->
-<div class="page">
-  <h2 class="stitle"><span class="n">13</span>Gestion Multi-Établissements<span class="sub">Architecture multi-tenant par colonne discriminante</span></h2>
-  <p>Toutes les tables métier (students, attendance, formations, formateurs) contiennent un champ <code>school_id</code> qui isole les données de chaque établissement dans la même base physique.</p>
-  <h3>Cycle de vie d'un établissement</h3>
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">13</span>Gestion Multi-Établissements</div>
+  <p>Modèle multi-tenant par colonne discriminante : toutes les tables métier (students, attendance, formations, formateurs) contiennent un champ <code>school_id</code> qui isole les données de chaque établissement dans la même base physique.</p>
   <table>
     <tr><th>Étape</th><th>Déclencheur</th><th>Statut résultant</th></tr>
-    <tr><td>1. Inscription</td><td>POST /api/register avec nom, email, pays, langue</td><td>pending</td></tr>
-    <tr><td>2. Activation</td><td>Paiement FedaPay confirmé (ou sandbox)</td><td>active + email de confirmation</td></tr>
-    <tr><td>3. Expiration</td><td>Automatique, détectée au prochain accès après la date d'échéance</td><td>expired</td></tr>
-    <tr><td>4. Renouvellement</td><td>Nouvelle soumission du formulaire d'inscription (même email)</td><td>active (même compte, historique conservé)</td></tr>
-    <tr><td>5. Suspension</td><td>Action manuelle super admin</td><td>suspended</td></tr>
+    <tr><td>Inscription</td><td>POST /api/register (nom, email, pays, langue)</td><td>pending</td></tr>
+    <tr><td>Activation</td><td>Paiement FedaPay confirmé</td><td>active + email de confirmation</td></tr>
+    <tr><td>Expiration</td><td>Automatique, détectée au prochain accès après échéance</td><td>expired</td></tr>
+    <tr><td>Renouvellement</td><td>Nouvelle soumission du formulaire (même email)</td><td>active (même compte, historique conservé)</td></tr>
   </table>
 </div>
 
-<!-- SECTION 14 (nouvelle section v1.1) -->
+<!-- SECTION 14, 15 & 16 -->
 <div class="page">
-  <h2 class="stitle"><span class="n">14</span>Tarification et Paiement<span class="sub">Nouveau : modèle économique et couverture géographique</span></h2>
-  <h3>14.1 Tarif</h3>
-  <p>EducTrack applique un <b>tarif unique de 20 $ US par an et par établissement</b>, sans palier ni fonctionnalité payante additionnelle. Le montant est converti et prélevé en Francs CFA (XOF) via FedaPay, seule devise supportée pour le mobile money dans la zone visée.</p>
-  <h3>14.2 Moyens de paiement</h3>
+  <h2 class="stitle"><span class="n">14</span>Tarification, Import/Export et Déploiement<span class="sub">Modèle économique, données et infrastructure</span></h2>
+  <p>EducTrack applique un <b>tarif unique de 20 $ US par an et par établissement</b>, sans palier ni fonctionnalité payante additionnelle, prélevé en Francs CFA (XOF) via FedaPay. Le pays est un champ <b>obligatoire</b> à l'inscription (Bénin, Côte d'Ivoire, Togo, Sénégal, Burkina Faso, Nigéria, Ghana, ou autre) ; la langue (Français/Anglais) est présélectionnée selon le pays (anglais par défaut pour le Nigéria et le Ghana) et reste modifiable. Un email de confirmation (Brevo) est envoyé, dans la langue de l'école, à chaque activation ou renouvellement.</p>
   <div class="grid3">
     <div class="box"><b>Carte bancaire</b><span>Visa / Mastercard via FedaPay</span></div>
     <div class="box"><b>MTN Mobile Money</b><span>Bénin, Côte d'Ivoire, Togo</span></div>
     <div class="box"><b>Moov Money</b><span>Bénin, Côte d'Ivoire, Togo</span></div>
   </div>
-  <h3>14.3 Couverture géographique et langue</h3>
-  <p>Le pays est un champ <b>obligatoire</b> du formulaire d'inscription (register.html) : Bénin, Côte d'Ivoire, Togo, Sénégal, Burkina Faso, Nigéria, Ghana, ou Autre. La langue de l'interface et des emails transactionnels (Français/Anglais) est présélectionnée selon le pays choisi (anglais par défaut pour le Nigéria et le Ghana), et reste modifiable par l'utilisateur avant soumission.</p>
-  <div class="warn"><b>Limite connue :</b> le circuit de paiement reste unique (FedaPay/XOF) pour tous les pays à ce stade. L'extension à un gateway dédié (Paystack/Flutterwave) pour le Nigéria/Ghana est identifiée comme évolution v1.2 (voir §18).</div>
-  <h3>14.4 Notification email systématique</h3>
-  <p>À chaque activation ou renouvellement, un email de confirmation est envoyé (Brevo API), dans la langue de l'école, rappelant explicitement les identifiants de connexion et la formule "Abonnement annuel — 20 $ US / an".</p>
-</div>
+  <div class="warn"><b>Limite connue :</b> le circuit de paiement reste unique (FedaPay/XOF) pour tous les pays à ce stade ; une passerelle dédiée pour le Nigéria/Ghana est une évolution identifiée (§18).</div>
 
-<!-- SECTION 15 & 16 -->
-<div class="page">
-  <h2 class="stitle"><span class="n">15</span>Import/Export & Déploiement<span class="sub">Données et infrastructure de production</span></h2>
-  <h3>15.1 Import PDF</h3>
-  <p>Lecture côté client via PDF.js, sans upload serveur. Fonctionne uniquement sur PDFs natifs (couche texte).</p>
-  <h3>15.2 Exports</h3>
-  <p>CSV (UTF-8 BOM, séparateur ;) et PDF (jsPDF + html2canvas), 100% côté client.</p>
-  <h3 style="margin-top:14px">16 · Pipeline CI/CD</h3>
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">15</span>Import et Export de Données</div>
+  <p>Import apprenants : lecture PDF côté client via PDF.js, sans upload serveur, sur PDFs natifs uniquement (couche texte). Export : CSV (UTF-8 BOM, séparateur ;) et rapport PDF (jsPDF + html2canvas), 100 % côté client.</p>
+
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">16</span>Déploiement et Infrastructure</div>
   <table>
     <tr><th>Étape</th><th>Outil</th><th>Action</th></tr>
-    <tr><td>1. Push</td><td>GitHub</td><td>Push sur branche main du dépôt vaniogbk/suivi-apprenants</td></tr>
-    <tr><td>2. Build</td><td>Vercel CI</td><td>Détection automatique des fonctions serverless</td></tr>
-    <tr><td>3. Deploy</td><td>Vercel CDN</td><td>Mise en ligne en ~30 secondes</td></tr>
+    <tr><td>Push</td><td>GitHub</td><td>Push sur la branche principale du dépôt</td></tr>
+    <tr><td>Build</td><td>Vercel CI</td><td>Détection automatique des fonctions serverless</td></tr>
+    <tr><td>Deploy</td><td>Vercel CDN</td><td>Mise en ligne en environ 30 secondes</td></tr>
   </table>
 </div>
 
-<!-- SECTION 17 -->
+<!-- SECTION 17 & 18 -->
 <div class="page">
   <h2 class="stitle"><span class="n">17</span>Tests et Validation<span class="sub">Stratégie de vérification</span></h2>
   <table>
-    <tr><th>Endpoint / Flux</th><th>Cas testés</th><th>Statut</th></tr>
-    <tr><td>/api/login</td><td>Credentials valides, mot de passe erroné, abonnement expiré</td><td>Validé</td></tr>
-    <tr><td>/api/register</td><td>Inscription neuve, doublon actif bloqué (409), renouvellement d'un compte expiré</td><td>Validé</td></tr>
-    <tr><td>Expiration abonnement</td><td>Bascule active→expired en base, 402 sur token déjà émis, blocage au login</td><td>Validé</td></tr>
-    <tr><td>/api/students, /sessions, /formations</td><td>Token valide accepté, absence de token rejetée (401)</td><td>Validé</td></tr>
-    <tr><td>/api/superadmin</td><td>Clé correcte/incorrecte</td><td>Validé</td></tr>
+    <tr><th>Endpoint / Flux</th><th>Cas testés</th></tr>
+    <tr><td>/api/login</td><td>Credentials valides, mot de passe erroné, abonnement expiré</td></tr>
+    <tr><td>/api/register</td><td>Inscription neuve, doublon actif bloqué (409), renouvellement d'un compte expiré</td></tr>
+    <tr><td>Expiration abonnement</td><td>Bascule active→expired en base, 402 sur token déjà émis, blocage au login</td></tr>
+    <tr><td>/api/students, sessions, formations</td><td>Token valide accepté, absence de token rejetée (401)</td></tr>
+    <tr><td>/api/superadmin</td><td>Clé correcte / incorrecte</td></tr>
   </table>
-  <p>Tests exécutés via un script Node dédié (test-endpoints.js) rejouant les scénarios directement contre la base de production Railway, sans effet de bord destructeur.</p>
-</div>
+  <p>Tests exécutés via un script Node dédié rejouant les scénarios directement contre la base de production, sans effet de bord destructeur.</p>
 
-<!-- SECTION 18 -->
-<div class="page">
-  <h2 class="stitle"><span class="n">18</span>Contraintes, Limites et Évolutions<span class="sub">Limites techniques connues et roadmap produit</span></h2>
-  <h3>18.1 Contraintes connues</h3>
+  <div class="stitle2"><span style="background:#EEF2FF;color:#4338CA;display:inline-block;border-radius:50%;width:19px;height:19px;text-align:center;line-height:19px;font-size:9pt;margin-right:6px">18</span>Contraintes, Limites et Évolutions</div>
   <table>
     <tr><th>Contrainte</th><th>Description</th></tr>
     <tr><td>Cold start serverless</td><td>Première requête après inactivité : +1 à 3 s (warm-up Vercel)</td></tr>
     <tr><td>Connexions MySQL</td><td>Plan Railway gratuit limité à 5–10 connexions simultanées</td></tr>
     <tr><td>Paiement Nigéria/Ghana</td><td>Circuit XOF unique (FedaPay) pour tous les pays actuellement</td></tr>
   </table>
-  <h3>18.2 Roadmap</h3>
   <table>
-    <tr><th>Version</th><th>Fonctionnalité</th><th>Priorité</th></tr>
-    <tr><td>v1.2</td><td>Passerelle de paiement dédiée Nigéria/Ghana (Paystack/Flutterwave)</td><td class="haute">Haute</td></tr>
-    <tr><td>v1.2</td><td>Notifications push Web (alerte seuil absences)</td><td class="haute">Haute</td></tr>
-    <tr><td>v1.3</td><td>QR Code pour pointage autonome des apprenants</td><td class="haute">Haute</td></tr>
-    <tr><td>v2.0</td><td>Application mobile native Flutter (iOS + Android)</td><td class="haute">Haute</td></tr>
+    <tr><th>Horizon</th><th>Évolution envisagée</th></tr>
+    <tr><td>Court terme</td><td>Passerelle de paiement dédiée Nigéria/Ghana ; notifications push web</td></tr>
+    <tr><td>Moyen terme</td><td>QR code pour pointage autonome des apprenants</td></tr>
+    <tr><td>Long terme</td><td>Application mobile native (iOS + Android)</td></tr>
   </table>
-  <div class="info"><b>Engagement qualité :</b> EducTrack est développé selon les bonnes pratiques du développement web moderne : code versionné sur GitHub, variables d'environnement sécurisées hors du code source, requêtes SQL paramétrées, et déploiement automatisé reproductible.</div>
+  <div class="info"><b>Engagement qualité :</b> EducTrack est développé selon les bonnes pratiques du développement web moderne, code hébergé sur GitHub, variables d'environnement sécurisées hors du code source, requêtes SQL paramétrées et déploiement automatisé reproductible.</div>
 </div>
 
 <script>

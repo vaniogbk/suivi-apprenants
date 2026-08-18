@@ -95,18 +95,6 @@
     <form id="reg-form">
       <div class="form-row">
         <div class="form-group full">
-          <label>Nom de l'établissement *</label>
-          <input id="r-name" type="text" placeholder="École Numérique de Cotonou" required>
-        </div>
-        <div class="form-group">
-          <label>Email professionnel *</label>
-          <input id="r-email" type="email" placeholder="contact@ecole.bj" required>
-        </div>
-        <div class="form-group">
-          <label>Téléphone</label>
-          <input id="r-phone" type="tel" placeholder="+229 01 XX XX XX XX">
-        </div>
-        <div class="form-group">
           <label>Pays *</label>
           <select id="r-country" required onchange="onCountryChange()" aria-label="Pays">
             <option value="">Sélectionner…</option>
@@ -119,6 +107,18 @@
             <option value="GH">Ghana</option>
             <option value="OTHER">Autre / Other</option>
           </select>
+        </div>
+        <div class="form-group full">
+          <label>Nom de l'établissement *</label>
+          <input id="r-name" type="text" placeholder="École Numérique de Cotonou" required>
+        </div>
+        <div class="form-group">
+          <label>Email professionnel *</label>
+          <input id="r-email" type="email" placeholder="contact@ecole.bj" required>
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input id="r-phone" type="tel" placeholder="+229 01 XX XX XX XX">
         </div>
         <div class="form-group">
           <label>Langue / Language *</label>
@@ -184,9 +184,22 @@ let selectedMethod = 'mtn';
 // Nigéria/Ghana sont anglophones : on présélectionne l'anglais, mais
 // l'utilisateur reste libre de changer (ex: écoles francophones au Ghana).
 const ANGLOPHONE = ['NG', 'GH'];
+
+// Indicatif téléphonique appliqué automatiquement au champ Téléphone
+// quand le pays change, sans écraser un numéro déjà saisi par l'utilisateur.
+const DIAL_CODE = { BJ: '+229 ', CI: '+225 ', TG: '+228 ', SN: '+221 ', BF: '+226 ', NG: '+234 ', GH: '+233 ' };
+let lastAppliedPrefix = '';
+
 function onCountryChange() {
   const country = document.getElementById('r-country').value;
   document.getElementById('r-lang').value = ANGLOPHONE.includes(country) ? 'en' : 'fr';
+
+  const phone = document.getElementById('r-phone');
+  const prefix = DIAL_CODE[country] || '';
+  if (prefix && (phone.value.trim() === '' || phone.value === lastAppliedPrefix)) {
+    phone.value = prefix;
+  }
+  lastAppliedPrefix = prefix;
 }
 
 function selectPay(el, method) {
