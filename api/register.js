@@ -55,18 +55,20 @@ module.exports = async (req, res) => {
       );
     }
 
-    // Mode sandbox (no FEDAPAY_SECRET_KEY configured)
+    // Mode sandbox (pas de FEDAPAY_SECRET_KEY configuré) — l'école reste
+    // 'pending' tant que le paiement simulé n'a pas été confirmé : le
+    // paiement gate réellement l'activation, ce n'est pas une simple
+    // formalité visuelle. La confirmation redirige vers le même callback
+    // que le vrai FedaPay (api/activate-school.js), qui régénère le mot
+    // de passe et envoie l'email à l'activation.
     if (!fedaKey || fedaKey === 'sandbox') {
-      // Activate immediately for demo/sandbox
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      await pool.query(
-        `UPDATE schools SET subscription_status='active', subscription_expires=? WHERE id=?`,
-        [expires.toISOString().split('T')[0], id]
-      );
-      // Send credentials email
-      await sendCredentials(email, name, password, appUrl, language);
-      return res.json({ mode: 'sandbox', activated: true });
+      const paymentRef = auth.generateId() + auth.generateId();
+      await pool.query('UPDATE schools SET payment_ref=? WHERE id=?', [paymentRef, id]);
+      return res.json({
+        mode: 'sandbox',
+        activationUrl: `/api/activate-school?id=${paymentRef}&status=approved`,
+        amount: price,
+      });
     }
 
     // FedaPay real payment

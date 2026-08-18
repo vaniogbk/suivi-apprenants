@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
     if (!id) return res.redirect(`${appUrl}/register.html?payment=failed`);
 
     const fedaKey         = process.env.FEDAPAY_SECRET_KEY;
-    const expectedAmount  = parseInt(process.env.SUBSCRIPTION_PRICE_XOF || '50000');
+    const expectedAmount  = parseInt(process.env.SUBSCRIPTION_PRICE_XOF || '12000');
     const isSandbox       = !fedaKey || fedaKey === 'sandbox';
 
     if (!isSandbox) {

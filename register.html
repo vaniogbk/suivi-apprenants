@@ -176,10 +176,54 @@
   </div>
 </div>
 
+<!-- Simulateur de paiement sandbox — rendu visible uniquement quand
+     FEDAPAY_SECRET_KEY n'est pas configuré côté serveur. Le compte reste
+     'pending' tant que ce paiement simulé n'est pas confirmé : ce n'est
+     pas un simple écran de transition, c'est un vrai palier bloquant. -->
+<div id="sandbox-overlay" style="display:none;position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:16px;padding:28px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="width:48px;height:48px;border-radius:12px;background:#FFFBEB;color:#D97706;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px">
+        <i class="ph ph-flask"></i>
+      </div>
+      <div style="font-weight:700;color:#92400E;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase">Environnement Sandbox</div>
+      <h2 style="font-size:1.1rem;margin-top:4px">Simulation de paiement</h2>
+      <p style="color:#6B7280;font-size:.85rem;margin-top:4px">Aucun montant réel n'est prélevé. Cette étape simule le retour d'un vrai fournisseur de paiement (FedaPay).</p>
+    </div>
+    <div style="background:#F9FAFB;border-radius:10px;padding:16px;margin-bottom:20px;font-size:.85rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span>Moyen</span><strong id="sb-method">MTN MoMo</strong></div>
+      <div style="display:flex;justify-content:space-between"><span>Montant</span><strong id="sb-amount" style="color:#6366F1">20 $ US</strong></div>
+    </div>
+    <button type="button" class="btn-submit" id="sb-confirm" onclick="confirmSandboxPayment()">
+      <i class="ph ph-check-circle"></i> Confirmer le paiement (sandbox)
+    </button>
+    <button type="button" onclick="cancelSandboxPayment()" style="width:100%;margin-top:10px;padding:12px;border:none;background:transparent;color:#6B7280;font-size:.85rem;cursor:pointer">
+      Annuler — le compte restera en attente
+    </button>
+  </div>
+</div>
+
 <!-- FedaPay SDK -->
 <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
 <script>
 let selectedMethod = 'mtn';
+let pendingActivationUrl = null;
+
+function confirmSandboxPayment() {
+  const confirmBtn = document.getElementById('sb-confirm');
+  confirmBtn.disabled = true;
+  confirmBtn.innerHTML = '<i class="ph ph-spinner" style="animation:spin 1s linear infinite"></i> Traitement…';
+  // Simule le retour du fournisseur de paiement : redirige vers le même
+  // callback que le vrai FedaPay (api/activate-school.js), qui active le
+  // compte et envoie les identifiants. Sans ce clic, le compte reste
+  // 'pending' — le paiement conditionne réellement l'accès.
+  window.location.href = pendingActivationUrl;
+}
+
+function cancelSandboxPayment() {
+  document.getElementById('sandbox-overlay').style.display = 'none';
+  pendingActivationUrl = null;
+}
 
 // Nigéria/Ghana sont anglophones : on présélectionne l'anglais, mais
 // l'utilisateur reste libre de changer (ex: écoles francophones au Ghana).
@@ -239,8 +283,15 @@ async function submitReg() {
     if (!resp.ok) throw new Error(data.error || `Erreur (${resp.status})`);
 
     if (data.mode === 'sandbox') {
-      // Sandbox: already activated
-      window.location.href = '/login.html?registered=1';
+      // Le compte est encore 'pending' côté serveur : on ne l'active
+      // qu'après confirmation explicite dans le simulateur ci-dessous.
+      pendingActivationUrl = data.activationUrl;
+      const methodLabels = { mtn: 'MTN MoMo', moov: 'Moov Money', card: 'Carte Visa/MC' };
+      document.getElementById('sb-method').textContent = methodLabels[selectedMethod] || selectedMethod;
+      document.getElementById('sb-amount').textContent = document.getElementById('price-display').textContent;
+      document.getElementById('sandbox-overlay').style.display = 'flex';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-lock"></i> Payer et activer mon compte';
       return;
     }
 
